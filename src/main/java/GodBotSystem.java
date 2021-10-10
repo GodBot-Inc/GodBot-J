@@ -31,10 +31,7 @@ public class GodBotSystem {
         godbotJda.getPresence().setActivity(Activity.listening("dope music"));
         israJDA.getPresence().setActivity(Activity.listening("the GodBot System"));
 
-        AudioPlayerManager playerManager = new DefaultAudioPlayerManager();
-        AudioSourceManagers.registerRemoteSources(playerManager);
-
-        AudioPlayer player = playerManager.createPlayer();
+//        AudioPlayer player = playerManager.createPlayer();
 
         // Wait until JDA is ready and loaded
         godbotJda.awaitReady();

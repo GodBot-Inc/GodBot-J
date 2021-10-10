@@ -24,12 +24,13 @@ public class InteractionListener extends ListenerAdapter {
         if (event.getGuild() == null) { return; }
         switch (event.getName()) {
             case "play":
-                logger.log("Pause slash command triggered");
+                logger.log("Play slash command triggered");
                 try {
                     TimeUnit.SECONDS.sleep(2);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
+                event.reply("Hello").setEphemeral(true).queue();
                 break;
 
             case "pause":
