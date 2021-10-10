@@ -18,7 +18,7 @@ import java.util.logging.SimpleFormatter;
 public class PlayerManager {
 
     private static final PlayerManager managerObj = new PlayerManager();
-    private AudioPlayerManager playerManager;
+    private final DefaultAudioPlayerManager playerManager;
     private Logger logger;
 
     private Logger getLogger() throws IOException {
@@ -45,7 +45,7 @@ public class PlayerManager {
         }
     }
 
-    public AudioPlayer getPlayer(Integer guildID, Integer channelID) throws KeyAlreadyExistsException {
+    public AudioPlayer createPlayer(Integer guildID, Integer channelID) throws KeyAlreadyExistsException {
         PlayerVault vault = PlayerVault.getInstance();
         QueueSystem queue = QueueSystem.getInstance();
         AudioPlayer player = playerManager.createPlayer();

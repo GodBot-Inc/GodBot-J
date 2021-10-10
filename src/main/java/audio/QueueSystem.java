@@ -73,23 +73,40 @@ public class QueueSystem {
         return queueStorage.get(player);
     }
 
-    public void queue(AudioPlayer player, AudioTrack track) throws PlayerNotFound {
+    public void addTrack(AudioPlayer player, AudioTrack track, int index) throws PlayerNotFound, IndexOutOfBoundsException {
         if (!queueStorage.containsKey(player)) {
             throw new PlayerNotFound("Could not find Player " + player);
+        }
+        if (queueStorage.get(player).size() > index) {
+            throw new IndexOutOfBoundsException("Index" + index + " is too large for a list of size " + queueStorage.get(player).size());
         }
         logger.info("Queued Track " + track.getInfo().title);
         queueStorage.get(player).add(track);
     }
 
-    public void removeTrack(AudioPlayer player, int index) throws PlayerNotFound, QueueEmpty, KeyResolverException {
+    public void removeTrack(AudioPlayer player, AudioTrack track) throws PlayerNotFound, QueueEmpty, KeyResolverException {
+        if (!queueStorage.containsKey(player)) {
+            throw new PlayerNotFound("Could not find Player " + player);
+        }
+        if (queueStorage.get(player).isEmpty()) {
+            throw new QueueEmpty("Queue of Player " + player + "is empty");
+        }
+        if (!queueStorage.get(player).contains(track)) {
+            throw new KeyResolverException("Could not find track " + track.getInfo().title);
+        }
+        logger.info("Removed track " + track.getInfo().title);
+        queueStorage.get(player).remove(track);
+    }
+
+    public void removeTrackByIndex(AudioPlayer player, int index) throws PlayerNotFound, QueueEmpty, IndexOutOfBoundsException {
         if (!queueStorage.containsKey(player)) {
             throw new PlayerNotFound("Could not find Player " + player);
         }
         if (queueStorage.get(player).isEmpty()) {
             throw new QueueEmpty("Queue of Player " + player + " is empty");
         }
-        if (queueStorage.get(player).size() < index) {
-            throw new KeyResolverException("Index " + index + " is too long for the queue size " + queueStorage.get(player).size());
+        if (queueStorage.get(player).size() > index) {
+            throw new IndexOutOfBoundsException("Index " + index + " is too long for the queue size " + queueStorage.get(player).size());
         }
         logger.info("Removed Track " + queueStorage.get(player).get(index).getInfo().title);
         queueStorage.get(player).remove(index);

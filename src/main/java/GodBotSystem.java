@@ -1,7 +1,3 @@
-import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
-import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
-import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
-import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
 import io.github.cdimascio.dotenv.Dotenv;
 import listeners.BotStateListener;
 import listeners.InteractionListener;
@@ -12,7 +8,6 @@ import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.ChunkingFilter;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
-import utils.loggers.ListenerLogger;
 
 import javax.security.auth.login.LoginException;
 import java.io.IOException;
@@ -25,20 +20,21 @@ public class GodBotSystem {
         String TOKEN = dotenv.get("TOKEN");
         String israTOKEN = dotenv.get("IsrafilTOKEN");
 
-        JDA godbotJda = initializeBotFromToken(TOKEN);
-        JDA israJDA = initializeBotFromToken(israTOKEN);
+        JDA godbotJda = initializeBotFromToken(TOKEN, true);
+        JDA israJDA = initializeBotFromToken(israTOKEN, false);
+
+        // TODO: Initialize AudioManager for each guild for every bot and store them in the AudioManagerManager
+        // TODO: Logger -> log into database
 
         godbotJda.getPresence().setActivity(Activity.listening("dope music"));
         israJDA.getPresence().setActivity(Activity.listening("the GodBot System"));
-
-//        AudioPlayer player = playerManager.createPlayer();
 
         // Wait until JDA is ready and loaded
         godbotJda.awaitReady();
         israJDA.awaitReady();
     }
 
-    private static JDA initializeBotFromToken(String TOKEN) throws LoginException {
+    private static JDA initializeBotFromToken(String TOKEN, boolean listeners) throws LoginException {
         // Get a builder for the bot, so it can be customized / configured
         JDABuilder builder = JDABuilder.createDefault(TOKEN);
 
@@ -49,7 +45,9 @@ public class GodBotSystem {
         ListenerLogger logger = ListenerLogger.getLogger();
 
         // Registers all Listeners to the Bot-EventListener
-        registerListeners(builder, logger);
+        if (listeners) {
+            registerListeners(builder, logger);
+        }
 
         // Create bot instance
         return builder.build();
