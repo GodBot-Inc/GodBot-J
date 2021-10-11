@@ -2,10 +2,7 @@ package audio;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
-import com.sun.org.apache.xml.internal.security.keys.ContentHandlerAlreadyRegisteredException;
-import com.sun.org.apache.xml.internal.security.keys.keyresolver.KeyResolverException;
 import io.github.cdimascio.dotenv.Dotenv;
-import org.jetbrains.annotations.NotNull;
 import utils.CustomExceptions.audio.PlayerNotFound;
 import utils.CustomExceptions.audio.QueueEmpty;
 
@@ -84,7 +81,7 @@ public class QueueSystem {
         queueStorage.get(player).add(track);
     }
 
-    public void removeTrack(AudioPlayer player, AudioTrack track) throws PlayerNotFound, QueueEmpty, KeyResolverException {
+    public void removeTrack(AudioPlayer player, AudioTrack track) throws PlayerNotFound, QueueEmpty, KeyException {
         if (!queueStorage.containsKey(player)) {
             throw new PlayerNotFound("Could not find Player " + player);
         }
@@ -92,7 +89,7 @@ public class QueueSystem {
             throw new QueueEmpty("Queue of Player " + player + "is empty");
         }
         if (!queueStorage.get(player).contains(track)) {
-            throw new KeyResolverException("Could not find track " + track.getInfo().title);
+            throw new KeyException("Could not find track " + track.getInfo().title);
         }
         logger.info("Removed track " + track.getInfo().title);
         queueStorage.get(player).remove(track);

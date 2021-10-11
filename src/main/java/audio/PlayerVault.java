@@ -15,13 +15,11 @@ import java.util.logging.SimpleFormatter;
 
 
 class PlayerVault {
-    /**
-     * This Singelton class takes care of player storage. It stores all of them according to their guildID and channelID
-     * The Integer in the outer HashMap represents the guildID and the Integer in the inner HashMap represents the channelID
-     */
+
     private static final PlayerVault vaultObj = new PlayerVault();
     private Logger logger;
-    private final HashMap<Integer, HashMap<Integer, AudioPlayer>> playerStorage = new HashMap<>();
+    //                   GuildId        channelId  Destination
+    private final HashMap<String, HashMap<String, AudioPlayer>> playerStorage = new HashMap<>();
 
     private Logger getLogger() throws IOException {
         Dotenv env = Dotenv.load();
@@ -45,7 +43,7 @@ class PlayerVault {
         }
     }
 
-    public void checkGuildAndChannel(Integer guildID, Integer channelID) throws GuildNotFound, ChannelNotFound {
+    public void checkGuildAndChannel(String guildID, String channelID) throws GuildNotFound, ChannelNotFound {
         if (!playerStorage.containsKey(guildID)) {
             throw new GuildNotFound("GuildID " + guildID);
         } else if (!playerStorage.get(guildID).containsKey(channelID)) {
@@ -53,11 +51,9 @@ class PlayerVault {
         }
     }
 
-
-    public void storePlayer(Integer guildID, Integer channelID, AudioPlayer player) throws KeyAlreadyExistsException {
+    public void storePlayer(String guildID, String channelID, AudioPlayer player) throws KeyAlreadyExistsException {
         if (!playerStorage.containsKey(guildID)) {
-            HashMap<Integer, AudioPlayer> innerMap = new HashMap<>();
-            playerStorage.put(guildID, innerMap);
+            playerStorage.put(guildID, new HashMap<String, AudioPlayer>());
             logger.info("Added new GuildID " + guildID);
         }
         if (playerStorage.containsKey(channelID)) {
@@ -67,7 +63,7 @@ class PlayerVault {
         logger.info("Stored new player | GuildID " + guildID + " ChannelID" + channelID);
     }
 
-    public void changeChannelID(Integer guildID, Integer oldChannelID, Integer newChannelID) throws GuildNotFound, ChannelNotFound, KeyAlreadyExistsException {
+    public void changeChannelID(String guildID, String oldChannelID, String newChannelID) throws GuildNotFound, ChannelNotFound, KeyAlreadyExistsException {
         checkGuildAndChannel(guildID, oldChannelID);
         if (playerStorage.get(guildID).containsKey(newChannelID)) {
             throw new KeyAlreadyExistsException("ChannelID " + newChannelID);
@@ -77,13 +73,13 @@ class PlayerVault {
         logger.info("Changed player ChannelID | GuildID " + guildID + " oldChannelID " + oldChannelID + " newChannelID " + newChannelID);
     }
 
-    public void removePlayer(Integer guildID, Integer channelID) throws GuildNotFound, ChannelNotFound {
+    public void removePlayer(String guildID, String channelID) throws GuildNotFound, ChannelNotFound {
         checkGuildAndChannel(guildID, channelID);
         playerStorage.get(guildID).remove(channelID);
         logger.info("Removed Player | GuildID " + guildID + " channelID " + channelID);
     }
 
-    public void removeGuild(Integer guildID) throws GuildNotFound {
+    public void removeGuild(String guildID) throws GuildNotFound {
         if (!playerStorage.containsKey(guildID)) {
             throw new GuildNotFound("GuildID " + guildID);
         }
@@ -91,7 +87,7 @@ class PlayerVault {
         logger.info("Removed Guild | GuildID " + guildID);
     }
 
-    public AudioPlayer getPlayer(int guildID, Integer channelID) throws GuildNotFound, ChannelNotFound {
+    public AudioPlayer getPlayer(String guildID, String channelID) throws GuildNotFound, ChannelNotFound {
         checkGuildAndChannel(guildID, channelID);
         return playerStorage.get(guildID).get(channelID);
     }

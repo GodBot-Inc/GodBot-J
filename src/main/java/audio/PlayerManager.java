@@ -45,7 +45,7 @@ public class PlayerManager {
         }
     }
 
-    public AudioPlayer createPlayer(Integer guildID, Integer channelID) throws KeyAlreadyExistsException {
+    public AudioPlayer createPlayer(String guildID, String channelID) throws KeyAlreadyExistsException {
         PlayerVault vault = PlayerVault.getInstance();
         QueueSystem queue = QueueSystem.getInstance();
         AudioPlayer player = playerManager.createPlayer();
@@ -55,12 +55,13 @@ public class PlayerManager {
         return player;
     }
 
-    public void removePlayer(Integer guildID, Integer channelID, AudioPlayer player) throws GuildNotFound, ChannelNotFound, PlayerNotFound {
+    public void removePlayer(String guildID, String channelID, AudioPlayer player) throws GuildNotFound, ChannelNotFound, PlayerNotFound {
         PlayerVault vault = PlayerVault.getInstance();
         QueueSystem queue = QueueSystem.getInstance();
         vault.removePlayer(guildID, channelID);
         queue.removePlayer(player);
         player.stopTrack();
+        player.destroy();
     }
 
     public static PlayerManager getManagerObj() {

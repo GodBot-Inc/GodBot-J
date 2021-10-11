@@ -1,3 +1,4 @@
+import audio.AudioManagerManager;
 import io.github.cdimascio.dotenv.Dotenv;
 import listeners.BotStateListener;
 import listeners.InteractionListener;
@@ -13,24 +14,32 @@ import javax.security.auth.login.LoginException;
 import java.io.IOException;
 
 public class GodBotSystem {
-    public static void main(String[] args) throws LoginException, InterruptedException, IOException {
+    public static void main(String[] args) throws LoginException, InterruptedException {
         Dotenv dotenv = Dotenv.load();
 
         // Load Bot-Token into the program
         String TOKEN = dotenv.get("TOKEN");
         String israTOKEN = dotenv.get("IsrafilTOKEN");
+        String APPLICATIONID = dotenv.get("APPLICATIONID");
+        String israAPPLICATIONID = dotenv.get("IsrafilAPPLICATIONID");
 
-        JDA godbotJda = initializeBotFromToken(TOKEN, true);
+        assert APPLICATIONID != null;
+        assert israAPPLICATIONID != null;
+
+        JDA godbotJDA = initializeBotFromToken(TOKEN, true);
         JDA israJDA = initializeBotFromToken(israTOKEN, false);
 
-        // TODO: Initialize AudioManager for each guild for every bot and store them in the AudioManagerManager
+        AudioManagerManager audioManager = AudioManagerManager.getInstance();
+        audioManager.registerJDA(APPLICATIONID, godbotJDA.getGuilds());
+        audioManager.registerJDA(israAPPLICATIONID, israJDA.getGuilds());
+
         // TODO: Logger -> log into database
 
-        godbotJda.getPresence().setActivity(Activity.listening("dope music"));
+        godbotJDA.getPresence().setActivity(Activity.listening("dope music"));
         israJDA.getPresence().setActivity(Activity.listening("the GodBot System"));
 
         // Wait until JDA is ready and loaded
-        godbotJda.awaitReady();
+        godbotJDA.awaitReady();
         israJDA.awaitReady();
     }
 
@@ -41,22 +50,19 @@ public class GodBotSystem {
         // Run a configuration so the bot does not use up too much memory
         configureMemoryUsage(builder);
 
-        // Initialize Listener Logger for listeners
-        ListenerLogger logger = ListenerLogger.getLogger();
-
         // Registers all Listeners to the Bot-EventListener
         if (listeners) {
-            registerListeners(builder, logger);
+            registerListeners(builder);
         }
 
         // Create bot instance
         return builder.build();
     }
 
-    private static void registerListeners(JDABuilder builder, ListenerLogger logger) {
+    private static void registerListeners(JDABuilder builder) {
         builder.addEventListeners(
-                new BotStateListener(logger),
-                new InteractionListener(logger)
+                new BotStateListener(),
+                new InteractionListener()
         );
     }
 
