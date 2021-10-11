@@ -30,6 +30,7 @@ class TrackEventListener extends AudioEventAdapter {
         if (endReason.mayStartNext) {
             QueueSystem queue = QueueSystem.getInstance();
             try {
+                // TODO: Actually play the next song
                 queue.getNextAndDelete(player);
             } catch (PlayerNotFound | QueueEmpty e) {
                 e.printStackTrace();

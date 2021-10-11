@@ -1,10 +1,14 @@
 package listeners;
 
-import audio.AudioManagerVault;
-import audio.AudioPlayerSendHandler;
-import audio.PlayerManager;
-import audio.PlayerVault;
+import audio.*;
+import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
+import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
+import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
+import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
+import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
+import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
+import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import io.github.cdimascio.dotenv.Dotenv;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.audio.AudioSendHandler;
@@ -24,6 +28,7 @@ import utils.presets.Embeds;
 import javax.annotation.Nonnull;
 import java.security.KeyException;
 import java.util.HashMap;
+import java.util.Objects;
 
 public class InteractionListener extends ListenerAdapter {
 
@@ -55,7 +60,8 @@ public class InteractionListener extends ListenerAdapter {
         if (event.getGuild() == null) { return; }
         switch (event.getName()) {
             case "play":
-                playCommand(event, dotenv);
+                String url = Objects.requireNonNull(event.getOption("url")).getAsString();
+                playCommand(event, dotenv, url);
                 this.logger.info("PlayCommand", getLogArgs(event));
                 break;
         }
@@ -76,7 +82,7 @@ public class InteractionListener extends ListenerAdapter {
         }
     }
 
-    public void playCommand(SlashCommandEvent event, Dotenv dotenv) {
+    public void playCommand(SlashCommandEvent event, Dotenv dotenv, String url) {
         Guild guild = event.getGuild();
         Member member = event.getMember();
         String applicationId = dotenv.get("APPLICATIONID");
@@ -125,21 +131,52 @@ public class InteractionListener extends ListenerAdapter {
                     queue();
             return;
         }
-        event.deferReply().queue();
-        AudioSendHandler handler = manager.getSendingHandler();
-        AudioPlayer player;
+        final AudioPlayer player;
+        AudioPlayer player1;
         try {
-            player = PlayerVault.
+            player1 = PlayerVault.
                     getInstance().
                     getPlayer(guild.getId(), member.getVoiceState().getChannel().getId());
         } catch (GuildNotFound | ChannelNotFound e) {
-            player = PlayerManager.
+            player1 = PlayerManager.
                     getInstance().
                     createPlayer(guild.getId(), member.getVoiceState().getChannel().getId());
         }
+        player = player1;
+        AudioSendHandler handler = manager.getSendingHandler();
         if (handler == null) {
             manager.setSendingHandler(new AudioPlayerSendHandler(player));
         }
+        AudioPlayerManager playerManager = new DefaultAudioPlayerManager();
+        AudioSourceManagers.registerRemoteSources(playerManager);
+        QueueSystem queue = QueueSystem.getInstance();
+        // TODO: Link interpretation
+        // TODO: Load tracks according to the source of the link
+        // TODO: Play the song / add it to the queue
+        // Connect to a Voicechannel
+        manager.openAudioConnection(member.getVoiceState().getChannel());
+        playerManager.loadItem("scsearch:Industry Baby", new AudioLoadResultHandler() {
+            @Override
+            public void trackLoaded(AudioTrack audioTrack) {
+                player.playTrack(audioTrack);
+                System.out.println(audioTrack);
+                System.out.println(audioTrack.getPosition());
+            }
 
+            @Override
+            public void playlistLoaded(AudioPlaylist audioPlaylist) {
+                System.out.println("oh no playlist");
+            }
+
+            @Override
+            public void noMatches() {
+                System.out.println("No matches");
+            }
+
+            @Override
+            public void loadFailed(FriendlyException e) {
+                System.out.println("Loading failed");
+            }
+        });
     }
 }
