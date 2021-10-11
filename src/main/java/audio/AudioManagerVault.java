@@ -1,26 +1,23 @@
 package audio;
 
-import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
-import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.managers.AudioManager;
 import utils.CustomExceptions.GuildNotFound;
 import utils.CustomExceptions.audio.ApplicationNotFound;
 import utils.loggers.AudioManagerManagerLogger;
 
-import java.security.KeyException;
 import java.util.HashMap;
 import java.util.List;
 
-public class AudioManagerManager {
+public class AudioManagerVault {
 
-    private static final AudioManagerManager managerObj = new AudioManagerManager();
+    private static final AudioManagerVault managerObj = new AudioManagerVault();
 
     //                ApplicationId       GuildId  Destination
     private final HashMap<String, HashMap<String, AudioManager>> audioManagerStorage = new HashMap<>();
     private final AudioManagerManagerLogger logger;
 
-    private AudioManagerManager() {
+    private AudioManagerVault() {
         logger = AudioManagerManagerLogger.getInstance();
     }
 
@@ -69,5 +66,5 @@ public class AudioManagerManager {
         return audioManagerStorage.get(applicationId).get(guildId);
     }
 
-    public static AudioManagerManager getInstance() { return managerObj; }
+    public static AudioManagerVault getInstance() { return managerObj; }
 }

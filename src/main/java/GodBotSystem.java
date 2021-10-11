@@ -1,4 +1,4 @@
-import audio.AudioManagerManager;
+import audio.AudioManagerVault;
 import io.github.cdimascio.dotenv.Dotenv;
 import listeners.BotStateListener;
 import listeners.InteractionListener;
@@ -11,7 +11,6 @@ import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
 
 import javax.security.auth.login.LoginException;
-import java.io.IOException;
 
 public class GodBotSystem {
     public static void main(String[] args) throws LoginException, InterruptedException {
@@ -29,7 +28,7 @@ public class GodBotSystem {
         JDA godbotJDA = initializeBotFromToken(TOKEN, true);
         JDA israJDA = initializeBotFromToken(israTOKEN, false);
 
-        AudioManagerManager audioManager = AudioManagerManager.getInstance();
+        AudioManagerVault audioManager = AudioManagerVault.getInstance();
         audioManager.registerJDA(APPLICATIONID, godbotJDA.getGuilds());
         audioManager.registerJDA(israAPPLICATIONID, israJDA.getGuilds());
 

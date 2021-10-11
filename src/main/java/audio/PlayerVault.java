@@ -14,7 +14,7 @@ import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
 
-class PlayerVault {
+public class PlayerVault {
 
     private static final PlayerVault vaultObj = new PlayerVault();
     private Logger logger;

@@ -60,11 +60,10 @@ public class PlayerManager {
         QueueSystem queue = QueueSystem.getInstance();
         vault.removePlayer(guildID, channelID);
         queue.removePlayer(player);
-        player.stopTrack();
         player.destroy();
     }
 
-    public static PlayerManager getManagerObj() {
+    public static PlayerManager getInstance() {
         return managerObj;
     }
 }
