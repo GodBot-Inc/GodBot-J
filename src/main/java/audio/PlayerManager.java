@@ -1,57 +1,40 @@
 package audio;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
-import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
-import io.github.cdimascio.dotenv.Dotenv;
 import utils.CustomExceptions.ChannelNotFound;
 import utils.CustomExceptions.GuildNotFound;
 import utils.CustomExceptions.audio.PlayerNotFound;
+import utils.loggers.DefaultLogger;
 
 import javax.management.openmbean.KeyAlreadyExistsException;
 import java.io.IOException;
-import java.util.logging.FileHandler;
+import java.util.HashMap;
 import java.util.logging.Logger;
-import java.util.logging.SimpleFormatter;
 
 public class PlayerManager {
 
     private static final PlayerManager managerObj = new PlayerManager();
     private final DefaultAudioPlayerManager playerManager;
-    private Logger logger;
-
-    private Logger getLogger() throws IOException {
-        Dotenv env = Dotenv.load();
-
-        String dir = env.get("LOGGER_DIR");
-
-        Logger logger = Logger.getLogger("PlayerManagerLogger");
-        FileHandler fh = new FileHandler(dir + "\\PlayerManager.log");
-        SimpleFormatter formatter = new SimpleFormatter();
-
-        logger.addHandler(fh);
-        fh.setFormatter(formatter);
-        return logger;
-    }
+    private final DefaultLogger logger;
 
     private PlayerManager() {
         playerManager = new DefaultAudioPlayerManager();
         AudioSourceManagers.registerRemoteSources(playerManager);
-        try {
-            logger = getLogger();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        logger = new DefaultLogger(this.getClass().getName() + "Logger");
     }
 
-    public AudioPlayer createPlayer(String guildID, String channelID) throws KeyAlreadyExistsException {
+    public AudioPlayer createPlayer(String guildId, String channelId) throws KeyAlreadyExistsException {
         PlayerVault vault = PlayerVault.getInstance();
         QueueSystem queue = QueueSystem.getInstance();
         AudioPlayer player = playerManager.createPlayer();
-        vault.storePlayer(guildID, channelID, player);
+        vault.storePlayer(guildId, channelId, player);
         queue.registerPlayer(player);
-        logger.info("Registered new Player " + player + " GuildID " + guildID + " channelID " + channelID);
+        logger.info("createPlayer", new HashMap<String, String>() {{
+            put("GuildId", guildId);
+            put("channelId", channelId);
+        }});
         return player;
     }
 
@@ -61,6 +44,10 @@ public class PlayerManager {
         vault.removePlayer(guildID, channelID);
         queue.removePlayer(player);
         player.destroy();
+        logger.info("removePlayer", new HashMap<String, String>() {{
+            put("GuildId", guildID);
+            put("channelId", channelID);
+        }});
     }
 
     public static PlayerManager getInstance() {

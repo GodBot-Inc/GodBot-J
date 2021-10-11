@@ -2,44 +2,29 @@ package audio;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
-import io.github.cdimascio.dotenv.Dotenv;
 import utils.CustomExceptions.audio.PlayerNotFound;
 import utils.CustomExceptions.audio.QueueEmpty;
+import utils.loggers.DefaultLogger;
 
 import javax.management.openmbean.KeyAlreadyExistsException;
-import java.io.IOException;
 import java.security.KeyException;
 import java.util.*;
-import java.util.logging.FileHandler;
-import java.util.logging.Logger;
-import java.util.logging.SimpleFormatter;
 
 public class QueueSystem {
 
     private final HashMap<AudioPlayer, List<AudioTrack>> queueStorage = new HashMap<>();
-    private Logger logger;
+    private final DefaultLogger logger;
     private static final QueueSystem queueSystemObj = new QueueSystem();
 
-    private Logger getLogger() throws IOException {
-        Dotenv env = Dotenv.load();
-
-        String dir = env.get("LOGGER_DIR");
-
-        Logger logger = Logger.getLogger("QueueSystemLogger");
-        FileHandler fh = new FileHandler(dir + "\\QueueSystem.log");
-        SimpleFormatter formatter = new SimpleFormatter();
-
-        logger.addHandler(fh);
-        fh.setFormatter(formatter);
-        return logger;
+    private QueueSystem() {
+        logger = new DefaultLogger(this.getClass().getName() + "Logger");
     }
 
     public void registerPlayer(AudioPlayer player) throws KeyAlreadyExistsException {
         if (queueStorage.containsKey(player)) {
             throw new KeyAlreadyExistsException("Player already registered " + player);
         }
-        queueStorage.put(player, new ArrayList<AudioTrack>());
-        logger.info("Registered Player " + player);
+        queueStorage.put(player, new ArrayList<>());
     }
 
     public void removePlayer(AudioPlayer player) throws PlayerNotFound {
@@ -47,7 +32,6 @@ public class QueueSystem {
             throw new PlayerNotFound("Could not find Player " + player);
         }
         queueStorage.remove(player);
-        logger.info("Removed Player " + player);
     }
 
     public AudioTrack getNextAndDelete(AudioPlayer player) throws PlayerNotFound, QueueEmpty {
@@ -57,7 +41,10 @@ public class QueueSystem {
         if (queueStorage.get(player).isEmpty()) {
             throw new QueueEmpty("Queue of Player " + player + " is empty");
         }
-        logger.info("Returned Track " + queueStorage.get(player).get(0).getInfo().title + " and removed it");
+        logger.info("getNextAndDelete", new HashMap<String, String>() {{
+            put("TrackId", queueStorage.get(player).get(0).getIdentifier());
+            put("TrackName", queueStorage.get(player).get(0).getInfo().title);
+        }});
         AudioTrack next = queueStorage.get(player).get(0);
         queueStorage.get(player).remove(0);
         return next;
@@ -77,7 +64,10 @@ public class QueueSystem {
         if (queueStorage.get(player).size() > index) {
             throw new IndexOutOfBoundsException("Index" + index + " is too large for a list of size " + queueStorage.get(player).size());
         }
-        logger.info("Queued Track " + track.getInfo().title);
+        logger.info("addTrack", new HashMap<String, String>() {{
+            put("TrackId", track.getIdentifier());
+            put("TrackName", track.getInfo().title);
+        }});
         queueStorage.get(player).add(track);
     }
 
@@ -91,7 +81,6 @@ public class QueueSystem {
         if (!queueStorage.get(player).contains(track)) {
             throw new KeyException("Could not find track " + track.getInfo().title);
         }
-        logger.info("Removed track " + track.getInfo().title);
         queueStorage.get(player).remove(track);
     }
 
@@ -105,16 +94,7 @@ public class QueueSystem {
         if (queueStorage.get(player).size() > index) {
             throw new IndexOutOfBoundsException("Index " + index + " is too long for the queue size " + queueStorage.get(player).size());
         }
-        logger.info("Removed Track " + queueStorage.get(player).get(index).getInfo().title);
         queueStorage.get(player).remove(index);
-    }
-
-    private QueueSystem() {
-        try {
-            logger = getLogger();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     public static QueueSystem getInstance() { return queueSystemObj; }

@@ -22,7 +22,7 @@ import utils.CustomExceptions.ChannelNotFound;
 import utils.CustomExceptions.GuildNotFound;
 import utils.CustomExceptions.audio.ApplicationNotFound;
 import utils.JDAManager;
-import utils.loggers.InteractionLogger;
+import utils.loggers.DefaultLogger;
 import utils.presets.Embeds;
 
 import javax.annotation.Nonnull;
@@ -32,10 +32,10 @@ import java.util.Objects;
 
 public class InteractionListener extends ListenerAdapter {
 
-    private final InteractionLogger logger;
+    private final DefaultLogger logger;
 
     public InteractionListener() {
-        this.logger = InteractionLogger.getInstance();
+        this.logger = new DefaultLogger(this.getClass().getName() + "Logger");
     }
 
     public HashMap<String, String> getLogArgs(@Nonnull SlashCommandEvent event) {
@@ -55,6 +55,7 @@ public class InteractionListener extends ListenerAdapter {
         /* TODO: event.reply().setEphemeral(true).queue(); used if only the user who used the slash command should see
             the response message (in case of an error)
          */
+        this.logger.info("onSlashCommand", getLogArgs(event));
         Dotenv dotenv = Dotenv.load();
         event.deferReply().queue();
         if (event.getGuild() == null) { return; }
@@ -62,7 +63,6 @@ public class InteractionListener extends ListenerAdapter {
             case "play":
                 String url = Objects.requireNonNull(event.getOption("url")).getAsString();
                 playCommand(event, dotenv, url);
-                this.logger.info("PlayCommand", getLogArgs(event));
                 break;
         }
     }

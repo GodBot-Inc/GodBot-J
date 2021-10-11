@@ -32,8 +32,6 @@ public class GodBotSystem {
         audioManager.registerJDA(APPLICATIONID, godbotJDA.getGuilds());
         audioManager.registerJDA(israAPPLICATIONID, israJDA.getGuilds());
 
-        // TODO: Logger -> log into database
-
         godbotJDA.getPresence().setActivity(Activity.listening("dope music"));
         israJDA.getPresence().setActivity(Activity.listening("the GodBot System"));
 
