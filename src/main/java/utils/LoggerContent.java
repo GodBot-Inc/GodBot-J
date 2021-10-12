@@ -1,6 +1,7 @@
 package utils;
 
 import com.mongodb.BasicDBObject;
+import org.bson.Document;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -37,8 +38,8 @@ public class LoggerContent {
         return builder.toString();
     }
 
-    public BasicDBObject getDBScheme() {
-        BasicDBObject object = new BasicDBObject();
+    public Document getDBScheme() {
+        Document object = new Document();
         object.append("type", this.type);
         object.append("methodName", this.methodName);
         object.append("time", this.time);

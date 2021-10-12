@@ -1,21 +1,25 @@
 package utils;
 
 import com.mongodb.*;
+
+import com.mongodb.client.MongoClients;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
 import io.github.cdimascio.dotenv.Dotenv;
 
-import java.net.UnknownHostException;
+import org.bson.Document;
 
 public class DBCommunication {
 
     private static final DBCommunication dbObj = new DBCommunication();
 
-    private DBCollection queues;
-    private DBCollection searches;
-    private DBCollection servers;
+    private final MongoCollection<Document> queues;
+    private final MongoCollection<Document> searches;
+    private final MongoCollection<Document> servers;
 
-    private DBCollection commands;
-    private DBCollection audioProcesses;
-    private DBCollection general;
+    private final MongoCollection<Document> commands;
+    private final MongoCollection<Document> audioProcesses;
+    private final MongoCollection<Document> general;
 
     private DBCommunication() {
         Dotenv dotenv = Dotenv.load();
@@ -24,55 +28,42 @@ public class DBCommunication {
         assert USERNAME != null;
         assert PASSWORD != null;
 
-        MongoClient mongoClient;
-        try {
-            mongoClient = new MongoClient(
-                    new MongoClientURI(
-                            String.format(
-                                    "mongodb+srv://%s:%s@cluster0.z4ax5.mongodb.net/MyFirstDatabase?retryWrites=true&w=majority",
-                                    USERNAME,
-                                    PASSWORD
-                            )
-                    )
-            );
-        } catch (UnknownHostException e) {
-            return;
-        }
+        ConnectionString connectionString = new ConnectionString(
+                String.format(
+                        "mongodb+srv://%s:%s@cluster0.z4ax5.mongodb.net/myFirstDatabase?retryWrites=true&w=majority",
+                        USERNAME,
+                        PASSWORD
+                )
+        );
+        MongoClientSettings settings = MongoClientSettings.builder()
+                .applyConnectionString(connectionString)
+                .build();
+        com.mongodb.client.MongoClient mongoClient = MongoClients.create(settings);
+        MongoDatabase database = mongoClient.getDatabase("test");
 
-        DB discordDB = mongoClient.getDB("discord");
-        DB logDB = mongoClient.getDB("Logs");
-
-        assert discordDB != null;
-        assert logDB != null;
+        MongoDatabase discordDB = mongoClient.getDatabase("discord");
+        MongoDatabase logDB = mongoClient.getDatabase("Logs");
 
         this.queues = discordDB.getCollection("Queues");
         this.searches = discordDB.getCollection("Searches");
         this.servers = discordDB.getCollection("Servers");
 
-        assert this.queues != null;
-        assert this.searches != null;
-        assert this.servers != null;
-
         this.commands = logDB.getCollection("Commands");
         this.audioProcesses = logDB.getCollection("AudioProcesses");
-        this.general = logDB.getCollection("general");
-
-        assert this.commands != null;
-        assert this.audioProcesses != null;
-        assert this.general != null;
+        this.general = logDB.getCollection("General");
     }
 
 
     public void generalLog(LoggerContent loggerObj) {
-        this.general.insert(loggerObj.getDBScheme());
+        this.general.insertOne(loggerObj.getDBScheme());
     }
 
     public void commandLog(LoggerContent loggerObj) {
-        this.commands.insert(loggerObj.getDBScheme());
+        this.commands.insertOne(loggerObj.getDBScheme());
     }
 
     public void audioProcessLog(LoggerContent loggerObj) {
-        this.audioProcesses.insert(loggerObj.getDBScheme());
+        this.audioProcesses.insertOne(loggerObj.getDBScheme());
     }
 
 
