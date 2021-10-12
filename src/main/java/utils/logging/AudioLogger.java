@@ -1,32 +1,29 @@
 package utils.logging;
 
+import java.util.logging.Logger;
+
 import utils.DBCommunication;
 import utils.LoggerContent;
 
-import java.util.logging.Logger;
+public class AudioLogger implements DefaultLogger {
 
-public class CommandLogger implements DefaultLogger{
-
-    private static final CommandLogger loggerObj = new CommandLogger();
     private final Logger logger;
     private final DBCommunication dbCommunication;
 
-    private CommandLogger() {
-        this.logger = Logger.getLogger(this.getClass().getName());
+    public AudioLogger(String loggerName) {
+        this.logger = Logger.getLogger(loggerName);
         dbCommunication = DBCommunication.getInstance();
     }
 
     @Override
     public void info(LoggerContent loggerObj) {
         this.logger.info(loggerObj.getAsString());
-        dbCommunication.commandLog(loggerObj);
+        dbCommunication.audioProcessLog(loggerObj);
     }
 
     @Override
     public void warn(LoggerContent loggerObj) {
-        this.logger.info(loggerObj.getAsString());
+        this.logger.warning(loggerObj.getAsString());
         dbCommunication.audioProcessLog(loggerObj);
     }
-
-    public static CommandLogger getInstance() { return loggerObj; }
 }

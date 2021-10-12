@@ -2,9 +2,10 @@ package audio;
 
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.managers.AudioManager;
+import utils.LoggerContent;
 import utils.customExceptions.GuildNotFound;
 import utils.customExceptions.audio.ApplicationNotFound;
-import utils.logging.DefaultLoggerClass;
+import utils.logging.AudioLogger;
 
 import java.util.HashMap;
 import java.util.List;
@@ -15,10 +16,10 @@ public class AudioManagerVault {
 
     //                ApplicationId       GuildId  Destination
     private final HashMap<String, HashMap<String, AudioManager>> audioManagerStorage = new HashMap<>();
-    private final DefaultLoggerClass logger;
+    private final AudioLogger logger;
 
     private AudioManagerVault() {
-        logger = new DefaultLoggerClass(this.getClass().getName() + "Logger");
+        this.logger = new AudioLogger(this.getClass().getName() + "Logger");
     }
 
     public void registerJDA(String applicationId, List<Guild> guilds) {
@@ -28,7 +29,15 @@ public class AudioManagerVault {
         for (Guild guild : guilds) {
             audioManagerStorage.get(applicationId).put(guild.getId(), guild.getAudioManager());
         }
-        logger.info("registerJDA", new HashMap<String, String>() {{ put("ApplicationId", applicationId); }});
+        this.logger.info(
+            new LoggerContent(
+                "registerJDA",
+                new HashMap<String, String>() {{
+                    put("applicationId", applicationId);
+                }},
+                "info"
+            )
+        );
     }
 
     public void registerGuild(String applicationId, Guild guild) {
@@ -36,7 +45,17 @@ public class AudioManagerVault {
             audioManagerStorage.put(applicationId, new HashMap<>());
         }
         audioManagerStorage.get(applicationId).put(guild.getId(), guild.getAudioManager());
-        logger.info("registerGuild", new HashMap<String, String>() {{ put("GuildId", guild.getId()); }});
+        this.logger.info(
+            new LoggerContent(
+                "registerGuild",
+                new HashMap<String, String>() {{
+                    put("appicationId", applicationId);
+                    put("GuildId", guild.getId());
+                    put("GuildName", guild.getName());
+                }},
+                "info"
+            )
+        );
     }
 
     public void removeJDA(String applicationId) throws ApplicationNotFound {
@@ -44,7 +63,15 @@ public class AudioManagerVault {
             throw new ApplicationNotFound("Could not find applicationId in storage " + applicationId);
         }
         audioManagerStorage.remove(applicationId);
-        logger.info("removeJDA", new HashMap<String, String>() {{ put("ApplicationId", applicationId); }});
+        this.logger.info(
+            new LoggerContent(
+                "removeJDA",
+                new HashMap<String, String>() {{
+                    put("applicationId", applicationId);
+                }},
+                "info"
+            )
+        );
     }
 
     public void removeGuild(String applicationId, String guildId) throws ApplicationNotFound {
@@ -52,7 +79,16 @@ public class AudioManagerVault {
             throw new ApplicationNotFound("Could not find applicationId in storage " + applicationId);
         }
         audioManagerStorage.get(applicationId).remove(guildId);
-        logger.info("removeGuild", new HashMap<String, String>() {{ put("ApplicationId", applicationId); }});
+        this.logger.info(
+            new LoggerContent(
+                "removeGuild",
+                new HashMap<String, String>() {{
+                    put("applicationId", applicationId);
+                    put("GuildId", guildId);
+                }},
+                "info"
+            )
+        );
     }
 
     public AudioManager getAudioManager(String applicationId, String guildId) throws ApplicationNotFound, GuildNotFound {
@@ -62,10 +98,16 @@ public class AudioManagerVault {
         if (!audioManagerStorage.get(applicationId).containsKey(guildId)) {
             throw new GuildNotFound("Could not find guildId in storage " + guildId);
         }
-        logger.info("getAudioManager", new HashMap<String, String>() {{
-            put("ApplicationId", applicationId);
-            put("GuildId", guildId);
-        }});
+        this.logger.info(
+            new LoggerContent(
+                "getAudioManager",
+                new HashMap<String, String>() {{
+                    put("applicaitonId", applicationId);
+                    put("GuildId", guildId);
+                }},
+                "info"
+            )
+        );
         return audioManagerStorage.get(applicationId).get(guildId);
     }
 

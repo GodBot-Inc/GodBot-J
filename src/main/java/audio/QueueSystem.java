@@ -4,20 +4,21 @@ import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import utils.customExceptions.audio.PlayerNotFound;
 import utils.customExceptions.audio.QueueEmpty;
-import utils.logging.DefaultLoggerClass;
+import utils.logging.AudioLogger;
 
 import javax.management.openmbean.KeyAlreadyExistsException;
 import java.security.KeyException;
 import java.util.*;
+import utils.LoggerContent;
 
 public class QueueSystem {
 
     private final HashMap<AudioPlayer, List<AudioTrack>> queueStorage = new HashMap<>();
-    private final DefaultLoggerClass logger;
+    private final AudioLogger logger;
     private static final QueueSystem queueSystemObj = new QueueSystem();
 
     private QueueSystem() {
-        logger = new DefaultLoggerClass(this.getClass().getName() + "Logger");
+        logger = new AudioLogger(this.getClass().getName() + "Logger");
     }
 
     public void registerPlayer(AudioPlayer player) throws KeyAlreadyExistsException {
@@ -41,10 +42,13 @@ public class QueueSystem {
         if (queueStorage.get(player).isEmpty()) {
             throw new QueueEmpty("Queue of Player " + player + " is empty");
         }
-        logger.info("getNextAndDelete", new HashMap<String, String>() {{
-            put("TrackId", queueStorage.get(player).get(0).getIdentifier());
-            put("TrackName", queueStorage.get(player).get(0).getInfo().title);
-        }});
+        this.logger.info(
+            new LoggerContent(
+                "QueueSystem-getNextAndDelete",
+                new HashMap<>(),
+                "info"
+            )
+        );
         AudioTrack next = queueStorage.get(player).get(0);
         queueStorage.get(player).remove(0);
         return next;
@@ -64,10 +68,13 @@ public class QueueSystem {
         if (queueStorage.get(player).size() > index) {
             throw new IndexOutOfBoundsException("Index" + index + " is too large for a list of size " + queueStorage.get(player).size());
         }
-        logger.info("addTrack", new HashMap<String, String>() {{
-            put("TrackId", track.getIdentifier());
-            put("TrackName", track.getInfo().title);
-        }});
+        this.logger.info(
+            new LoggerContent(
+                "QueueSystem-addTrack",
+                new HashMap<>(),
+                "info"
+            )
+        );
         queueStorage.get(player).add(track);
     }
 

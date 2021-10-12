@@ -15,8 +15,9 @@ import net.dv8tion.jda.api.managers.AudioManager;
 import utils.customExceptions.ChannelNotFound;
 import utils.customExceptions.GuildNotFound;
 import utils.customExceptions.audio.ApplicationNotFound;
+import utils.logging.CommandLogger;
 import utils.JDAManager;
-import utils.logging.DefaultLoggerClass;
+import utils.LoggerContent;
 import utils.presets.Embeds;
 
 import javax.annotation.Nonnull;
@@ -25,10 +26,10 @@ import java.util.HashMap;
 
 public class InteractionListener extends ListenerAdapter {
 
-    private final DefaultLoggerClass logger;
+    private final CommandLogger logger;
 
     public InteractionListener() {
-        this.logger = new DefaultLoggerClass(this.getClass().getName() + "Logger");
+        this.logger = CommandLogger.getInstance();
     }
 
     public HashMap<String, String> getLogArgs(@Nonnull SlashCommandEvent event) {
@@ -52,7 +53,13 @@ public class InteractionListener extends ListenerAdapter {
     }
 
     public void onSlashCommand(@Nonnull SlashCommandEvent event) {
-        this.logger.info("onSlashCommand", getLogArgs(event));
+        this.logger.info(
+            new LoggerContent(
+                "SlashCommandEvent",
+                getLogArgs(event),
+                "eventInfo"
+            )
+        );
         Dotenv dotenv = Dotenv.load();
         if (event.getGuild() == null) { return; }
         switch (event.getName()) {

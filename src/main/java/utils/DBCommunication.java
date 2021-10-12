@@ -2,15 +2,12 @@ package utils;
 
 import com.mongodb.*;
 import io.github.cdimascio.dotenv.Dotenv;
-import utils.logging.DefaultLoggerClass;
 
 import java.net.UnknownHostException;
-import java.util.Map;
 
 public class DBCommunication {
 
     private static final DBCommunication dbObj = new DBCommunication();
-    private final DefaultLoggerClass logger;
 
     private DBCollection queues;
     private DBCollection searches;
@@ -18,6 +15,7 @@ public class DBCommunication {
 
     private DBCollection commands;
     private DBCollection audioProcesses;
+    private DBCollection general;
 
     private DBCommunication() {
         Dotenv dotenv = Dotenv.load();
@@ -25,8 +23,6 @@ public class DBCommunication {
         String PASSWORD = dotenv.get("DBPASSWORD");
         assert USERNAME != null;
         assert PASSWORD != null;
-
-        this.logger = new DefaultLoggerClass(this.getClass().getName() + "Logger");
 
         MongoClient mongoClient;
         try {
@@ -40,7 +36,6 @@ public class DBCommunication {
                     )
             );
         } catch (UnknownHostException e) {
-            this.logger.warn("UnknownHostException in Database Communication " + e.getCause());
             return;
         }
 
@@ -60,17 +55,23 @@ public class DBCommunication {
 
         this.commands = logDB.getCollection("Commands");
         this.audioProcesses = logDB.getCollection("AudioProcesses");
+        this.general = logDB.getCollection("general");
 
         assert this.commands != null;
         assert this.audioProcesses != null;
+        assert this.general != null;
     }
 
 
-    public void commandLog(LoggerObj loggerObj) {
+    public void generalLog(LoggerContent loggerObj) {
+        this.general.insert(loggerObj.getDBScheme());
+    }
+
+    public void commandLog(LoggerContent loggerObj) {
         this.commands.insert(loggerObj.getDBScheme());
     }
 
-    public void audioProcessLog(LoggerObj loggerObj) {
+    public void audioProcessLog(LoggerContent loggerObj) {
         this.audioProcesses.insert(loggerObj.getDBScheme());
     }
 

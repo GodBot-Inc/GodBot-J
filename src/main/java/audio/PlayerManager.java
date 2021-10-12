@@ -4,10 +4,12 @@ import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
+
+import utils.LoggerContent;
 import utils.customExceptions.ChannelNotFound;
 import utils.customExceptions.GuildNotFound;
 import utils.customExceptions.audio.PlayerNotFound;
-import utils.logging.DefaultLoggerClass;
+import utils.logging.AudioLogger;
 
 import javax.management.openmbean.KeyAlreadyExistsException;
 import java.util.HashMap;
@@ -16,12 +18,12 @@ public class PlayerManager {
 
     private static final PlayerManager managerObj = new PlayerManager();
     private final DefaultAudioPlayerManager playerManager;
-    private final DefaultLoggerClass logger;
+    private final AudioLogger logger;
 
     private PlayerManager() {
         playerManager = new DefaultAudioPlayerManager();
         AudioSourceManagers.registerRemoteSources(playerManager);
-        logger = new DefaultLoggerClass(this.getClass().getName() + "Logger");
+        logger = new AudioLogger(this.getClass().getName() + "Logger");
     }
 
     public AudioPlayer createPlayer(String guildId, String channelId) throws KeyAlreadyExistsException {
@@ -30,10 +32,16 @@ public class PlayerManager {
         AudioPlayer player = playerManager.createPlayer();
         vault.storePlayer(guildId, channelId, player);
         queue.registerPlayer(player);
-        logger.info("createPlayer", new HashMap<String, String>() {{
-            put("GuildId", guildId);
-            put("channelId", channelId);
-        }});
+        this.logger.info(
+            new LoggerContent(
+                "createPlayer",
+                new HashMap<String, String>() {{
+                    put("GuildId", guildId);
+                    put("channelId", channelId);
+                }},
+                "info"
+            )
+        );
         return player;
     }
 
@@ -43,10 +51,16 @@ public class PlayerManager {
         vault.removePlayer(guildID, channelID);
         queue.removePlayer(player);
         player.destroy();
-        logger.info("removePlayer", new HashMap<String, String>() {{
-            put("GuildId", guildID);
-            put("channelId", channelID);
-        }});
+        this.logger.info(
+            new LoggerContent(
+                "removePlayer",
+                new HashMap<String, String>() {{
+                    put("GuildId", guildID);
+                    put("channelId", channelID);
+                }},
+                "info"
+            )
+        );
     }
 
     public AudioPlayerManager getManager() {

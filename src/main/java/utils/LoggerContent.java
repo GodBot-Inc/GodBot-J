@@ -7,14 +7,14 @@ import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
 
-public class LoggerObj {
+public class LoggerContent {
 
     final String methodName;
     final HashMap<String, String> fields;
     final String time;
     final String type;
 
-    public LoggerObj(String methodName, HashMap<String, String> fields, String type) {
+    public LoggerContent(String methodName, HashMap<String, String> fields, String type) {
         this.methodName = methodName;
         this.fields = fields;
         this.time = DateTimeFormatter.

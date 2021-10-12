@@ -1,6 +1,6 @@
 package utils.logging;
 
-import utils.LoggerObj;
+import utils.LoggerContent;
 
 import java.util.logging.Logger;
 
@@ -9,12 +9,12 @@ public interface DefaultLogger {
      Logger logger = Logger.getLogger("DefaultLogger");
 
 
-     default void info(LoggerObj loggerObj) {
+     default void info(LoggerContent loggerObj) {
          logger.info(loggerObj.getAsString());
          // Save into specific Database
      }
 
-     default void warn(LoggerObj loggerObj) {
+     default void warn(LoggerContent loggerObj) {
          logger.warning(loggerObj.getAsString());
          // Save into specific Database
      }
