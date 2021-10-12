@@ -9,6 +9,7 @@ import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.ChunkingFilter;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
+import utils.JDAManager;
 
 import javax.security.auth.login.LoginException;
 
@@ -22,11 +23,13 @@ public class GodBotSystem {
         String APPLICATIONID = dotenv.get("APPLICATIONID");
         String israAPPLICATIONID = dotenv.get("IsrafilAPPLICATIONID");
 
+        assert TOKEN != null;
+        assert israTOKEN != null;
         assert APPLICATIONID != null;
         assert israAPPLICATIONID != null;
 
-        JDA godbotJDA = initializeBotFromToken(TOKEN, true);
-        JDA israJDA = initializeBotFromToken(israTOKEN, false);
+        JDA godbotJDA = initializeBotFromToken(TOKEN, APPLICATIONID, "godbot", true);
+        JDA israJDA = initializeBotFromToken(israTOKEN, israAPPLICATIONID, "israfil", false);
 
         AudioManagerVault audioManager = AudioManagerVault.getInstance();
         audioManager.registerJDA(APPLICATIONID, godbotJDA.getGuilds());
@@ -40,7 +43,7 @@ public class GodBotSystem {
         israJDA.awaitReady();
     }
 
-    private static JDA initializeBotFromToken(String TOKEN, boolean listeners) throws LoginException {
+    private static JDA initializeBotFromToken(String TOKEN, String applicationId, String botName, boolean listeners) throws LoginException {
         // Get a builder for the bot, so it can be customized / configured
         JDABuilder builder = JDABuilder.createDefault(TOKEN);
 
@@ -52,8 +55,17 @@ public class GodBotSystem {
             registerListeners(builder);
         }
 
-        // Create bot instance
-        return builder.build();
+        // Create a bot instance
+        JDA botInstance = builder.build();
+
+        // Save AudioManagers for every single Guild into the AudioManagerVault
+        AudioManagerVault.getInstance().registerJDA(applicationId, botInstance.getGuilds());
+
+        // Save the JDA Object into the JDAManager
+        JDAManager.getInstance().registerJDA(botName, botInstance);
+
+        // Return bot Instance
+        return botInstance;
     }
 
     private static void registerListeners(JDABuilder builder) {

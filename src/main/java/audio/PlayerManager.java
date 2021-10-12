@@ -1,28 +1,27 @@
 package audio;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
+import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
-import utils.CustomExceptions.ChannelNotFound;
-import utils.CustomExceptions.GuildNotFound;
-import utils.CustomExceptions.audio.PlayerNotFound;
-import utils.loggers.DefaultLogger;
+import utils.customExceptions.ChannelNotFound;
+import utils.customExceptions.GuildNotFound;
+import utils.customExceptions.audio.PlayerNotFound;
+import utils.logging.DefaultLoggerClass;
 
 import javax.management.openmbean.KeyAlreadyExistsException;
-import java.io.IOException;
 import java.util.HashMap;
-import java.util.logging.Logger;
 
 public class PlayerManager {
 
     private static final PlayerManager managerObj = new PlayerManager();
     private final DefaultAudioPlayerManager playerManager;
-    private final DefaultLogger logger;
+    private final DefaultLoggerClass logger;
 
     private PlayerManager() {
         playerManager = new DefaultAudioPlayerManager();
         AudioSourceManagers.registerRemoteSources(playerManager);
-        logger = new DefaultLogger(this.getClass().getName() + "Logger");
+        logger = new DefaultLoggerClass(this.getClass().getName() + "Logger");
     }
 
     public AudioPlayer createPlayer(String guildId, String channelId) throws KeyAlreadyExistsException {
@@ -48,6 +47,10 @@ public class PlayerManager {
             put("GuildId", guildID);
             put("channelId", channelID);
         }});
+    }
+
+    public AudioPlayerManager getManager() {
+        return this.playerManager;
     }
 
     public static PlayerManager getInstance() {

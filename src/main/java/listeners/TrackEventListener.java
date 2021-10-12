@@ -6,8 +6,8 @@ import com.sedmelluq.discord.lavaplayer.player.event.AudioEventAdapter;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
-import utils.CustomExceptions.audio.PlayerNotFound;
-import utils.CustomExceptions.audio.QueueEmpty;
+import utils.customExceptions.audio.PlayerNotFound;
+import utils.customExceptions.audio.QueueEmpty;
 
 class TrackEventListener extends AudioEventAdapter {
     @Override

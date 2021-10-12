@@ -1,9 +1,9 @@
 package audio;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
-import utils.CustomExceptions.ChannelNotFound;
-import utils.CustomExceptions.GuildNotFound;
-import utils.loggers.DefaultLogger;
+import utils.customExceptions.ChannelNotFound;
+import utils.customExceptions.GuildNotFound;
+import utils.logging.DefaultLoggerClass;
 
 import javax.management.openmbean.KeyAlreadyExistsException;
 import java.util.HashMap;
@@ -12,12 +12,12 @@ import java.util.HashMap;
 public class PlayerVault {
 
     private static final PlayerVault vaultObj = new PlayerVault();
-    private final DefaultLogger logger;
+    private final DefaultLoggerClass logger;
     //                   GuildId        channelId  Destination
     private final HashMap<String, HashMap<String, AudioPlayer>> playerStorage = new HashMap<>();
 
     private PlayerVault() {
-        logger = new DefaultLogger(this.getClass().getName() + "Logger");
+        logger = new DefaultLoggerClass(this.getClass().getName() + "Logger");
     }
 
     public void checkGuildAndChannel(String guildID, String channelID) throws GuildNotFound, ChannelNotFound {

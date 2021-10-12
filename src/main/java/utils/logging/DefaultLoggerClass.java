@@ -1,14 +1,14 @@
-package utils.loggers;
+package utils.logging;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
 
-public class DefaultLogger {
+public class DefaultLoggerClass {
 
     private final Logger logger;
 
-    public DefaultLogger(String loggerName) {
+    public DefaultLoggerClass(String loggerName) {
         logger = Logger.getLogger(loggerName);
     }
 

@@ -1,4 +1,4 @@
-package utils.CustomExceptions;
+package utils.customExceptions;
 
 public class JDANotFound extends Exception {
     public JDANotFound(String errorMessage) {

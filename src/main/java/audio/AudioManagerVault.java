@@ -2,9 +2,9 @@ package audio;
 
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.managers.AudioManager;
-import utils.CustomExceptions.GuildNotFound;
-import utils.CustomExceptions.audio.ApplicationNotFound;
-import utils.loggers.DefaultLogger;
+import utils.customExceptions.GuildNotFound;
+import utils.customExceptions.audio.ApplicationNotFound;
+import utils.logging.DefaultLoggerClass;
 
 import java.util.HashMap;
 import java.util.List;
@@ -15,10 +15,10 @@ public class AudioManagerVault {
 
     //                ApplicationId       GuildId  Destination
     private final HashMap<String, HashMap<String, AudioManager>> audioManagerStorage = new HashMap<>();
-    private final DefaultLogger logger;
+    private final DefaultLoggerClass logger;
 
     private AudioManagerVault() {
-        logger = new DefaultLogger(this.getClass().getName() + "Logger");
+        logger = new DefaultLoggerClass(this.getClass().getName() + "Logger");
     }
 
     public void registerJDA(String applicationId, List<Guild> guilds) {

@@ -2,9 +2,9 @@ package audio;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
-import utils.CustomExceptions.audio.PlayerNotFound;
-import utils.CustomExceptions.audio.QueueEmpty;
-import utils.loggers.DefaultLogger;
+import utils.customExceptions.audio.PlayerNotFound;
+import utils.customExceptions.audio.QueueEmpty;
+import utils.logging.DefaultLoggerClass;
 
 import javax.management.openmbean.KeyAlreadyExistsException;
 import java.security.KeyException;
@@ -13,11 +13,11 @@ import java.util.*;
 public class QueueSystem {
 
     private final HashMap<AudioPlayer, List<AudioTrack>> queueStorage = new HashMap<>();
-    private final DefaultLogger logger;
+    private final DefaultLoggerClass logger;
     private static final QueueSystem queueSystemObj = new QueueSystem();
 
     private QueueSystem() {
-        logger = new DefaultLogger(this.getClass().getName() + "Logger");
+        logger = new DefaultLoggerClass(this.getClass().getName() + "Logger");
     }
 
     public void registerPlayer(AudioPlayer player) throws KeyAlreadyExistsException {
