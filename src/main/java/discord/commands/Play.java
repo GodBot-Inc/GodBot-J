@@ -1,6 +1,8 @@
-package commands;
+package discord.commands;
 
-import audio.*;
+import discord.audio.*;
+import discord.audio.lavaplayer.AudioPlayerSendHandler;
+import discord.audio.lavaplayer.AudioResultHandler;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import io.github.cdimascio.dotenv.Dotenv;
 import net.dv8tion.jda.api.JDA;
@@ -9,7 +11,7 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.managers.AudioManager;
-import utils.JDAManager;
+import discord.JDAManager;
 import utils.customExceptions.ChannelNotFound;
 import utils.customExceptions.GuildNotFound;
 import utils.customExceptions.audio.ApplicationNotFound;

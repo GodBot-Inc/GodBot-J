@@ -1,4 +1,4 @@
-package audio;
+package discord.audio.lavaplayer;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
@@ -6,7 +6,6 @@ import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import utils.presets.Embeds;
 
@@ -41,18 +40,8 @@ public class AudioResultHandler implements AudioLoadResultHandler {
                     .queue();
             return;
         }
-        player.playTrack(audioPlaylist.getSelectedTrack());
+        player.playTrack(audioPlaylist.getTracks().get(0));
         System.out.println("After started Playing");
-        event.replyEmbeds(
-                new EmbedBuilder()
-                        .setDescription(
-                                String.format(
-                                        "Now playing %s",
-                                        this.identifier
-                                )
-                        )
-                        .build()
-        ).queue();
         event.replyEmbeds(Embeds.playTrack(audioPlaylist.getTracks().get(0))).queue();
     }
 

@@ -1,4 +1,4 @@
-package audio;
+package discord.audio;
 
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.managers.AudioManager;

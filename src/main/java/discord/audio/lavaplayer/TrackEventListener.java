@@ -1,6 +1,6 @@
-package listeners;
+package discord.audio.lavaplayer;
 
-import audio.QueueSystem;
+import discord.audio.QueueSystem;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.event.AudioEventAdapter;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
@@ -55,6 +55,6 @@ class TrackEventListener extends AudioEventAdapter {
 
     @Override
     public void onTrackStuck(AudioPlayer player, AudioTrack track, long thresholdMs) {
-        // Audio track has been unable to provide us any audio, might want to just start a new track
+        // Audio track has been unable to provide us any discord.audio, might want to just start a new track
     }
 }

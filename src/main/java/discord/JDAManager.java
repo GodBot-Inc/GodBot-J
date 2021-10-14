@@ -1,4 +1,4 @@
-package utils;
+package discord;
 
 import net.dv8tion.jda.api.JDA;
 import utils.logging.GeneralLogger;
