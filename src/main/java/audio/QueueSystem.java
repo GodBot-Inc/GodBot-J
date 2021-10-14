@@ -9,7 +9,7 @@ import utils.logging.AudioLogger;
 import javax.management.openmbean.KeyAlreadyExistsException;
 import java.security.KeyException;
 import java.util.*;
-import utils.LoggerContent;
+import utils.logging.LoggerContent;
 
 public class QueueSystem {
 

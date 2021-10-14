@@ -8,6 +8,7 @@ import com.mongodb.client.MongoDatabase;
 import io.github.cdimascio.dotenv.Dotenv;
 
 import org.bson.Document;
+import utils.logging.LoggerContent;
 
 public class DBCommunication {
 
@@ -39,7 +40,6 @@ public class DBCommunication {
                 .applyConnectionString(connectionString)
                 .build();
         com.mongodb.client.MongoClient mongoClient = MongoClients.create(settings);
-        MongoDatabase database = mongoClient.getDatabase("test");
 
         MongoDatabase discordDB = mongoClient.getDatabase("discord");
         MongoDatabase logDB = mongoClient.getDatabase("Logs");

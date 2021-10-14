@@ -5,7 +5,7 @@ import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
 
-import utils.LoggerContent;
+import utils.logging.LoggerContent;
 import utils.customExceptions.ChannelNotFound;
 import utils.customExceptions.GuildNotFound;
 import utils.customExceptions.audio.PlayerNotFound;

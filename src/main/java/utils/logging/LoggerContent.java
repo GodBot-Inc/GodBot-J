@@ -1,4 +1,4 @@
-package utils;
+package utils.logging;
 
 import com.mongodb.BasicDBObject;
 import org.bson.Document;

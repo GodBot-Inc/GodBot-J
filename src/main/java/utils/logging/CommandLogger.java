@@ -1,7 +1,6 @@
 package utils.logging;
 
 import utils.DBCommunication;
-import utils.LoggerContent;
 
 import java.util.logging.Logger;
 

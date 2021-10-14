@@ -1,7 +1,7 @@
 import java.util.HashMap;
 
 import utils.DBCommunication;
-import utils.LoggerContent;
+import utils.logging.LoggerContent;
 
 public class Test {
 

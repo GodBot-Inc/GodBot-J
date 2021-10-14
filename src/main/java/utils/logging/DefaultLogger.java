@@ -1,7 +1,5 @@
 package utils.logging;
 
-import utils.LoggerContent;
-
 import java.util.logging.Logger;
 
 public interface DefaultLogger {
@@ -18,4 +16,6 @@ public interface DefaultLogger {
          logger.warning(loggerObj.getAsString());
          // Save into specific Database
      }
+
+     //TODO: LoggerContentBuilder
 }

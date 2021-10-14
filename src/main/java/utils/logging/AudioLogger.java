@@ -3,7 +3,6 @@ package utils.logging;
 import java.util.logging.Logger;
 
 import utils.DBCommunication;
-import utils.LoggerContent;
 
 public class AudioLogger implements DefaultLogger {
 

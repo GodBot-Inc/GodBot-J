@@ -2,7 +2,7 @@ package audio;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 
-import utils.LoggerContent;
+import utils.logging.LoggerContent;
 import utils.customExceptions.ChannelNotFound;
 import utils.customExceptions.GuildNotFound;
 import utils.logging.AudioLogger;

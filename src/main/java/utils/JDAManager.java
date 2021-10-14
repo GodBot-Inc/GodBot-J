@@ -2,6 +2,7 @@ package utils;
 
 import net.dv8tion.jda.api.JDA;
 import utils.logging.GeneralLogger;
+import utils.logging.LoggerContent;
 
 import java.security.KeyException;
 import java.util.HashMap;

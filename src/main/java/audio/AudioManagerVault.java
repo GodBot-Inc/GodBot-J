@@ -2,7 +2,7 @@ package audio;
 
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.managers.AudioManager;
-import utils.LoggerContent;
+import utils.logging.LoggerContent;
 import utils.customExceptions.GuildNotFound;
 import utils.customExceptions.audio.ApplicationNotFound;
 import utils.logging.AudioLogger;

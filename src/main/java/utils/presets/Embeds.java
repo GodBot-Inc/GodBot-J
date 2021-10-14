@@ -15,6 +15,7 @@ public class Embeds {
     }
 
     public static MessageEmbed playTrack(AudioTrack audioTrack) {
+        System.out.println("Play Track preset called");
         EmbedBuilder eb = new EmbedBuilder();
         eb.setDescription(
                 String.format(
@@ -23,7 +24,7 @@ public class Embeds {
                         audioTrack.getInfo().uri
                 )
         );
-        eb.setColor(Color.decode("FFFE3F"));
+        eb.setColor(Color.YELLOW);
         return eb.build();
     }
 }
