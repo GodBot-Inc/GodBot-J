@@ -16,15 +16,15 @@ public class Embeds {
 
     public static MessageEmbed playTrack(AudioTrack audioTrack) {
         System.out.println("Play Track preset called");
-        EmbedBuilder eb = new EmbedBuilder();
-        eb.setDescription(
-                String.format(
-                        "Now playing [%s](%s)",
-                        audioTrack.getInfo().title,
-                        audioTrack.getInfo().uri
+        return new EmbedBuilder()
+                .setDescription(
+                        String.format(
+                                "Now playing [%s](%s)",
+                                audioTrack.getInfo().title,
+                                audioTrack.getInfo().uri
+                        )
                 )
-        );
-        eb.setColor(Color.YELLOW);
-        return eb.build();
+                .setColor(Color.ORANGE)
+                .build();
     }
 }

@@ -1,6 +1,6 @@
 package discord.listeners;
 
-import discord.commands.Play;
+import discord.commands.music.Play;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;

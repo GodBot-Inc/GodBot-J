@@ -2,13 +2,16 @@ package discord.audio.lavaplayer;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
+import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayer;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
+import com.sedmelluq.discord.lavaplayer.track.AudioReference;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import utils.presets.Embeds;
 
+import javax.naming.directory.SearchResult;
 import java.awt.*;
 
 public class AudioResultHandler implements AudioLoadResultHandler {
@@ -40,6 +43,7 @@ public class AudioResultHandler implements AudioLoadResultHandler {
                     .queue();
             return;
         }
+        System.out.println(audioPlaylist.getTracks().get(0));
         player.playTrack(audioPlaylist.getTracks().get(0));
         System.out.println("After started Playing");
         event.replyEmbeds(Embeds.playTrack(audioPlaylist.getTracks().get(0))).queue();
