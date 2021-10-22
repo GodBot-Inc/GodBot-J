@@ -5,6 +5,7 @@ import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
 
+import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import utils.logging.LoggerContent;
 import utils.customExceptions.ChannelNotFound;
 import utils.customExceptions.GuildNotFound;
@@ -61,6 +62,10 @@ public class PlayerManager {
                 "info"
             )
         );
+    }
+
+    public void addTrack(AudioPlayer player, AudioTrack track) throws PlayerNotFound {
+
     }
 
     public AudioPlayerManager getManager() {

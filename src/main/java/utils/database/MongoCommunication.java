@@ -1,4 +1,4 @@
-package utils;
+package utils.database;
 
 import com.mongodb.*;
 
@@ -10,9 +10,9 @@ import io.github.cdimascio.dotenv.Dotenv;
 import org.bson.Document;
 import utils.logging.LoggerContent;
 
-public class DBCommunication {
+public class MongoCommunication {
 
-    private static final DBCommunication dbObj = new DBCommunication();
+    private static final MongoCommunication dbObj = new MongoCommunication();
 
     private final MongoCollection<Document> queues;
     private final MongoCollection<Document> searches;
@@ -22,7 +22,7 @@ public class DBCommunication {
     private final MongoCollection<Document> audioProcesses;
     private final MongoCollection<Document> general;
 
-    private DBCommunication() {
+    private MongoCommunication() {
         Dotenv dotenv = Dotenv.load();
         String USERNAME = dotenv.get("DBUSERNAME");
         String PASSWORD = dotenv.get("DBPASSWORD");
@@ -71,7 +71,7 @@ public class DBCommunication {
         
     }
 
-    public static DBCommunication getInstance() {
+    public static MongoCommunication getInstance() {
         return dbObj;
     }
 }

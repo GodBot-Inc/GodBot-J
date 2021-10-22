@@ -1,6 +1,8 @@
-package utils.linkProcessing.interpretations;
+package utils.linkProcessing.interpretations.soundcloud;
 
-public class SpotifyInterpretation implements Interpretation {
+import utils.linkProcessing.interpretations.Interpretation;
+
+public class SoundcloudInterpretation implements Interpretation {
 
     public final String searchTerm;
     public final long duration;
@@ -10,7 +12,7 @@ public class SpotifyInterpretation implements Interpretation {
     public final String uri;
     public final String type;
 
-    public SpotifyInterpretation(String searchTerm, long duration, String author, String title, String album, String uri, String type) {
+    public SoundcloudInterpretation(String searchTerm, long duration, String author, String title, String album, String uri, String type) {
         this.searchTerm = searchTerm;
         this.duration = duration;
         this.author = author;

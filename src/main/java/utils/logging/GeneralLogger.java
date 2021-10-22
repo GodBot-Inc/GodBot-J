@@ -2,16 +2,16 @@ package utils.logging;
 
 import java.util.logging.Logger;
 
-import utils.DBCommunication;
+import utils.database.MongoCommunication;
 
 public class GeneralLogger implements DefaultLogger {
     
     private final Logger logger;
-    private final DBCommunication dbCommunication;
+    private final MongoCommunication dbCommunication;
 
     public GeneralLogger(String loggerName) {
         this.logger = Logger.getLogger(loggerName);
-        this.dbCommunication = DBCommunication.getInstance();
+        this.dbCommunication = MongoCommunication.getInstance();
     }
 
     @Override

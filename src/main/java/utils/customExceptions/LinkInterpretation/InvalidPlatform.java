@@ -1,4 +1,4 @@
-package utils.customExceptions;
+package utils.customExceptions.LinkInterpretation;
 
 public class InvalidPlatform extends Exception {
     public InvalidPlatform(String errorMessage) {

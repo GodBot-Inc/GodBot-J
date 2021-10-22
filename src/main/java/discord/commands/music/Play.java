@@ -1,9 +1,5 @@
 package discord.commands.music;
 
-import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
-import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayer;
-import com.sedmelluq.discord.lavaplayer.source.soundcloud.SoundCloudAudioSourceManager;
-import com.sedmelluq.discord.lavaplayer.track.AudioReference;
 import discord.audio.*;
 import discord.audio.lavaplayer.AudioPlayerSendHandler;
 import discord.audio.lavaplayer.AudioResultHandler;
@@ -109,6 +105,6 @@ public class Play {
         // TODO: Soundcloud / Spotify Api to search
         // TODO: Play the song / add it to the queue
         manager.openAudioConnection(member.getVoiceState().getChannel());
-        PlayerManager.getInstance().getManager().loadItem(String.format("scsearch:%s", url), new AudioResultHandler(player, event, url));
+        PlayerManager.getInstance().getManager().loadItem(String.format("%s", url), new AudioResultHandler(player, event, url));
     }
 }

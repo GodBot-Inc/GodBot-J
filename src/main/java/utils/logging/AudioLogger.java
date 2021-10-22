@@ -2,16 +2,16 @@ package utils.logging;
 
 import java.util.logging.Logger;
 
-import utils.DBCommunication;
+import utils.database.MongoCommunication;
 
 public class AudioLogger implements DefaultLogger {
 
     private final Logger logger;
-    private final DBCommunication dbCommunication;
+    private final MongoCommunication dbCommunication;
 
     public AudioLogger(String loggerName) {
         this.logger = Logger.getLogger(loggerName);
-        dbCommunication = DBCommunication.getInstance();
+        dbCommunication = MongoCommunication.getInstance();
     }
 
     @Override
