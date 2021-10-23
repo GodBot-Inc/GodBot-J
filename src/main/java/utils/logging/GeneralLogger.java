@@ -17,12 +17,12 @@ public class GeneralLogger implements DefaultLogger {
     @Override
     public void info(LoggerContent loggerObj) {
         this.logger.info(loggerObj.getAsString());
-        this.dbCommunication.generalLog(loggerObj);
+        this.dbCommunication.generalLog(loggerObj.getDBScheme());
     }
 
     @Override
     public void warn(LoggerContent loggerObj) {
         this.logger.warning(loggerObj.getAsString());
-        this.dbCommunication.generalLog(loggerObj);
+        this.dbCommunication.generalLog(loggerObj.getDBScheme());
     }
 }

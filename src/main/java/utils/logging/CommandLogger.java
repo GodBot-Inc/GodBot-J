@@ -18,13 +18,13 @@ public class CommandLogger implements DefaultLogger{
     @Override
     public void info(LoggerContent loggerObj) {
         this.logger.info(loggerObj.getAsString());
-        dbCommunication.commandLog(loggerObj);
+        dbCommunication.commandLog(loggerObj.getDBScheme());
     }
 
     @Override
     public void warn(LoggerContent loggerObj) {
         this.logger.info(loggerObj.getAsString());
-        dbCommunication.audioProcessLog(loggerObj);
+        dbCommunication.audioProcessLog(loggerObj.getDBScheme());
     }
 
     public static CommandLogger getInstance() { return loggerObj; }

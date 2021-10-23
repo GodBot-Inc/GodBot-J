@@ -2,28 +2,30 @@ package discord.audio.lavaplayer;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
-import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayer;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
-import com.sedmelluq.discord.lavaplayer.track.AudioReference;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
+import discord.snippets.Embeds.errors.StandardError;
+import discord.snippets.Embeds.trackInfo.PlayTrack;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
-import utils.presets.Embeds;
+import utils.linkProcessing.interpretations.Interpretation;
 
-import javax.naming.directory.SearchResult;
 import java.awt.*;
+import java.util.ArrayList;
 
 public class AudioResultHandler implements AudioLoadResultHandler {
 
     private final AudioPlayer player;
     private final SlashCommandEvent event;
     private final String identifier;
+    private final ArrayList<Interpretation> interpretations;
 
-    public AudioResultHandler(AudioPlayer player, SlashCommandEvent event, String identifier) {
+    public AudioResultHandler(AudioPlayer player, SlashCommandEvent event, String identifier, ArrayList<Interpretation> interpretations) {
         this.player = player;
         this.event = event;
         this.identifier = identifier;
+        this.interpretations = interpretations;
     }
 
     // TODO: Replace player.playTrack with playerWrapper function or just a QueueSystem.append :D
@@ -31,14 +33,24 @@ public class AudioResultHandler implements AudioLoadResultHandler {
     public void trackLoaded(AudioTrack audioTrack) {
         System.out.printf("TrackLoaded %s", this.identifier);
         player.playTrack(audioTrack);
-        event.replyEmbeds(Embeds.playTrack(audioTrack)).queue();
+        if (interpretations.isEmpty()) {
+            event
+                    .replyEmbeds(
+                            PlayTrack(
+                                    audioTrack,
+                                    event.getMember(),
+                                    "https://overview-ow.com"
+                            )
+                    )
+        }
+        event.replyEmbeds(PlayTrack.build(audioTrack, event.getMember())).queue();
     }
 
     @Override
     public void playlistLoaded(AudioPlaylist audioPlaylist) {
         System.out.printf("playlistLoaded %s\n", this.identifier);
         if (audioPlaylist.getTracks().isEmpty()) {
-            event.replyEmbeds(Embeds.error("Could not fetch your song"))
+            event.replyEmbeds(StandardError.build(String.format("Could not fetch the song %s", this.identifier)))
                     .setEphemeral(true)
                     .queue();
             return;
@@ -46,7 +58,7 @@ public class AudioResultHandler implements AudioLoadResultHandler {
         System.out.println(audioPlaylist.getTracks().get(0));
         player.playTrack(audioPlaylist.getTracks().get(0));
         System.out.println("After started Playing");
-        event.replyEmbeds(Embeds.playTrack(audioPlaylist.getTracks().get(0))).queue();
+        event.replyEmbeds(PlayTrack.build(audioPlaylist.getSelectedTrack(), event.getMember())).queue();
     }
 
     @Override

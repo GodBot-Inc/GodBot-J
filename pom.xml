@@ -51,9 +51,9 @@
             <version>PR650-9af0c892ff-1</version>
         </dependency>
         <dependency>
-            <groupId>com.google.apis</groupId>
-            <artifactId>google-api-services-youtube</artifactId>
-            <version>v3-rev20210811-1.32.1</version>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <version>20210307</version>
         </dependency>
     </dependencies>
 </project>

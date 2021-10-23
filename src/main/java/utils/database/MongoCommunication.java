@@ -21,6 +21,7 @@ public class MongoCommunication {
     private final MongoCollection<Document> commands;
     private final MongoCollection<Document> audioProcesses;
     private final MongoCollection<Document> general;
+    private final MongoCollection<Document> linkProcessing;
 
     private MongoCommunication() {
         Dotenv dotenv = Dotenv.load();
@@ -51,24 +52,24 @@ public class MongoCommunication {
         this.commands = logDB.getCollection("Commands");
         this.audioProcesses = logDB.getCollection("AudioProcesses");
         this.general = logDB.getCollection("General");
+        this.linkProcessing = logDB.getCollection("LinkProcessing");
     }
 
 
-    public void generalLog(LoggerContent loggerObj) {
-        this.general.insertOne(loggerObj.getDBScheme());
+    public void generalLog(Document document) {
+        this.general.insertOne(document);
     }
 
-    public void commandLog(LoggerContent loggerObj) {
-        this.commands.insertOne(loggerObj.getDBScheme());
+    public void commandLog(Document document) {
+        this.commands.insertOne(document);
     }
 
-    public void audioProcessLog(LoggerContent loggerObj) {
-        this.audioProcesses.insertOne(loggerObj.getDBScheme());
+    public void audioProcessLog(Document document) {
+        this.audioProcesses.insertOne(document);
     }
 
-
-    public static void searchesLog(LoggerContent loggerObj) {
-        
+    public void linkProcessingLog(Document document) {
+        this.linkProcessing.insertOne(document);
     }
 
     public static MongoCommunication getInstance() {

@@ -17,12 +17,12 @@ public class AudioLogger implements DefaultLogger {
     @Override
     public void info(LoggerContent loggerObj) {
         this.logger.info(loggerObj.getAsString());
-        dbCommunication.audioProcessLog(loggerObj);
+        this.dbCommunication.audioProcessLog(loggerObj.getDBScheme());
     }
 
     @Override
     public void warn(LoggerContent loggerObj) {
         this.logger.warning(loggerObj.getAsString());
-        dbCommunication.audioProcessLog(loggerObj);
+        dbCommunication.audioProcessLog(loggerObj.getDBScheme());
     }
 }

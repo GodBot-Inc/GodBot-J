@@ -4,15 +4,15 @@ import utils.linkProcessing.interpretations.Interpretation;
 
 public class YoutubeVideoInterpretation implements YoutubeInterpretation, Interpretation {
 
-    public final long duration;
-    public final String author;
-    public final String title;
-    public final String uri;
-    public final String thumbnailUri;
-    public final long likes;
-    public final long dislikes;
-    public final long views;
-    public final long comments;
+    private final long duration;
+    private final String author;
+    private final String title;
+    private final String uri;
+    private final String thumbnailUri;
+    private final long likes;
+    private final long dislikes;
+    private final long views;
+    private final long comments;
 
     public YoutubeVideoInterpretation(long duration, String author, String title, String uri, String thumbnailUri, long likes, long dislikes, long views, long comments) {
         this.duration = duration;

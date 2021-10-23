@@ -10,13 +10,18 @@ import java.awt.*;
 import java.util.List;
 
 public class PlayTrack {
-    public static String formatSources(List<Interpretation> linkList) {
+    public static String formatSources(List<Interpretation> interpretations) {
         // TODO extract the sources given and bring the info into a nice format
         // TODO Also add buttons to display more information about the song specific to a platform
+        if (interpretations.isEmpty()) {
+            return "<:youtube:898548549615255572> -\n" +
+                    "<:spotify:898548583370989590> -\n" +
+                    "<:soundcloud:898548569051631618> -\n";
+        }
         return "";
     }
 
-    public static MessageEmbed build(AudioTrack track, Member requester, String thumbnail, boolean nowPlaying, List<Interpretation> linkList) {
+    public static MessageEmbed build(AudioTrack track, Member requester, String thumbnail, boolean nowPlaying, List<Interpretation> interpretations) {
         String title;
         if (nowPlaying) {
             title = "Playing";
@@ -35,7 +40,7 @@ public class PlayTrack {
                 .setColor(Color.ORANGE)
                 .setThumbnail(thumbnail)
                 .addField("Author", track.getInfo().author, true)
-                .addField(formatSources(linkList), "", true)
+                .addField(formatSources(interpretations), "", true)
                 .addField("Duration", trackLines.build(0, track.getInfo().length), false)
                 .setFooter(String.format("by %s", requester.getNickname()), requester.getUser().getAvatarUrl())
                 .build();

@@ -4,12 +4,12 @@ import utils.linkProcessing.interpretations.Interpretation;
 
 public class YoutubePlaylistInterpretation implements YoutubeInterpretation, Interpretation {
 
-    public final long duration;
-    public final String author;
-    public final String title;
-    public final String uri;
-    public final String thumbnailUri;
-    public final int size;
+    private final long duration;
+    private final String author;
+    private final String title;
+    private final String uri;
+    private final String thumbnailUri;
+    private final int size;
 
     public YoutubePlaylistInterpretation(long duration, String author, String title, String uri, String thumbnailUri, int size) {
         this.duration = duration;

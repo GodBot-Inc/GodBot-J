@@ -1,30 +1,21 @@
-package utils.apis.youtube;
-
 import org.json.JSONObject;
 import utils.customExceptions.LinkInterpretation.InvalidURL;
 import utils.customExceptions.LinkInterpretation.RequestFailed;
-import utils.linkProcessing.interpretations.youtube.YoutubeInterpretation;
-import utils.linkProcessing.interpretations.youtube.YoutubePlaylistInterpretation;
-import utils.linkProcessing.interpretations.youtube.YoutubeVideoInterpretation;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.HashMap;
 
-public class youtubeApi {
-    public static final String url = "https://youtube.googleapis.com/youtube/v3/videos?part=snippet&id=hd1D61037c8&videoCategoryId=10&key=[YOUR_API_KEY]";
-
-    public static YoutubeVideoInterpretation getVideoInformation(String id) {
-        String getVideoInformationUrl = "";
+public class Test {
+    public static void main(String[] args) throws IOException, RequestFailed, InvalidURL {
+        JSONObject object = sendRequest("https://youtube.googleapis.com/youtube/v3/videos?part=snippet&part=contentDetails&part=player&part=statistics&id=XzUcSWVkjVA&videoCategoryId=10&key=AIzaSyDw076BIlPImvqay6IlGGzv_N_vFOFxd98");
     }
 
-    public static YoutubePlaylistInterpretation getPlaylistInformation(String id) {
-        String getPlaylistInformationUrl = "";
-    }
+    /*
+    GET https://youtube.googleapis.com/youtube/v3/videos?part=snippet&part=contentDetails&part=player&part=statistics&id=XzUcSWVkjVA&videoCategoryId=10&key=[YOUR_API_KEY]
+     */
 
     private static void checkResponseCode(int code) throws RequestFailed, InvalidURL {
         switch (code) {
