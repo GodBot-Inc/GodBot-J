@@ -18,13 +18,14 @@ import java.util.HashMap;
 public class youtubeApi {
     public static final String url = "https://youtube.googleapis.com/youtube/v3/videos?part=snippet&id=hd1D61037c8&videoCategoryId=10&key=[YOUR_API_KEY]";
 
-    public static YoutubeVideoInterpretation getVideoInformation(String id) {
-        String getVideoInformationUrl = "";
-    }
+//    public static YoutubeVideoInterpretation getVideoInformation(String id) {
+//        String getVideoInformationUrl = "";
+//        return new YoutubeVideoInterpretation()
+//    }
 
-    public static YoutubePlaylistInterpretation getPlaylistInformation(String id) {
-        String getPlaylistInformationUrl = "";
-    }
+//    public static YoutubePlaylistInterpretation getPlaylistInformation(String id) {
+//        String getPlaylistInformationUrl = "";
+//    }
 
     private static void checkResponseCode(int code) throws RequestFailed, InvalidURL {
         switch (code) {

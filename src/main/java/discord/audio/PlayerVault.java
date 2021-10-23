@@ -39,14 +39,15 @@ public class PlayerVault {
         }
         playerStorage.get(guildID).put(channelID, player);
         this.logger.info(
-            new LoggerContent(
-                "storePlayer",
-                new HashMap<String, String>() {{
-                    put("GuildId", guildID);
-                    put("channelId", channelID);
-                }},
-                "info"
-            )
+                new LoggerContent(
+                        "info",
+                        "PlayerVault-storePlayer",
+                        "",
+                        new HashMap<String, String>() {{
+                            put("GuildId", guildID);
+                            put("channelId", channelID);
+                        }}
+                )
         );
     }
 
@@ -63,14 +64,15 @@ public class PlayerVault {
         checkGuildAndChannel(guildID, channelID);
         playerStorage.get(guildID).remove(channelID);
         this.logger.info(
-            new LoggerContent(
-                "removePlayer",
-                new HashMap<String, String>() {{
-                    put("GuildId", guildID);
-                    put("channelId", channelID);
-                }},
-                "info"
-            )
+                new LoggerContent(
+                        "info",
+                        "PlayerVault-removePlayer",
+                        "",
+                        new HashMap<String, String>() {{
+                            put("GuildId", guildID);
+                            put("channelId", channelID);
+                        }}
+                )
         );
     }
 
@@ -80,13 +82,14 @@ public class PlayerVault {
         }
         playerStorage.remove(guildID);
         this.logger.info(
-            new LoggerContent(
-                "PlayerVault-removeGuild",
-                new HashMap<String, String>() {{
-                    put("GuildId", guildID);
-                }},
-                "info"
-            )
+                new LoggerContent(
+                        "info",
+                        "PlayerVault-removeGuild",
+                        "",
+                        new HashMap<String, String>() {{
+                            put("GuildId", guildID);
+                        }}
+                )
         );
     }
 

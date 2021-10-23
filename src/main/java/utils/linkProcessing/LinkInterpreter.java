@@ -1,13 +1,10 @@
 package utils.linkProcessing;
 
-import com.sun.org.apache.xml.internal.security.keys.keyresolver.KeyResolverException;
-import jdk.jfr.internal.Logger;
 import utils.apis.youtube.youtubeApi;
 import utils.customExceptions.LinkInterpretation.InvalidURL;
 import utils.customExceptions.LinkInterpretation.PlatformNotFound;
 import utils.linkProcessing.interpretations.Interpretation;
 import utils.linkProcessing.interpretations.youtube.YoutubeInterpretation;
-import utils.logging.GeneralLogger;
 import utils.logging.LinkProcessingLogger;
 import utils.logging.LoggerContent;
 
@@ -130,9 +127,9 @@ public class LinkInterpreter {
         }
         ArrayList<YoutubeInterpretation> ytInterpretation = new ArrayList<>();
         if (Objects.equals(typeAndId.get("type"), "playlist")) {
-            ytInterpretation.add(youtubeApi.getPlaylistInformation(typeAndId.get("id")));
+//            ytInterpretation.add(youtubeApi.getPlaylistInformation(typeAndId.get("id")));
         } else if (Objects.equals(typeAndId.get("type"), "video")) {
-            ytInterpretation.add(youtubeApi.getVideoInformation(typeAndId.get("id")));
+//            ytInterpretation.add(youtubeApi.getVideoInformation(typeAndId.get("id")));
         }
         return ytInterpretation;
     }

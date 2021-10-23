@@ -1,6 +1,7 @@
 package discord.listeners;
 
 import discord.commands.music.Play;
+import discord.snippets.Embeds.errors.StandardError;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
@@ -8,7 +9,6 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import utils.logging.CommandLogger;
 import utils.logging.LoggerContent;
-import utils.presets.Embeds;
 
 import javax.annotation.Nonnull;
 import java.util.HashMap;
@@ -28,7 +28,7 @@ public class InteractionListener extends ListenerAdapter {
         if (guild == null) {
             return new HashMap<String, String>() {{
                put("GuildId", "null");
-               put("AuthorId", user.getId() );
+               put("AuthorId", user.getId());
                put("GuildName", "null");
                put("AuthorName", user.getName() + user.getDiscriminator());
             }};
@@ -43,11 +43,12 @@ public class InteractionListener extends ListenerAdapter {
 
     public void onSlashCommand(@Nonnull SlashCommandEvent event) {
         this.logger.info(
-            new LoggerContent(
-                "SlashCommandEvent",
-                getLogArgs(event),
-                "eventInfo"
-            )
+                new LoggerContent(
+                        "info",
+                        "SlashCommandEvent",
+                        "",
+                        getLogArgs(event)
+                )
         );
         if (event.getGuild() == null) { return; }
         switch (event.getName()) {
@@ -55,7 +56,7 @@ public class InteractionListener extends ListenerAdapter {
                 OptionMapping urlParameter = event.getOption("url");
                 if (urlParameter == null) {
                     event
-                            .replyEmbeds(Embeds.error("You did not pass a url as parameter"))
+                            .replyEmbeds(StandardError.build("You did not pass an url as parameter"))
                             .setEphemeral(true)
                             .queue();
                     return;

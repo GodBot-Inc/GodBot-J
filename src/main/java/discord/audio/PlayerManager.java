@@ -34,14 +34,15 @@ public class PlayerManager {
         vault.storePlayer(guildId, channelId, player);
         queue.registerPlayer(player);
         this.logger.info(
-            new LoggerContent(
-                "createPlayer",
-                new HashMap<String, String>() {{
-                    put("GuildId", guildId);
-                    put("channelId", channelId);
-                }},
-                "info"
-            )
+                new LoggerContent(
+                        "info",
+                        "PlayerManager-createPlayer",
+                        "",
+                        new HashMap<String, String>() {{
+                            put("GuildId", guildId);
+                            put("channelId", channelId);
+                        }}
+                )
         );
         return player;
     }
@@ -53,14 +54,15 @@ public class PlayerManager {
         queue.removePlayer(player);
         player.destroy();
         this.logger.info(
-            new LoggerContent(
-                "removePlayer",
-                new HashMap<String, String>() {{
-                    put("GuildId", guildID);
-                    put("channelId", channelID);
-                }},
-                "info"
-            )
+                new LoggerContent(
+                        "info",
+                        "PlayerManager-removePlayer",
+                        "",
+                        new HashMap<String, String>() {{
+                            put("GuildId", guildID);
+                            put("channelId", channelID);
+                        }}
+                )
         );
     }
 

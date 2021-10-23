@@ -1,5 +1,6 @@
 package discord.audio;
 
+import com.iwebpp.crypto.TweetNaclFast;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.managers.AudioManager;
 import utils.logging.LoggerContent;
@@ -30,13 +31,14 @@ public class AudioManagerVault {
             audioManagerStorage.get(applicationId).put(guild.getId(), guild.getAudioManager());
         }
         this.logger.info(
-            new LoggerContent(
-                "registerJDA",
-                new HashMap<String, String>() {{
-                    put("applicationId", applicationId);
-                }},
-                "info"
-            )
+                new LoggerContent(
+                        "info",
+                        "AudioManagerVault-registerJDA",
+                        "",
+                        new HashMap<String, String>() {{
+                            put("applicationId", applicationId);
+                        }}
+                )
         );
     }
 
@@ -46,15 +48,16 @@ public class AudioManagerVault {
         }
         audioManagerStorage.get(applicationId).put(guild.getId(), guild.getAudioManager());
         this.logger.info(
-            new LoggerContent(
-                "registerGuild",
-                new HashMap<String, String>() {{
-                    put("appicationId", applicationId);
-                    put("GuildId", guild.getId());
-                    put("GuildName", guild.getName());
-                }},
-                "info"
-            )
+                new LoggerContent(
+                        "info",
+                        "AudioManagerVault-registerGuild",
+                        "",
+                        new HashMap<String, String>() {{
+                            put("applicationId", applicationId);
+                            put("GuildId", guild.getId());
+                            put("GuildName", guild.getName());
+                        }}
+                )
         );
     }
 
@@ -64,13 +67,14 @@ public class AudioManagerVault {
         }
         audioManagerStorage.remove(applicationId);
         this.logger.info(
-            new LoggerContent(
-                "removeJDA",
-                new HashMap<String, String>() {{
-                    put("applicationId", applicationId);
-                }},
-                "info"
-            )
+                new LoggerContent(
+                        "info",
+                        "AudioManagerVault-removeJDA",
+                        "",
+                        new HashMap<String, String>() {{
+                            put("applicationId", applicationId);
+                        }}
+                )
         );
     }
 
@@ -80,14 +84,15 @@ public class AudioManagerVault {
         }
         audioManagerStorage.get(applicationId).remove(guildId);
         this.logger.info(
-            new LoggerContent(
-                "removeGuild",
-                new HashMap<String, String>() {{
-                    put("applicationId", applicationId);
-                    put("GuildId", guildId);
-                }},
-                "info"
-            )
+                new LoggerContent(
+                        "info",
+                        "AudioManagerVault-removeGuild",
+                        "",
+                        new HashMap<String, String>() {{
+                            put("applicationId", applicationId);
+                            put("GuildId", guildId);
+                        }}
+                )
         );
     }
 
@@ -99,14 +104,15 @@ public class AudioManagerVault {
             throw new GuildNotFound("Could not find guildId in storage " + guildId);
         }
         this.logger.info(
-            new LoggerContent(
-                "getAudioManager",
-                new HashMap<String, String>() {{
-                    put("applicaitonId", applicationId);
-                    put("GuildId", guildId);
-                }},
-                "info"
-            )
+                new LoggerContent(
+                        "info",
+                        "AudioManagerVault-getAudioManager",
+                        "",
+                        new HashMap<String, String>() {{
+                            put("applicationId", applicationId);
+                            put("GuildId", guildId);
+                        }}
+                )
         );
         return audioManagerStorage.get(applicationId).get(guildId);
     }

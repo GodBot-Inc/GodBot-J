@@ -5,10 +5,12 @@ import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
+import discord.audio.QueueSystem;
 import discord.snippets.Embeds.errors.StandardError;
 import discord.snippets.Embeds.trackInfo.PlayTrack;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import utils.customExceptions.audio.PlayerNotFound;
 import utils.linkProcessing.interpretations.Interpretation;
 
 import java.awt.*;
@@ -31,19 +33,34 @@ public class AudioResultHandler implements AudioLoadResultHandler {
     // TODO: Replace player.playTrack with playerWrapper function or just a QueueSystem.append :D
     @Override
     public void trackLoaded(AudioTrack audioTrack) {
+        QueueSystem qSystem = QueueSystem.getInstance();
         System.out.printf("TrackLoaded %s", this.identifier);
-        player.playTrack(audioTrack);
-        if (interpretations.isEmpty()) {
-            event
-                    .replyEmbeds(
-                            PlayTrack(
-                                    audioTrack,
-                                    event.getMember(),
-                                    "https://overview-ow.com"
-                            )
-                    )
+        boolean nowPlaying = false;
+        try {
+            if (qSystem.getQueue(player).isEmpty()) {
+                player.playTrack(audioTrack);
+                nowPlaying = true;
+            } else {
+                qSystem.addTrack(player, audioTrack);
+            }
+        } catch(PlayerNotFound e) {
+            qSystem.registerPlayer(player);
         }
-        event.replyEmbeds(PlayTrack.build(audioTrack, event.getMember())).queue();
+        String thumbnail = "https://github.com/RasberryKai/GodBot-J/blob/master/resources/music.png";
+        if (!this.interpretations.isEmpty()) {
+
+        }
+        event
+                .replyEmbeds(
+                        PlayTrack.build(
+                                audioTrack,
+                                event.getMember(),
+                                "https://github.com/RasberryKai/GodBot-J/blob/master/resources/music.png",
+                                nowPlaying,
+                                this.interpretations
+                        )
+                )
+                .queue();
     }
 
     @Override
@@ -55,10 +72,16 @@ public class AudioResultHandler implements AudioLoadResultHandler {
                     .queue();
             return;
         }
-        System.out.println(audioPlaylist.getTracks().get(0));
-        player.playTrack(audioPlaylist.getTracks().get(0));
-        System.out.println("After started Playing");
-        event.replyEmbeds(PlayTrack.build(audioPlaylist.getSelectedTrack(), event.getMember())).queue();
+        player.playTrack(audioPlaylist.getSelectedTrack());
+        event.reply(String.format("Playing %s", audioPlaylist.getSelectedTrack().getInfo().title)).queue();
+//        event.replyEmbeds(PlayTrack.build(audioPlaylist.getSelectedTrack(), event.getMember())).queue();
+//        event.replyEmbeds(
+//                PlayTrack.build(
+//                        audioPlaylist.getSelectedTrack(),
+//                        event.getMember(),
+//
+//                )
+//        )
     }
 
     @Override
@@ -81,9 +104,10 @@ public class AudioResultHandler implements AudioLoadResultHandler {
     @Override
     public void loadFailed(FriendlyException e) {
         System.out.printf("LoadFailed %s", this.identifier);
-        event
-                .replyEmbeds(Embeds.error("Loading of the track failed"))
-                .setEphemeral(true)
-                .queue();
+        event.reply("loading failed :(").queue();
+//        event
+//                .replyEmbeds(Embeds.error("Loading of the track failed"))
+//                .setEphemeral(true)
+//                .queue();
     }
 }

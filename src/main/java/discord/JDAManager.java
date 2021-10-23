@@ -21,14 +21,32 @@ public class JDAManager {
 
     public void registerJDA(String botName, JDA jda) {
         JDAStorage.put(botName, jda);
-        logger.info(new LoggerContent("registerJDA", new HashMap<String, String>() {{put("botName", botName);}}, "info"));
+        this.logger.info(
+                new LoggerContent(
+                        "info",
+                        "JDAManager-registerJDA",
+                        "",
+                        new HashMap<String, String>() {{
+                            put("botName", botName);
+                        }}
+                )
+        );
     }
 
     public JDA getJDA(String botName) throws KeyException {
         if (!JDAStorage.containsKey(botName)) {
             throw new KeyException("Could not find the botName " + botName);
         }
-        logger.info(new LoggerContent("getJDA", new HashMap<String, String>() {{put("botName", botName);}}, "info"));
+        this.logger.info(
+                new LoggerContent(
+                        "info",
+                        "JDAManager-getJDA",
+                        "",
+                        new HashMap<String, String>() {{
+                            put("botName", botName);
+                        }}
+                )
+        );
         return JDAStorage.get(botName);
     }
 

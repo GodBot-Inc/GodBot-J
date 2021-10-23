@@ -2,6 +2,7 @@ package discord.audio;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
+import org.apache.commons.collections4.map.HashedMap;
 import utils.customExceptions.audio.PlayerNotFound;
 import utils.customExceptions.audio.QueueEmpty;
 import utils.logging.AudioLogger;
@@ -25,6 +26,14 @@ public class QueueSystem {
         if (queueStorage.containsKey(player)) {
             throw new KeyAlreadyExistsException("Player already registered " + player);
         }
+        this.logger.info(
+                new LoggerContent(
+                        "info",
+                        "QueueSystem-registerPlayer",
+                        "",
+                        new HashMap<>()
+                )
+        );
         queueStorage.put(player, new ArrayList<>());
     }
 
@@ -44,9 +53,12 @@ public class QueueSystem {
         }
         this.logger.info(
             new LoggerContent(
-                "QueueSystem-getNextAndDelete",
-                new HashMap<>(),
-                "info"
+                    "info",
+                    "QueueSystem-getNextAndDelete",
+                    "",
+                    new HashMap<String, String>() {{
+                        put("track", queueStorage.get(player).get(0).getInfo().title);
+                    }}
             )
         );
         AudioTrack next = queueStorage.get(player).get(0);
@@ -61,19 +73,19 @@ public class QueueSystem {
         return queueStorage.get(player);
     }
 
-    public void addTrack(AudioPlayer player, AudioTrack track, int index) throws PlayerNotFound, IndexOutOfBoundsException {
+    public void addTrack(AudioPlayer player, AudioTrack track) throws PlayerNotFound, IndexOutOfBoundsException {
         if (!queueStorage.containsKey(player)) {
             throw new PlayerNotFound("Could not find Player " + player);
         }
-        if (queueStorage.get(player).size() > index) {
-            throw new IndexOutOfBoundsException("Index" + index + " is too large for a list of size " + queueStorage.get(player).size());
-        }
         this.logger.info(
-            new LoggerContent(
-                "QueueSystem-addTrack",
-                new HashMap<>(),
-                "info"
-            )
+                new LoggerContent(
+                        "info",
+                        "QueueSystem-addTrack",
+                        "",
+                        new HashMap<String, String>() {{
+                            put("track", track.getInfo().title);
+                        }}
+                )
         );
         queueStorage.get(player).add(track);
     }

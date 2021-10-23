@@ -4,6 +4,7 @@ import discord.audio.*;
 import discord.audio.lavaplayer.AudioPlayerSendHandler;
 import discord.audio.lavaplayer.AudioResultHandler;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
+import discord.snippets.Embeds.errors.StandardError;
 import io.github.cdimascio.dotenv.Dotenv;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.audio.AudioSendHandler;
@@ -15,9 +16,9 @@ import discord.JDAManager;
 import utils.customExceptions.ChannelNotFound;
 import utils.customExceptions.GuildNotFound;
 import utils.customExceptions.audio.ApplicationNotFound;
-import utils.presets.Embeds;
 
 import java.security.KeyException;
+import java.util.ArrayList;
 
 public class Play {
     private static AudioManager getManager(String applicationId, Guild guild) throws KeyException {
@@ -42,35 +43,35 @@ public class Play {
         String applicationId = dotenv.get("APPLICATIONID");
         if (applicationId == null) {
             event
-                    .replyEmbeds(Embeds.error("Could not get the ApplicationId"))
+                    .replyEmbeds(StandardError.build("Could not get the ApplicationId"))
                     .setEphemeral(true)
                     .queue();
             return;
         }
         if (guild == null) {
             event
-                    .replyEmbeds(Embeds.error("Could not get the Guild I'm in"))
+                    .replyEmbeds(StandardError.build("Could not get the Guild I'm in"))
                     .setEphemeral(true)
                     .queue();
             return;
         }
         if (member == null) {
             event
-                    .replyEmbeds(Embeds.error("Could not get the author of the message"))
+                    .replyEmbeds(StandardError.build("Could not get the author of the message"))
                     .setEphemeral(true)
                     .queue();
             return;
         }
         if (member.getVoiceState() == null) {
             event
-                    .replyEmbeds(Embeds.error("You are not connected to a Voicechannel"))
+                    .replyEmbeds(StandardError.build("You are not connected to a Voicechannel"))
                     .setEphemeral(true)
                     .queue();
             return;
         }
         if (member.getVoiceState().getChannel() == null) {
             event
-                    .replyEmbeds(Embeds.error("You are not connected to a Voicechannel"))
+                    .replyEmbeds(StandardError.build("You are not connected to a Voicechannel"))
                     .setEphemeral(true)
                     .queue();
             return;
@@ -80,7 +81,7 @@ public class Play {
             manager = getManager(applicationId, guild);
         } catch (KeyException e) {
             event
-                    .replyEmbeds(Embeds.error("Could not get an AudioManager"))
+                    .replyEmbeds(StandardError.build("Could not get an AudioManager"))
                     .setEphemeral(true)
                     .queue();
             return;
@@ -102,9 +103,24 @@ public class Play {
             manager.setSendingHandler(new AudioPlayerSendHandler(player));
         }
         // TODO: Link interpretation
-        // TODO: Soundcloud / Spotify Api to search
-        // TODO: Play the song / add it to the queue
+        // TODO: Utilize Apis to search for compatibility
         manager.openAudioConnection(member.getVoiceState().getChannel());
-        PlayerManager.getInstance().getManager().loadItem(String.format("%s", url), new AudioResultHandler(player, event, url));
+//        HashMap<String, Interpretation> interpretationHashMap = new HashMap<>();
+//        try {
+//            interpretationHashMap = LinkInterpreter.interpret(url);
+//        } catch(InvalidURL e) {
+//            event.replyEmbeds(StandardError.build("The Url given is invalid")).queue();
+//            return;
+//        } catch(PlatformNotFound e) {
+//            event.replyEmbeds(StandardError.build("The given Url ")).queue();
+//            return;
+//        }
+        PlayerManager
+                .getInstance()
+                .getManager()
+                .loadItem(
+                        String.format("%s", url),
+                        new AudioResultHandler(player, event, url, new ArrayList<>())
+                );
     }
 }
