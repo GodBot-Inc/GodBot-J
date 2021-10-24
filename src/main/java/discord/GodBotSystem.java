@@ -11,7 +11,6 @@ import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.ChunkingFilter;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
-import discord.JDAManager;
 
 import javax.security.auth.login.LoginException;
 
@@ -34,10 +33,6 @@ public class GodBotSystem {
 
         JDA godbotJDA = initializeBotFromToken(TOKEN, APPLICATIONID, "godbot", true);
         JDA israJDA = initializeBotFromToken(israTOKEN, israAPPLICATIONID, "israfil", false);
-
-        AudioManagerVault audioManager = AudioManagerVault.getInstance();
-        audioManager.registerJDA(APPLICATIONID, godbotJDA.getGuilds());
-        audioManager.registerJDA(israAPPLICATIONID, israJDA.getGuilds());
 
         godbotJDA.getPresence().setActivity(Activity.listening("dope music"));
         israJDA.getPresence().setActivity(Activity.listening("the GodBot System"));
@@ -87,9 +82,10 @@ public class GodBotSystem {
         builder.setBulkDeleteSplittingEnabled(false);
 
         // Disables Intents for Guild Presences because we don't need it
+        // TODO Disable all Intents that are not needed
         builder.disableIntents(GatewayIntent.GUILD_PRESENCES);
 
-        // Only cache members who are either in a voice channel
+        // Only cache members who are in a voice channel
         builder.setMemberCachePolicy(MemberCachePolicy.VOICE);
 
         // Disable member chunking on startup

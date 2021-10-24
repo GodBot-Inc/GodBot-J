@@ -15,10 +15,15 @@ import net.dv8tion.jda.api.managers.AudioManager;
 import discord.JDAManager;
 import utils.customExceptions.ChannelNotFound;
 import utils.customExceptions.GuildNotFound;
+import utils.customExceptions.LinkInterpretation.InvalidURL;
+import utils.customExceptions.LinkInterpretation.PlatformNotFound;
 import utils.customExceptions.audio.ApplicationNotFound;
+import utils.linkProcessing.LinkInterpreter;
+import utils.linkProcessing.interpretations.Interpretation;
 
 import java.security.KeyException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Play {
     private static AudioManager getManager(String applicationId, Guild guild) throws KeyException {
@@ -105,22 +110,22 @@ public class Play {
         // TODO: Link interpretation
         // TODO: Utilize Apis to search for compatibility
         manager.openAudioConnection(member.getVoiceState().getChannel());
-//        HashMap<String, Interpretation> interpretationHashMap = new HashMap<>();
-//        try {
-//            interpretationHashMap = LinkInterpreter.interpret(url);
-//        } catch(InvalidURL e) {
-//            event.replyEmbeds(StandardError.build("The Url given is invalid")).queue();
-//            return;
-//        } catch(PlatformNotFound e) {
-//            event.replyEmbeds(StandardError.build("The given Url ")).queue();
-//            return;
-//        }
+        HashMap<String, Interpretation> interpretationHashMap = new HashMap<>();
+        try {
+            interpretationHashMap = LinkInterpreter.interpret(url);
+        } catch(InvalidURL e) {
+            event.replyEmbeds(StandardError.build("The Url given is invalid")).queue();
+            return;
+        } catch(PlatformNotFound e) {
+            event.replyEmbeds(StandardError.build("The given Url ")).queue();
+            return;
+        }
         PlayerManager
                 .getInstance()
                 .getManager()
                 .loadItem(
                         String.format("%s", url),
-                        new AudioResultHandler(player, event, url, new ArrayList<>())
+                        new AudioResultHandler(player, event, url, interpretationHashMap)
                 );
     }
 }
