@@ -16,6 +16,4 @@ public interface DefaultLogger {
          logger.warning(loggerObj.getAsString());
          // Save into specific Database
      }
-
-     //TODO: LoggerContentBuilder
 }

@@ -1,8 +1,6 @@
 package utils.linkProcessing.interpretations.spotify;
 
-import utils.linkProcessing.interpretations.Interpretation;
-
-public class SpotifySongInterpretation implements Interpretation {
+public class SpotifyAlbumInterpretation implements SpotifyInterpretation {
     @Override
     public long getDuration() {
         return 0;

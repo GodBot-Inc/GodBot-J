@@ -15,6 +15,9 @@ import utils.logging.AudioLogger;
 import javax.management.openmbean.KeyAlreadyExistsException;
 import java.util.HashMap;
 
+/**
+ * A little confusing but essentially a collection of useful functions related to players
+ */
 public class PlayerManager {
 
     private static final PlayerManager managerObj = new PlayerManager();
@@ -66,8 +69,27 @@ public class PlayerManager {
         );
     }
 
-    public void addTrack(AudioPlayer player, AudioTrack track) throws PlayerNotFound {
-
+    /**
+     * If the player is not registered we have to register it and rerun the try block
+     * and so on that would be an infinite loop without recursion
+     * @param audioTrack The audioTrack that should be played
+     * @return Returns if the player is now playing or if the song got appended to the queue
+     */
+    public static boolean playTrack(AudioPlayer player, AudioTrack audioTrack) {
+        QueueSystem queueSystem = QueueSystem.getInstance();
+        boolean nowPlaying = false;
+        try {
+            if (queueSystem.getQueue(player).isEmpty()) {
+                player.playTrack(audioTrack);
+                return true;
+            } else {
+                queueSystem.addTrack(player, audioTrack);
+                return false;
+            }
+        } catch(PlayerNotFound e) {
+            queueSystem.registerPlayer(player);
+            return playTrack(player, audioTrack);
+        }
     }
 
     public AudioPlayerManager getManager() {

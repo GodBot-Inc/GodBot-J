@@ -22,7 +22,6 @@ public class InteractionListener extends ListenerAdapter {
     }
 
     public HashMap<String, String> getLogArgs(@Nonnull SlashCommandEvent event) {
-        // TODO: Finish getLogArgs method :D
         User user = event.getUser();
         Guild guild = event.getGuild();
         if (guild == null) {

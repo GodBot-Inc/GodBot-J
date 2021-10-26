@@ -1,8 +1,6 @@
-package utils.linkProcessing.interpretations.spotify;
+package utils.linkProcessing.interpretations.soundcloud;
 
-import utils.linkProcessing.interpretations.Interpretation;
-
-public class SpotifySongInterpretation implements Interpretation {
+public class SoundCloudAlbumInterpretation implements SoundCloudInterpretation {
     @Override
     public long getDuration() {
         return 0;

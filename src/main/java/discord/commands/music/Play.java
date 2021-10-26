@@ -107,10 +107,9 @@ public class Play {
         if (handler == null) {
             manager.setSendingHandler(new AudioPlayerSendHandler(player));
         }
-        // TODO: Link interpretation
         // TODO: Utilize Apis to search for compatibility
         manager.openAudioConnection(member.getVoiceState().getChannel());
-        HashMap<String, Interpretation> interpretationHashMap = new HashMap<>();
+        HashMap<String, Interpretation> interpretationHashMap;
         try {
             interpretationHashMap = LinkInterpreter.interpret(url);
         } catch(InvalidURL e) {

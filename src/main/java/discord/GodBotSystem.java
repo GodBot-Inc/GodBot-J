@@ -16,8 +16,6 @@ import javax.security.auth.login.LoginException;
 
 public class GodBotSystem {
     public static void main(String[] args) throws LoginException, InterruptedException {
-        // TODO Change ArrayList<Interpretations> to HashMap<String, Interpretations>
-
         Dotenv dotenv = Dotenv.load();
 
         // Load Bot-Token into the program
@@ -82,8 +80,13 @@ public class GodBotSystem {
         builder.setBulkDeleteSplittingEnabled(false);
 
         // Disables Intents for Guild Presences because we don't need it
-        // TODO Disable all Intents that are not needed
         builder.disableIntents(GatewayIntent.GUILD_PRESENCES);
+        builder.disableIntents(GatewayIntent.GUILD_BANS);
+        builder.disableIntents(GatewayIntent.GUILD_INVITES);
+        builder.disableIntents(GatewayIntent.GUILD_MESSAGE_TYPING);
+        builder.disableIntents(GatewayIntent.GUILD_MESSAGE_REACTIONS);
+        builder.disableIntents(GatewayIntent.DIRECT_MESSAGE_REACTIONS);
+        builder.disableIntents(GatewayIntent.DIRECT_MESSAGE_TYPING);
 
         // Only cache members who are in a voice channel
         builder.setMemberCachePolicy(MemberCachePolicy.VOICE);

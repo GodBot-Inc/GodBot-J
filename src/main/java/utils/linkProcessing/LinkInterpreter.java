@@ -1,13 +1,16 @@
 package utils.linkProcessing;
 
+import okhttp3.Request;
 import utils.apis.youtube.youtubeApi;
 import utils.customExceptions.LinkInterpretation.InvalidURL;
 import utils.customExceptions.LinkInterpretation.PlatformNotFound;
+import utils.customExceptions.LinkInterpretation.RequestFailed;
 import utils.linkProcessing.interpretations.Interpretation;
 import utils.linkProcessing.interpretations.youtube.YoutubeInterpretation;
+import utils.linkProcessing.interpretations.youtube.YoutubeVideoInterpretation;
 import utils.logging.LinkProcessingLogger;
-import utils.logging.LoggerContent;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -47,22 +50,31 @@ public class LinkInterpreter {
         }
     }
 
-    public static ArrayList<Interpretation> interpret(String url) throws InvalidURL, PlatformNotFound {
+    public static HashMap<String, Interpretation> interpret(String url) throws InvalidURL, PlatformNotFound {
         if (!isValid(url)) {
             throw new InvalidURL(String.format("Url %s is not valid", url));
         }
         String platform = getPlatform(url);
-        ArrayList<Interpretation> interpretations = new ArrayList<>();
+        HashMap<String, Interpretation> interpretations = new HashMap<>();
         switch (platform) {
             case "youtube":
-                ArrayList<YoutubeInterpretation> ytInterpretations = ytInterpret(url);
+                try {
+                    YoutubeInterpretation youtubeInterpretation = ytInterpret(url);
+                    if (youtubeInterpretation instanceof YoutubeVideoInterpretation) {
+                        interpretations.put("YoutubeVideo", youtubeInterpretation);
+                    } else {
+                        interpretations.put("YoutubePlaylist", youtubeInterpretation);
+                    }
+                } catch(IOException | RequestFailed ignore) {}
                 break;
             case "spotify":
                 throw new InvalidURL("Spotify is not supported yet");
             case "soundcloud":
                 throw new InvalidURL("Soundcloud is not supported yet");
+            default:
+                throw new IllegalStateException("Unexpected value: " + platform);
         }
-        return new ArrayList<Interpretation>();
+        return interpretations;
     }
 
     private static String getPlatform(String url) throws PlatformNotFound {
@@ -95,43 +107,21 @@ public class LinkInterpreter {
         throw new InvalidURL(String.format("Could not fetch Type and Id of the given url %s", url));
     }
 
-    private static ArrayList<YoutubeInterpretation> ytInterpret(String url) throws  InvalidURL {
+    private static YoutubeInterpretation ytInterpret(String url) throws InvalidURL, IOException, RequestFailed {
         // TODO Send a request to youtube so you can get the song title / song titles for every song in a playlist
         LinkProcessingLogger logger = LinkProcessingLogger.getInstance();
         HashMap<String, String> typeAndId = ytGetTypeAndId(url);
-        if (!typeAndId.containsKey("type")) {
-            logger.warn(
-                    new LoggerContent(
-                        "warning",
-                        "ytInterpret",
-                        "Could not resolve key type",
-                        new HashMap<String, String>() {{
-                            put("url", url);
-                            put("HashMap", typeAndId.toString());
-                        }}
-                    )
-            );
-        }
-        if (!typeAndId.containsKey("id")) {
-            logger.warn(
-                    new LoggerContent(
-                            "warning",
-                            "ytInterpret",
-                            "Could not resolve key id",
-                            new HashMap<String, String>() {{
-                                put("url", url);
-                                put("HashMap", typeAndId.toString());
-                            }}
-                    )
-            );
-        }
-        ArrayList<YoutubeInterpretation> ytInterpretation = new ArrayList<>();
         if (Objects.equals(typeAndId.get("type"), "playlist")) {
-//            ytInterpretation.add(youtubeApi.getPlaylistInformation(typeAndId.get("id")));
+            return youtubeApi.getPlaylistInformation(typeAndId.get("id"));
         } else if (Objects.equals(typeAndId.get("type"), "video")) {
-//            ytInterpretation.add(youtubeApi.getVideoInformation(typeAndId.get("id")));
+            try {
+                // TODO Error handling
+                return youtubeApi.getVideoInformation(typeAndId.get("id"));
+            } catch(IOException | RequestFailed | InvalidURL e) {
+                e.printStackTrace();
+            }
         }
-        return ytInterpretation;
+        throw new IllegalStateException("Unexpected value: " + typeAndId.get("type"));
     }
     // YT END
 }

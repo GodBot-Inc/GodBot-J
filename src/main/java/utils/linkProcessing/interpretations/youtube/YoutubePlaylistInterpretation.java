@@ -2,6 +2,8 @@ package utils.linkProcessing.interpretations.youtube;
 
 import utils.linkProcessing.interpretations.Interpretation;
 
+import java.util.ArrayList;
+
 public class YoutubePlaylistInterpretation implements YoutubeInterpretation, Interpretation {
 
     private final long duration;
@@ -10,14 +12,16 @@ public class YoutubePlaylistInterpretation implements YoutubeInterpretation, Int
     private final String uri;
     private final String thumbnailUri;
     private final int size;
+    private final ArrayList<String> videoUris;
 
-    public YoutubePlaylistInterpretation(long duration, String author, String title, String uri, String thumbnailUri, int size) {
+    public YoutubePlaylistInterpretation(long duration, String author, String title, String uri, String thumbnailUri, int size, ArrayList<String> videoUris) {
         this.duration = duration;
         this.author = author;
         this.title = title;
         this.uri = uri;
         this.thumbnailUri = thumbnailUri;
         this.size = size;
+        this.videoUris = videoUris;
     }
 
     @Override
@@ -47,5 +51,9 @@ public class YoutubePlaylistInterpretation implements YoutubeInterpretation, Int
 
     public int getSize() {
         return this.size;
+    }
+
+    public ArrayList<String> getVideoUris() {
+        return this.videoUris;
     }
 }

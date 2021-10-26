@@ -2,7 +2,6 @@ package discord.audio;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
-import org.apache.commons.collections4.map.HashedMap;
 import utils.customExceptions.audio.PlayerNotFound;
 import utils.customExceptions.audio.QueueEmpty;
 import utils.logging.AudioLogger;
@@ -35,6 +34,13 @@ public class QueueSystem {
                 )
         );
         queueStorage.put(player, new ArrayList<>());
+    }
+
+    public boolean canPlayNext(AudioPlayer player) throws PlayerNotFound {
+        if (!queueStorage.containsKey(player)) {
+            throw new PlayerNotFound("Could not find Player " + player);
+        }
+        return !queueStorage.get(player).isEmpty();
     }
 
     public void removePlayer(AudioPlayer player) throws PlayerNotFound {

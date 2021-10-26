@@ -4,72 +4,120 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
+import utils.EmojiIds;
 import utils.linkProcessing.interpretations.Interpretation;
-import utils.linkProcessing.interpretations.youtube.YoutubeVideoInterpretation;
 
 import java.awt.*;
 import java.util.HashMap;
 
 public class PlayTrack {
-
-    private static final String youtubeEmoji = "<:youtube:898548549615255572>";
-    private static final String soundcloudEmoji = "<:soundcloud:898548569051631618>";
-    private static final String spotifyEmoji = "<:spotify:898548583370989590>";
-
     public static String formatSources(HashMap<String, Interpretation> interpretations) {
-        // TODO extract the sources given and bring the info into a nice format
-        // TODO Also add buttons to display more information about the song specific to a platform
-        if (interpretations.isEmpty()) {
-            return String.format(
-                    "%s -\n%s -\n%s -\n",
-                    youtubeEmoji,
-                    soundcloudEmoji,
-                    spotifyEmoji
+        StringBuilder builder = new StringBuilder();
+        if (interpretations.containsKey("YoutubeVideo")) {
+            builder.append(
+                    String.format(
+                            "%s %s\n",
+                            EmojiIds.youtubeEmoji,
+                            interpretations.get("YoutubeVideo").getUrl()
+                    )
+            );
+        } else if (interpretations.containsKey("YoutubePlaylist")) {
+            builder.append(
+                    String.format(
+                            "%s %s\n",
+                            EmojiIds.youtubeEmoji,
+                            interpretations.get("YoutubePlaylist").getUrl()
+                    )
             );
         } else {
-            StringBuilder builder = new StringBuilder();
-            if (interpretations.containsKey("YoutubeVideo") && interpretations.get("YoutubeVideo").getClass().getName() == "moin") {
-                YoutubeVideoInterpretation ytInterpretation = (YoutubeVideoInterpretation) interpretations.get("YoutubeVideo");
-                builder.append(
-                        String.format(
-                                "%s %s\n",
-                                youtubeEmoji,
-                        )
-                );
-            } else if (interpretations.containsKey("YoutubePlaylist")) {
-
-            } else {
-
-            }
-
-            if (interpretations.containsKey("SpotifySong")) {
-
-            } else if (interpretations.containsKey("SpotifyPlaylist")) {
-
-            } else if (interpretations.containsKey("SpotifyAlbum")) {
-
-            } else {
-
-            }
-
-            if (interpretations.containsKey("SoundcloudSong")) {
-
-            } else if (interpretations.containsKey("SoundcloudPlaylist")) {
-
-            } else if (interpretations.containsKey("SoundcloudAlbum")) {
-
-            } else {
-
-            }
+            builder.append(
+                    String.format(
+                            "%s -\n",
+                            EmojiIds.youtubeEmoji
+                    )
+            );
         }
+
+        if (interpretations.containsKey("SpotifySong")) {
+            builder.append(
+                    String.format(
+                            "%s %s\n",
+                            EmojiIds.spotifyEmoji,
+                            interpretations.get("SpotifySong").getUrl()
+                    )
+            );
+        } else if (interpretations.containsKey("SpotifyPlaylist")) {
+            builder.append(
+                    String.format(
+                            "%s %s\n",
+                            EmojiIds.spotifyEmoji,
+                            interpretations.get("SpotifyPlaylist").getUrl()
+                    )
+            );
+        } else if (interpretations.containsKey("SpotifyAlbum")) {
+            builder.append(
+                    String.format(
+                            "%s %s\n",
+                            EmojiIds.spotifyEmoji,
+                            interpretations.get("SpotifyAlbum").getUrl()
+                    )
+            );
+        } else {
+            builder.append(
+                    String.format(
+                            "%s -\n",
+                            EmojiIds.spotifyEmoji
+                    )
+            );
+        }
+
+        if (interpretations.containsKey("SoundcloudSong")) {
+            builder.append(
+                    String.format(
+                            "%s %s",
+                            EmojiIds.soundcloudEmoji,
+                            interpretations.get("SoundcloudSong").getUrl()
+                    )
+            );
+        } else if (interpretations.containsKey("SoundcloudPlaylist")) {
+            builder.append(
+                    String.format(
+                            "%s %s",
+                            EmojiIds.soundcloudEmoji,
+                            interpretations.get("SoundcloudPlaylist").getUrl()
+                    )
+            );
+        } else if (interpretations.containsKey("SoundcloudAlbum")) {
+            builder.append(
+                    String.format(
+                            "%s %s",
+                            EmojiIds.soundcloudEmoji,
+                            interpretations.get("SoundcloudAlbum")
+                    )
+            );
+        } else {
+            builder.append(
+                    String.format(
+                            "%s -",
+                            EmojiIds.soundcloudEmoji
+                    )
+            );
+        }
+        return builder.toString();
     }
 
-    public static MessageEmbed build(AudioTrack track, Member requester, String thumbnailUrl, boolean nowPlaying, HashMap<String, Interpretation> interpretations) {
-        String title;
-        String thumbnail = "https://cdn-icons.flaticon.com/png/512/3083/premium/3083417.png?token=exp=1634997669~hmac=f6a9fef992b7627500be77fe042b0077";
-        if (thumbnailUrl != null) {
-            thumbnail = thumbnailUrl;
+    private static String getThumbnail(HashMap<String, Interpretation> interpretations) {
+        String defaultThumbnail = "https://cdn-icons.flaticon.com/png/512/3083/premium/3083417.png?token=exp=1634997669~hmac=f6a9fef992b7627500be77fe042b0077";
+        for (Interpretation interpretation : interpretations.values()) {
+            if (interpretation.getThumbnailUrl() != null) {
+                return interpretation.getThumbnailUrl();
+            }
         }
+        return defaultThumbnail;
+    }
+
+    public static MessageEmbed build(AudioTrack track, Member requester, boolean nowPlaying, HashMap<String, Interpretation> interpretations) {
+        String title;
         if (nowPlaying) {
             title = "Playing";
         } else {
@@ -85,13 +133,11 @@ public class PlayTrack {
                         )
                 )
                 .setColor(Color.ORANGE)
-                .setThumbnail(thumbnail)
+                .setThumbnail(getThumbnail(interpretations))
                 .addField("Author", track.getInfo().author, true)
                 .addField("", formatSources(interpretations), true)
                 .addField("Duration", trackLines.build(0, track.getInfo().length), false)
                 .setFooter(String.format("by %s", requester.getEffectiveName()), requester.getUser().getAvatarUrl())
                 .build();
     }
-
-    //TODO Get Buttons here
 }

@@ -1,13 +1,17 @@
 package discord.audio.lavaplayer;
 
+import discord.audio.PlayerManager;
 import discord.audio.QueueSystem;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.event.AudioEventAdapter;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
+import discord.commands.music.Play;
 import utils.customExceptions.audio.PlayerNotFound;
 import utils.customExceptions.audio.QueueEmpty;
+
+import java.util.Queue;
 
 class TrackEventListener extends AudioEventAdapter {
     @Override
@@ -27,12 +31,24 @@ class TrackEventListener extends AudioEventAdapter {
 
     @Override
     public void onTrackEnd(AudioPlayer player, AudioTrack track, AudioTrackEndReason endReason) {
+        /*
+        TODO Here we can implement the dynamic bot quality.
+        On every TrackEnd event we look at the ram that the players
+        are using and adjust it for every player. (That will be a fun algorithm to code)
+         */
         if (endReason.mayStartNext) {
             QueueSystem queue = QueueSystem.getInstance();
             try {
-                // TODO: Actually play the next song
-                queue.getNextAndDelete(player);
-            } catch (PlayerNotFound | QueueEmpty e) {
+                if (queue.canPlayNext(player)) {
+                    try {
+                        player.playTrack(queue.getNextAndDelete(player));
+                    } catch (PlayerNotFound e) {
+                        queue.registerPlayer(player);
+                    } catch (QueueEmpty e) {
+                        e.printStackTrace();
+                    }
+                }
+            } catch (PlayerNotFound e) {
                 e.printStackTrace();
             }
         } else {

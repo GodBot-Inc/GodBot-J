@@ -9,8 +9,8 @@
         <module name="GodBot-J" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
-      <module name="GodBot-J" target="8" />
+    <bytecodeTargetLevel target="17">
+      <module name="GodBot-J" target="14" />
     </bytecodeTargetLevel>
   </component>
 </project>

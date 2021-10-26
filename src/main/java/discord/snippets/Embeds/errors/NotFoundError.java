@@ -5,7 +5,7 @@ import net.dv8tion.jda.api.entities.MessageEmbed;
 
 import java.awt.*;
 
-public class NotFound {
+public class NotFoundError {
     public static MessageEmbed build(String description) {
         return new EmbedBuilder()
                 .setDescription(
