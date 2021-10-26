@@ -12,16 +12,16 @@ public class YoutubePlaylistInterpretation implements YoutubeInterpretation, Int
     private final String uri;
     private final String thumbnailUri;
     private final int size;
-    private final ArrayList<String> videoUris;
+    private final ArrayList<YoutubeVideoInterpretation> videoInterpretations;
 
-    public YoutubePlaylistInterpretation(long duration, String author, String title, String uri, String thumbnailUri, int size, ArrayList<String> videoUris) {
+    public YoutubePlaylistInterpretation(long duration, String author, String title, String uri, String thumbnailUri, int size, ArrayList<YoutubeVideoInterpretation> videoInterpretations) {
         this.duration = duration;
         this.author = author;
         this.title = title;
         this.uri = uri;
         this.thumbnailUri = thumbnailUri;
         this.size = size;
-        this.videoUris = videoUris;
+        this.videoInterpretations = videoInterpretations;
     }
 
     @Override
@@ -53,7 +53,7 @@ public class YoutubePlaylistInterpretation implements YoutubeInterpretation, Int
         return this.size;
     }
 
-    public ArrayList<String> getVideoUris() {
-        return this.videoUris;
+    public ArrayList<YoutubeVideoInterpretation> getVideoInterpretations() {
+        return this.videoInterpretations;
     }
 }
