@@ -8,6 +8,7 @@ import utils.customExceptions.LinkInterpretation.youtubeApi.ApiKeyNotRetreived;
 import utils.customExceptions.LinkInterpretation.InvalidURL;
 import utils.customExceptions.LinkInterpretation.RequestFailed;
 import utils.customExceptions.LinkInterpretation.youtubeApi.CouldNotExtractInfo;
+import utils.customExceptions.LinkInterpretation.youtubeApi.VideoNotFound;
 import utils.linkProcessing.interpretations.youtube.YoutubePlaylistInterpretation;
 import utils.linkProcessing.interpretations.youtube.YoutubeVideoInterpretation;
 
@@ -33,7 +34,33 @@ public class youtubeApi {
 
     private static long convertDuration(String duration) {
         // TODO Convert duration from this format: {insert format} into a long (milliseconds)
-        return 0;
+        System.out.println();
+        System.out.println("Convert Duration:");
+        System.out.println(duration);
+        long time = 0;
+        duration = duration.substring(2);
+        System.out.println(duration);
+        if (duration.contains("H")) {
+            // multiply hours with 3600000 to get milliseconds
+            time += Long.parseLong(duration.split("H")[0]) * 3600000;
+        }
+        if (duration.contains("M")) {
+            if (time != 0) {
+                time += Long.parseLong(duration.split("M")[0].substring(1)) * 60000;
+            } else {
+                time += Long.parseLong(duration.split("M")[0]) * 60000;
+            }
+        }
+        if (duration.contains("S")) {
+            if (duration.contains("M")) {
+                time += Long.parseLong(duration.split("M")[1].substring(0, 1)) * 1000;
+            } else if (duration.contains("H")) {
+                time += Long.parseLong(duration.split("H")[1].substring(0, 1)) * 1000;
+            } else {
+                time += Long.parseLong(duration.substring(0, 1)) * 1000;
+            }
+        }
+        return time;
     }
 
     private static String getApiKey() throws ApiKeyNotRetreived {
@@ -67,8 +94,10 @@ public class youtubeApi {
         }
 
         String author = snippet.getString("channelTitle");
-        if (author.contains(" - Topic")) {
+        if (author.contains("- Topic")) {
+            System.out.println(author);
             author = author.split(" - Tpoic")[0];
+            System.out.println(author);
         }
 
         String title = snippet.getString("title");
@@ -96,12 +125,7 @@ public class youtubeApi {
             comments = Integer.parseInt(statistics.getString("commentCount"));
         }
 
-        long duration;
-        if (contentDetails.isEmpty()) {
-            duration = 0;
-        } else {
-            duration = convertDuration(contentDetails.getString("duration"));
-        }
+        long duration = convertDuration(contentDetails.getString("duration"));
 
         return new YoutubeVideoInterpretation(
                 duration,
@@ -120,30 +144,27 @@ public class youtubeApi {
     }
 
     public static YoutubeVideoInterpretation getVideoInformation(String id)
-            throws IOException, RequestFailed, InvalidURL {
+            throws IOException, RequestFailed, InvalidURL, CouldNotExtractInfo {
         JSONObject videoInfo = sendRequest(String.format(
                 getVideoInformationUrl,
                 id,
                 getApiKey()
         ));
 
-        // Check and extract received information
-        if (videoInfo.isEmpty()) {
-            throw new CouldNotExtractInfo("JSONObject is empty");
-        }
-        if (videoInfo.getJSONObject("items").isEmpty()) {
-            throw new CouldNotExtractInfo("Items is empty");
+        JSONObject items = videoInfo.getJSONArray("items").getJSONObject(0);
+        if (items.isEmpty()) {
+            throw new VideoNotFound(String.format("VideoId: %s could not be found", id));
         }
         return extractVideoInfo(
-                videoInfo.getJSONObject("items").getJSONObject("snippet"),
-                videoInfo.getJSONObject("items").getJSONObject("statistics"),
-                videoInfo.getJSONObject("items").getJSONObject("contentDetails"),
+                items.getJSONObject("snippet"),
+                items.getJSONObject("statistics"),
+                items.getJSONObject("contentDetails"),
                 id
         );
     }
 
     public static YoutubePlaylistInterpretation getPlaylistInformation(String id)
-            throws InvalidURL, IOException, RequestFailed, CouldNotExtractInfo {
+            throws InvalidURL, IOException, RequestFailed {
         // TODO Combine PlaylistInfo and Playlistitems requests in one method
         JSONObject playlistInfo = sendRequest(
                 String.format(
@@ -205,14 +226,16 @@ public class youtubeApi {
                             getString("duration")
             );
 
-            videoInterpretations.add(
-                    extractVideoInfo(
-                            obj.getJSONObject("snippet"),
-                            obj.getJSONObject("statistics"),
-                            obj.getJSONObject("contentDetails"),
-                            id
-                    )
-            );
+            try {
+                videoInterpretations.add(
+                        extractVideoInfo(
+                                obj.getJSONObject("snippet"),
+                                obj.getJSONObject("statistics"),
+                                obj.getJSONObject("contentDetails"),
+                                id
+                        )
+                );
+            } catch(CouldNotExtractInfo ignore) {}
         }
 
         return new YoutubePlaylistInterpretation(

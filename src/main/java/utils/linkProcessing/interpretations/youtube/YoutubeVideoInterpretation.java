@@ -27,6 +27,23 @@ public class YoutubeVideoInterpretation implements YoutubeInterpretation, Interp
     }
 
     @Override
+    public String toString() {
+        return String.format(
+                "YoutubeVideoInterpretation=[duration=%s, author=%s, title=%s, uri=%s, " +
+                        "thumbnailUri=%s, likes=%s, dislikes=%s, views=%s, comments=%s]",
+                duration,
+                author,
+                title,
+                uri,
+                thumbnailUri,
+                likes,
+                dislikes,
+                views,
+                comments
+        );
+    }
+
+    @Override
     public long getDuration() {
         return this.duration;
     }
