@@ -3,6 +3,7 @@ package utils.apis.youtube;
 import com.mongodb.util.JSON;
 import io.github.cdimascio.dotenv.Dotenv;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import utils.customExceptions.LinkInterpretation.youtubeApi.ApiKeyNotRetreived;
 import utils.customExceptions.LinkInterpretation.InvalidURL;
@@ -20,26 +21,52 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Objects;
 
+// TODO Make youtubeApi section VideoType 10 (music) only so we can use youtube music links
 public class youtubeApi {
 
     private static final String getPlaylistInfoUrl =
-            "https://youtube.googleapis.com/youtube/v3/playlists?" +
-                    "part=snippet&part=contentDetails&id=%s&maxResults=1&key=%s";
+            "https://youtube.googleapis.com/youtube/v3/" +
+                    "playlists?" +
+                    "part=snippet" +
+                    "&part=contentDetails" +
+                    "&id=%s" +
+                    "&maxResults=1" +
+                    "&key=%s";
     private static final String getPlaylistItemsUrl =
-            "https://youtube.googleapis.com/youtube/v3/playlistItems?" +
-                    "part=snippet&playlistId=%s&key=%s";
+            "https://youtube.googleapis.com/youtube/v3/" +
+                    "playlistItems?" +
+                    "part=snippet" +
+                    "&part=contentDetails" +
+                    "&playlistId=%s" +
+                    "&key=%s";
     private static final String getVideoInformationUrl =
-            "https://youtube.googleapis.com/youtube/v3/videos?" +
-                    "part=contentDetails&part=snippet&part=statistics&id=%s&maxResults=1&key=%s";
+            "https://youtube.googleapis.com/youtube/v3/" +
+                    "videos?" +
+                    "part=contentDetails" +
+                    "&part=snippet" +
+                    "&part=statistics" +
+                    "&id=%s" +
+                    "&maxResults=1" +
+                    "&key=%s";
+    private static final String playlistItemsUrlWithToken =
+            "https://youtube.googleapis.com/youtube/v3/" +
+                    "playlistItems?" +
+                    "part=snippet" +
+                    "&part=contentDetails" +
+                    "&pageToken=%s" +
+                    "&playlistId=%s" +
+                    "&key=%s";
 
+    /**
+     * Converts the duration from the passed String that we get from YouTube to a long
+     * @param duration passed from YouTube
+     * @return duration in milliseconds
+     */
     private static long convertDuration(String duration) {
-        // TODO Convert duration from this format: {insert format} into a long (milliseconds)
-        System.out.println();
-        System.out.println("Convert Duration:");
-        System.out.println(duration);
         long time = 0;
-        duration = duration.substring(2);
-        System.out.println(duration);
+        if (duration.contains("PT") || duration.contains("PM")) {
+            duration = duration.substring(2);
+        }
         if (duration.contains("H")) {
             // multiply hours with 3600000 to get milliseconds
             time += Long.parseLong(duration.split("H")[0]) * 3600000;
@@ -72,6 +99,15 @@ public class youtubeApi {
         return API_KEY;
     }
 
+    /**
+     * Call it and pass the following arguments to get a YoutubeVideoInterpretation
+     * @param snippet The snippet part of the original JSONObject
+     * @param statistics The statistics part of the original JSONObject
+     * @param contentDetails The contentDetails part of the original JSONObject
+     * @param id The YouTube id from the Video you want to extract the information from
+     * @return A YoutubeVideoInterpretation that contains all the gathered information
+     * @throws CouldNotExtractInfo If one of the necessary parts is empty
+     */
     private static YoutubeVideoInterpretation extractVideoInfo(
             JSONObject snippet,
             JSONObject statistics,
@@ -95,9 +131,7 @@ public class youtubeApi {
 
         String author = snippet.getString("channelTitle");
         if (author.contains("- Topic")) {
-            System.out.println(author);
             author = author.split(" - Tpoic")[0];
-            System.out.println(author);
         }
 
         String title = snippet.getString("title");
@@ -143,13 +177,29 @@ public class youtubeApi {
         );
     }
 
+    /**
+     * This function gathers information about the video with the given id
+     * @param id The YouTube id of the video that should be gathered information about
+     * @return Returns a YoutubeVideoInterpretation Object which contains all the gathered information
+     * @throws IOException If the request sending failed
+     * @throws RequestFailed If the request returns an invalid response code
+     * @throws InvalidURL If the Url the method got from the id is invalid
+     * @throws CouldNotExtractInfo If the Video Information could not be extracted because YouTubes answer is
+     * missing something important
+     * @throws VideoNotFound If the given id is not an id of a YouTube Video
+     * @throws InternalError If YouTube has issues resolving the request
+     */
     public static YoutubeVideoInterpretation getVideoInformation(String id)
-            throws IOException, RequestFailed, InvalidURL, CouldNotExtractInfo {
+            throws IOException, RequestFailed, InvalidURL, CouldNotExtractInfo, VideoNotFound, InternalError {
         JSONObject videoInfo = sendRequest(String.format(
                 getVideoInformationUrl,
                 id,
                 getApiKey()
         ));
+
+        if (videoInfo.getJSONArray("items").isEmpty()) {
+            throw new VideoNotFound("VideoId: " + id + " not found");
+        }
 
         JSONObject items = videoInfo.getJSONArray("items").getJSONObject(0);
         if (items.isEmpty()) {
@@ -163,9 +213,51 @@ public class youtubeApi {
         );
     }
 
+    /**
+     * The only purpose of the method is to return the converted duration from a video
+     * @param id The YouTube id of the song
+     * @return Only the duration of the song in milliseconds
+     * @throws InvalidURL If the URL that he got from the id is not valid
+     * @throws IOException When the send command of the request failed
+     * @throws RequestFailed If the request returned an invalid return code
+     * @throws InternalError If YouTube has issues resolving the request
+     */
+    private static long getVideoDuration(String id)
+            throws InvalidURL, IOException, RequestFailed, InternalError {
+        return convertDuration(sendRequest(
+                String.format(
+                        getVideoInformationUrl,
+                        id,
+                        getApiKey()
+                )
+        )
+                        .getJSONArray("items")
+                        .getJSONObject(0)
+                        .getJSONObject("contentDetails")
+                        .getString("duration")
+        );
+    }
+
+    private static boolean checkToken(JSONObject jsonObject) {
+        try {
+            jsonObject.get("nextPageToken");
+        } catch(JSONException e) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * The purpose of the method is to gather information about a playlist
+     * @param id The YouTube id of the playlist
+     * @return a YoutubePlaylistInterpretation Object that inhabits all important information
+     * @throws InvalidURL gets thrown if the Url it got from the id is invalid
+     * @throws IOException When the send command of the request failed
+     * @throws RequestFailed If the request  returned an invalid return code
+     * @throws InternalError If YouTube has issues resolving the request
+     */
     public static YoutubePlaylistInterpretation getPlaylistInformation(String id)
-            throws InvalidURL, IOException, RequestFailed {
-        // TODO Combine PlaylistInfo and Playlistitems requests in one method
+            throws InvalidURL, IOException, RequestFailed, InternalError {
         JSONObject playlistInfo = sendRequest(
                 String.format(
                         getPlaylistInfoUrl,
@@ -184,21 +276,31 @@ public class youtubeApi {
         if (playlistInfo.isEmpty()) {
             throw new CouldNotExtractInfo("PlaylistInfo is empty");
         }
-        if (playlistInfo.getJSONObject("items").isEmpty()) {
-            throw new CouldNotExtractInfo("Items is empty");
+        if (playlistInfo.getJSONArray("items").isEmpty()) {
+            throw new VideoNotFound("PlaylistId: " + id + " could not be found");
         }
 
-        if (playlistItems.isEmpty()) {
-            throw new CouldNotExtractInfo("PlaylistItems is empty");
+        JSONObject contentDetails;
+        JSONObject snippet;
+        try {
+            contentDetails = playlistInfo
+                    .getJSONArray("items")
+                    .getJSONObject(0)
+                    .getJSONObject("contentDetails");
+        }  catch (JSONException e) {
+            throw new CouldNotExtractInfo("ContentDetails was not found");
         }
-        if (playlistItems.getJSONObject("items").isEmpty()) {
-            throw new CouldNotExtractInfo("Items is empty");
+        try {
+            snippet = playlistInfo
+                    .getJSONArray("items")
+                    .getJSONObject(0)
+                    .getJSONObject("snippet");
+        }  catch (JSONException e) {
+            throw new CouldNotExtractInfo("Snippet was not found");
         }
-
-        JSONObject snippet = playlistItems.getJSONObject("items").getJSONObject("snippet");
 
         String author = snippet.getString("channelTitle");
-        if (author.contains(" - Topic")) {
+        if (author.contains("Topic")) {
             author = author.split(" - Topic")[0];
         }
 
@@ -211,31 +313,32 @@ public class youtubeApi {
             thumbnail = null;
         }
 
-        int itemCount = Integer.parseInt(playlistInfo.getJSONObject("contentDetails").getString("itemCount"));
+        int itemCount = contentDetails.getInt("itemCount");
 
         long duration = 0;
 
-        ArrayList<YoutubeVideoInterpretation> videoInterpretations = new ArrayList<>();
-        JSONArray array = playlistItems.getJSONArray("items");
-        for (int i = 0; i < array.length(); i++) {
-            JSONObject obj = array.getJSONObject(i);
+        ArrayList<String> videoIds = new ArrayList<>();
+        JSONObject playlistItemsObject = playlistItems;
+        JSONArray array;
+        while (checkToken(playlistItemsObject)) {
+            array = playlistItemsObject.getJSONArray("items");
+            for (int i = 0; i < array.length(); i++) {
+                String videoId = array
+                        .getJSONObject(i)
+                        .getJSONObject("contentDetails")
+                        .getString("videoId");
 
-            duration += convertDuration(
-                    obj.
-                            getJSONObject("contentDetails").
-                            getString("duration")
+                duration += getVideoDuration(videoId);
+                videoIds.add(videoId);
+            }
+            playlistItemsObject = sendRequest(
+                    String.format(
+                            playlistItemsUrlWithToken,
+                            playlistItemsObject.getString("nextPageToken"),
+                            id,
+                            getApiKey()
+                    )
             );
-
-            try {
-                videoInterpretations.add(
-                        extractVideoInfo(
-                                obj.getJSONObject("snippet"),
-                                obj.getJSONObject("statistics"),
-                                obj.getJSONObject("contentDetails"),
-                                id
-                        )
-                );
-            } catch(CouldNotExtractInfo ignore) {}
         }
 
         return new YoutubePlaylistInterpretation(
@@ -248,25 +351,32 @@ public class youtubeApi {
                 ),
                 thumbnail,
                 itemCount,
-                videoInterpretations
+                videoIds
         );
     }
 
-    private static void checkResponseCode(int code) throws RequestFailed, InvalidURL {
-        switch (code) {
-            case 200, 201, 202, 203, 204 -> System.out.println("Request was successful");
-            case 400, 401, 403 -> throw new RequestFailed("The request that was sent failed");
-            case 404 -> throw new InvalidURL("The request returned a 404 error");
-            case 500, 501, 502, 503, 504 -> throw new InternalError("Youtube has some issues resolving this request");
-        }
-    }
-
-    private static JSONObject sendRequest(String url) throws IOException, RequestFailed, InvalidURL {
+    /**
+     * A method that is there for sending requests
+     * @param url The destination that a request will be sent to
+     * @return the response of the website as JSONObject
+     * @throws IOException If the request failed
+     * @throws RequestFailed If the request returned an invalid return code
+     * @throws InvalidURL If the passed URL is invalid
+     * @throws InternalError If the website has trouble processing the request
+     */
+    private static JSONObject sendRequest(String url)
+            throws IOException, RequestFailed, InvalidURL, InternalError {
         URL obj = new URL(url);
         HttpURLConnection con = (HttpURLConnection) obj.openConnection();
         con.setRequestMethod("GET");
         int responseCode = con.getResponseCode();
-        checkResponseCode(responseCode);
+
+        switch (responseCode) {
+            case 400, 401, 403 -> throw new RequestFailed("The request that was sent failed");
+            case 404 -> throw new InvalidURL("The request returned a 404 error");
+            case 500, 501, 502, 503, 504 -> throw new InternalError("The site has some issues resolving your request");
+        }
+
         BufferedReader bufferedReader = new BufferedReader(
                 new InputStreamReader(con.getInputStream())
         );

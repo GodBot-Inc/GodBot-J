@@ -13,8 +13,10 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.managers.AudioManager;
 import discord.JDAManager;
+import okhttp3.internal.platform.Platform;
 import utils.customExceptions.ChannelNotFound;
 import utils.customExceptions.GuildNotFound;
+import utils.customExceptions.LinkInterpretation.InvalidPlatform;
 import utils.customExceptions.LinkInterpretation.InvalidURL;
 import utils.customExceptions.LinkInterpretation.PlatformNotFound;
 import utils.customExceptions.audio.ApplicationNotFound;
@@ -108,23 +110,61 @@ public class Play {
             manager.setSendingHandler(new AudioPlayerSendHandler(player));
         }
         // TODO: Utilize Apis to search for compatibility
-        manager.openAudioConnection(member.getVoiceState().getChannel());
-        HashMap<String, Interpretation> interpretationHashMap;
+        // TODO Find a way to distribute YoutubeInterpretations
+        /*
+        1. Check if the Url is valid
+        2. defer reply
+        3. Play the song
+         */
+        HashMap<String, Interpretation> interpretationMap;
         try {
-            interpretationHashMap = LinkInterpreter.interpret(url);
+            interpretationMap = LinkInterpreter.interpret(url);
         } catch(InvalidURL e) {
-            event.replyEmbeds(StandardError.build("The Url given is invalid")).queue();
+            event
+                    .replyEmbeds(StandardError.build("The Url " + url + " is invalid"))
+                    .setEphemeral(true)
+                    .queue();
             return;
         } catch(PlatformNotFound e) {
-            event.replyEmbeds(StandardError.build("The given Url ")).queue();
+            event
+                    .replyEmbeds(
+                            StandardError.build(
+                                    "We could not find the corresponding platform to your url"
+                            )
+                    )
+                    .setEphemeral(true)
+                    .queue();
             return;
         }
+//        if (!LinkInterpreter.isValid(url)) {
+//            event
+//                    .replyEmbeds(StandardError.build("The Url " + url + " is invalid"))
+//                    .setEphemeral(true)
+//                    .queue();
+//            return;
+//        }
+//        try {
+//            LinkInterpreter.getPlatform(url);
+//        } catch(PlatformNotFound e) {
+//            event
+//                    .replyEmbeds(
+//                            StandardError.build(
+//                                    "We could not find the corresponding platform to your url"
+//                            )
+//                    )
+//                    .setEphemeral(true)
+//                    .queue();
+//            return;
+//        }
+
+        manager.openAudioConnection(member.getVoiceState().getChannel());
+
         PlayerManager
                 .getInstance()
                 .getManager()
                 .loadItem(
                         String.format("%s", url),
-                        new AudioResultHandler(player, event, url, interpretationHashMap)
+                        new AudioResultHandler(player, event, url, interpretationMap)
                 );
     }
 }

@@ -5,6 +5,8 @@ import utils.apis.youtube.youtubeApi;
 import utils.customExceptions.LinkInterpretation.InvalidURL;
 import utils.customExceptions.LinkInterpretation.PlatformNotFound;
 import utils.customExceptions.LinkInterpretation.RequestFailed;
+import utils.customExceptions.LinkInterpretation.youtubeApi.CouldNotExtractInfo;
+import utils.customExceptions.LinkInterpretation.youtubeApi.VideoNotFound;
 import utils.linkProcessing.interpretations.Interpretation;
 import utils.linkProcessing.interpretations.youtube.YoutubeInterpretation;
 import utils.linkProcessing.interpretations.youtube.YoutubeVideoInterpretation;
@@ -41,7 +43,9 @@ public class LinkInterpreter {
         return LinkProcessingLogger.getInstance();
     }
 
-    private static boolean isValid(String url) {
+    // TODO Logging
+
+    public static boolean isValid(String url) {
         try {
             new URL(url).toURI();
             return true;
@@ -50,7 +54,8 @@ public class LinkInterpreter {
         }
     }
 
-    public static HashMap<String, Interpretation> interpret(String url) throws InvalidURL, PlatformNotFound {
+    public static HashMap<String, Interpretation> interpret(String url)
+            throws InvalidURL, PlatformNotFound {
         if (!isValid(url)) {
             throw new InvalidURL(String.format("Url %s is not valid", url));
         }
@@ -77,7 +82,7 @@ public class LinkInterpreter {
         return interpretations;
     }
 
-    private static String getPlatform(String url) throws PlatformNotFound {
+    public static String getPlatform(String url) throws PlatformNotFound {
         if (url.contains("https://open.spotify.com/")) {
             return "spotify";
         } else if (url.contains("https://www.youtube.com/") || url.contains("https://music.youtube.com/")) {
@@ -107,9 +112,10 @@ public class LinkInterpreter {
         throw new InvalidURL(String.format("Could not fetch Type and Id of the given url %s", url));
     }
 
-    private static YoutubeInterpretation ytInterpret(String url) throws InvalidURL, IOException, RequestFailed {
+    private static YoutubeInterpretation ytInterpret(String url)
+            throws InvalidURL, IOException, RequestFailed, InternalError, CouldNotExtractInfo, VideoNotFound {
         // TODO Send a request to youtube so you can get the song title / song titles for every song in a playlist
-        LinkProcessingLogger logger = LinkProcessingLogger.getInstance();
+        LinkProcessingLogger logger = getLogger();
         HashMap<String, String> typeAndId = ytGetTypeAndId(url);
         if (Objects.equals(typeAndId.get("type"), "playlist")) {
             return youtubeApi.getPlaylistInformation(typeAndId.get("id"));

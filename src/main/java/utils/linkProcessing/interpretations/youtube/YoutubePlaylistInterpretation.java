@@ -1,10 +1,8 @@
 package utils.linkProcessing.interpretations.youtube;
 
-import utils.linkProcessing.interpretations.Interpretation;
-
 import java.util.ArrayList;
 
-public class YoutubePlaylistInterpretation implements YoutubeInterpretation, Interpretation {
+public class YoutubePlaylistInterpretation implements YoutubeInterpretation {
 
     private final long duration;
     private final String author;
@@ -12,16 +10,31 @@ public class YoutubePlaylistInterpretation implements YoutubeInterpretation, Int
     private final String uri;
     private final String thumbnailUri;
     private final int size;
-    private final ArrayList<YoutubeVideoInterpretation> videoInterpretations;
+    private final ArrayList<String> videoIds;
 
-    public YoutubePlaylistInterpretation(long duration, String author, String title, String uri, String thumbnailUri, int size, ArrayList<YoutubeVideoInterpretation> videoInterpretations) {
+    public YoutubePlaylistInterpretation(long duration, String author, String title, String uri, String thumbnailUri, int size, ArrayList<String> videoIds) {
         this.duration = duration;
         this.author = author;
         this.title = title;
         this.uri = uri;
         this.thumbnailUri = thumbnailUri;
         this.size = size;
-        this.videoInterpretations = videoInterpretations;
+        this.videoIds = videoIds;
+    }
+
+    @Override
+    public String toString() {
+        return String.format(
+                "YoutubePlaylistInterpretation=[duration=%s, author=%s, title=%s, uri=%s, thumbnailUri=%s, " +
+                        "size=%s, videoIds=%s]",
+                duration,
+                author,
+                title,
+                uri,
+                thumbnailUri,
+                size,
+                videoIds.toString()
+        );
     }
 
     @Override
@@ -53,7 +66,7 @@ public class YoutubePlaylistInterpretation implements YoutubeInterpretation, Int
         return this.size;
     }
 
-    public ArrayList<YoutubeVideoInterpretation> getVideoInterpretations() {
-        return this.videoInterpretations;
+    public ArrayList<String> getVideoIds() {
+        return this.videoIds;
     }
 }
