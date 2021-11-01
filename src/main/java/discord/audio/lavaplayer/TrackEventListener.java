@@ -1,5 +1,7 @@
 package discord.audio.lavaplayer;
 
+import com.sedmelluq.discord.lavaplayer.player.event.AudioEvent;
+import com.sedmelluq.discord.lavaplayer.player.event.AudioEventListener;
 import discord.audio.PlayerManager;
 import discord.audio.QueueSystem;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
@@ -13,7 +15,7 @@ import utils.customExceptions.audio.QueueEmpty;
 
 import java.util.Queue;
 
-class TrackEventListener extends AudioEventAdapter {
+public class TrackEventListener extends AudioEventAdapter {
     @Override
     public void onPlayerPause(AudioPlayer player) {
         // Player was paused
@@ -40,17 +42,12 @@ class TrackEventListener extends AudioEventAdapter {
             QueueSystem queue = QueueSystem.getInstance();
             try {
                 if (queue.canPlayNext(player)) {
-                    try {
-                        player.playTrack(queue.getNextAndDelete(player));
-                    } catch (PlayerNotFound e) {
-                        queue.registerPlayer(player);
-                    } catch (QueueEmpty e) {
-                        e.printStackTrace();
-                    }
+                    player.playTrack(queue.getNextAndDelete(player));
                 }
             } catch (PlayerNotFound e) {
-                e.printStackTrace();
-            }
+                queue.registerPlayer(player);
+                onTrackEnd(player, track, endReason);
+            } catch (QueueEmpty ignore) {}
         } else {
             System.out.println(endReason.name());
         }

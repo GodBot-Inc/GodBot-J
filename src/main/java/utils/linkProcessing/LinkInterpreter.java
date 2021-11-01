@@ -2,6 +2,7 @@ package utils.linkProcessing;
 
 import okhttp3.Request;
 import utils.apis.youtube.youtubeApi;
+import utils.customExceptions.LinkInterpretation.InvalidPlatform;
 import utils.customExceptions.LinkInterpretation.InvalidURL;
 import utils.customExceptions.LinkInterpretation.PlatformNotFound;
 import utils.customExceptions.LinkInterpretation.RequestFailed;
@@ -55,7 +56,7 @@ public class LinkInterpreter {
     }
 
     public static HashMap<String, Interpretation> interpret(String url)
-            throws InvalidURL, PlatformNotFound {
+            throws InvalidURL, PlatformNotFound, InvalidPlatform {
         if (!isValid(url)) {
             throw new InvalidURL(String.format("Url %s is not valid", url));
         }
@@ -71,11 +72,12 @@ public class LinkInterpreter {
                         interpretations.put("YoutubePlaylist", youtubeInterpretation);
                     }
                 } catch(IOException | RequestFailed ignore) {}
+                // TODO
                 break;
             case "spotify":
-                throw new InvalidURL("Spotify is not supported yet");
+                throw new InvalidPlatform("Spotify is not supported yet");
             case "soundcloud":
-                throw new InvalidURL("Soundcloud is not supported yet");
+                throw new InvalidPlatform("Soundcloud is not supported yet");
             default:
                 throw new IllegalStateException("Unexpected value: " + platform);
         }
@@ -85,13 +87,22 @@ public class LinkInterpreter {
     public static String getPlatform(String url) throws PlatformNotFound {
         if (url.contains("https://open.spotify.com/")) {
             return "spotify";
-        } else if (url.contains("https://www.youtube.com/") || url.contains("https://music.youtube.com/")) {
+        } else if (url.contains("https://youtube.com/") || url.contains("https://music.youtube.com/")) {
             return "youtube";
-        } else if (url.contains("https://www.soundcloud.com/")) {
+        } else if (url.contains("https://soundcloud.com/")) {
             return "soundcloud";
         } else {
             throw new PlatformNotFound(String.format("Platform for lin %s could not be determined", url));
         }
+    }
+
+    public static String getSearchable(String platform, String url)
+        throws InvalidPlatform, InvalidURL {
+        // TODO write that function
+        return switch (platform) {
+            case "soundcloud" -> url;
+            default -> "";
+        };
     }
 
     // YT

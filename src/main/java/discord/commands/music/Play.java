@@ -4,7 +4,9 @@ import discord.audio.*;
 import discord.audio.lavaplayer.AudioPlayerSendHandler;
 import discord.audio.lavaplayer.AudioResultHandler;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
+import discord.snippets.Embeds.errors.NotFoundError;
 import discord.snippets.Embeds.errors.StandardError;
+import discord.snippets.Embeds.trackInfo.PlayTrack;
 import io.github.cdimascio.dotenv.Dotenv;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.audio.AudioSendHandler;
@@ -26,6 +28,7 @@ import utils.linkProcessing.interpretations.Interpretation;
 import java.security.KeyException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Objects;
 
 public class Play {
     private static AudioManager getManager(String applicationId, Guild guild) throws KeyException {
@@ -116,15 +119,28 @@ public class Play {
         2. defer reply
         3. Play the song
          */
-        HashMap<String, Interpretation> interpretationMap;
-        try {
-            interpretationMap = LinkInterpreter.interpret(url);
-        } catch(InvalidURL e) {
+        /*
+        TODO Get soundcloud searcher first then play and then gather info
+        Currently LInkInterpreter.interpret gathers information about the song on all platforms
+        which is time consuming and leads to a lot of latency when using the play command.
+        What we can do is determine the platform, check the URL etc. and then only get the information we need.
+        We get the title and the author of the song, then check if it exists on soundcloud. We get the soundcloud
+        Url and pass lavaplayer the song Id so it can get it.
+        After the song started playing, we interpret the
+         */
+        /*
+        NOTE: First concentrate on playing videos playlists can be handled later (if the playlist exists
+        on soundcloud we can directly load it from soundcloud without lodaing every single song)
+         */
+        if (!LinkInterpreter.isValid(url)) {
             event
                     .replyEmbeds(StandardError.build("The Url " + url + " is invalid"))
                     .setEphemeral(true)
                     .queue();
             return;
+        }
+        try {
+            String platform = LinkInterpreter.getPlatform(url);
         } catch(PlatformNotFound e) {
             event
                     .replyEmbeds(
@@ -136,35 +152,55 @@ public class Play {
                     .queue();
             return;
         }
-//        if (!LinkInterpreter.isValid(url)) {
-//            event
-//                    .replyEmbeds(StandardError.build("The Url " + url + " is invalid"))
-//                    .setEphemeral(true)
-//                    .queue();
-//            return;
-//        }
-//        try {
-//            LinkInterpreter.getPlatform(url);
-//        } catch(PlatformNotFound e) {
-//            event
-//                    .replyEmbeds(
-//                            StandardError.build(
-//                                    "We could not find the corresponding platform to your url"
-//                            )
-//                    )
-//                    .setEphemeral(true)
-//                    .queue();
-//            return;
-//        }
 
+        // TODO: Move connecting to Voicechannel into AudioResultHandler
         manager.openAudioConnection(member.getVoiceState().getChannel());
 
+        // TODO find a way to get information from AudioResultHandler after loading the title
+        /*
+        Possible Solution:
+        We create an instance of a new AudioResultHandler here and create an instance-variable that
+        contains information after it got a result. We can get these Information after Items
+        were loaded :5head:
+         */
+        // TODO Determine the platform and get the soundcloud ID
+        event.deferReply().queue();
+        AudioResultHandler audioResultHandler = new AudioResultHandler(player, event, url);
         PlayerManager
                 .getInstance()
                 .getManager()
                 .loadItem(
                         String.format("%s", url),
-                        new AudioResultHandler(player, event, url, interpretationMap)
+                        audioResultHandler
                 );
+        if (Objects.equals(audioResultHandler.actionType, "trackLoaded")) {
+
+        }
+//        HashMap<String, Interpretation> interpretationHashMap = new HashMap<>();
+//        try {
+//            interpretationHashMap = LinkInterpreter.interpret(url);
+//        } catch(InvalidURL e) {
+//            event
+//                    .replyEmbeds(
+//                            StandardError.build("The passed Url is not valid")
+//                    )
+//                    .queue();
+//        } catch(PlatformNotFound e) {
+//            event
+//                    .replyEmbeds(
+//                            StandardError.build(
+//                                    "Could not determine the platform that the link was taken from"
+//                            )
+//                    )
+//                    .queue();
+//        } catch(InvalidPlatform e) {
+//            event
+//                    .replyEmbeds(
+//                            StandardError.build(
+//                                    "The platform passed is invalid"
+//                            )
+//                    )
+//                    .queue();
+//        }
     }
 }

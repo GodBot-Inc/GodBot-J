@@ -23,31 +23,21 @@ public class AudioResultHandler implements AudioLoadResultHandler {
 
     private final AudioPlayer player;
     private final SlashCommandEvent event;
-    private final String identifier;
-    private final HashMap<String, Interpretation> interpretations;
+    public final String identifier;
+    public String actionType = null;
+    public boolean nowPlaying = false;
 
-    public AudioResultHandler(AudioPlayer player, SlashCommandEvent event, String identifier, HashMap<String, Interpretation> interpretations) {
+    public AudioResultHandler(AudioPlayer player, SlashCommandEvent event, String identifier) {
         this.player = player;
         this.event = event;
         this.identifier = identifier;
-        this.interpretations = interpretations;
     }
     
     @Override
     public void trackLoaded(AudioTrack audioTrack) {
-        QueueSystem qSystem = QueueSystem.getInstance();
         System.out.printf("TrackLoaded %s", identifier);
-        boolean nowPlaying = PlayerManager.playTrack(player, audioTrack);
-        event
-                .replyEmbeds(
-                        PlayTrack.build(
-                                audioTrack,
-                                event.getMember(),
-                                nowPlaying,
-                                interpretations
-                        )
-                )
-                .queue();
+        this.nowPlaying = PlayerManager.playTrack(player, audioTrack);
+        this.actionType = "trackLoaded";
     }
 
     @Override
@@ -57,35 +47,21 @@ public class AudioResultHandler implements AudioLoadResultHandler {
             event.replyEmbeds(StandardError.build(String.format("Could not fetch the song %s", identifier)))
                     .setEphemeral(true)
                     .queue();
+            actionType = "error";
             return;
         }
-        QueueSystem qSystem = QueueSystem.getInstance();
-        boolean nowPlaying = PlayerManager.playTrack(player, audioPlaylist.getSelectedTrack());
-        event.replyEmbeds(
-                PlayTrack.build(
-                        audioPlaylist.getSelectedTrack(),
-                        event.getMember(),
-                        nowPlaying,
-                        interpretations
-                )
-        )
-                .queue();
+        this.nowPlaying = PlayerManager.playTrack(player, audioPlaylist.getSelectedTrack());
+        this.actionType = "playlistLoaded";
     }
 
     @Override
     public void noMatches() {
         System.out.printf("NoMatches %s", identifier);
-        EmbedBuilder eb = new EmbedBuilder();
-        eb.setDescription(
-                String.format(
-                        "<:noTracksFound:897394939586043934> No matches for %s",
-                        identifier
-                )
-        );
-        eb.setColor(Color.GRAY);
+        actionType = "noMatches";
         event
-                .replyEmbeds(eb.build())
-                .setEphemeral(true)
+                .replyEmbeds(
+                        NotFoundError.build("Nothing found for " + this.identifier)
+                )
                 .queue();
     }
 
@@ -94,7 +70,7 @@ public class AudioResultHandler implements AudioLoadResultHandler {
         System.out.printf("LoadFailed %s", identifier);
         event
                 .replyEmbeds(StandardError.build("Playing the track failed"))
-                .setEphemeral(true)
                 .queue();
+        actionType = "loadFailed";
     }
 }

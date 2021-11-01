@@ -2,10 +2,12 @@ package discord.audio;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
+import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
 
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
+import discord.audio.lavaplayer.TrackEventListener;
 import utils.logging.LoggerContent;
 import utils.customExceptions.ChannelNotFound;
 import utils.customExceptions.GuildNotFound;
@@ -34,6 +36,7 @@ public class PlayerManager {
         PlayerVault vault = PlayerVault.getInstance();
         QueueSystem queue = QueueSystem.getInstance();
         AudioPlayer player = playerManager.createPlayer();
+        player.addListener(new TrackEventListener());
         vault.storePlayer(guildId, channelId, player);
         queue.registerPlayer(player);
         this.logger.info(
@@ -41,7 +44,7 @@ public class PlayerManager {
                         "info",
                         "PlayerManager-createPlayer",
                         "",
-                        new HashMap<String, String>() {{
+                        new HashMap<>() {{
                             put("GuildId", guildId);
                             put("channelId", channelId);
                         }}
@@ -79,12 +82,12 @@ public class PlayerManager {
         QueueSystem queueSystem = QueueSystem.getInstance();
         boolean nowPlaying = false;
         try {
-            if (queueSystem.getQueue(player).isEmpty()) {
-                player.playTrack(audioTrack);
-                return true;
-            } else {
+            if (player.getPlayingTrack() != null) {
                 queueSystem.addTrack(player, audioTrack);
                 return false;
+            } else {
+                player.playTrack(audioTrack);
+                return true;
             }
         } catch(PlayerNotFound e) {
             queueSystem.registerPlayer(player);
