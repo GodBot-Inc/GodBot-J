@@ -4,6 +4,7 @@ import discord.audio.*;
 import discord.audio.lavaplayer.AudioPlayerSendHandler;
 import discord.audio.lavaplayer.AudioResultHandler;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
+import discord.commands.Command;
 import discord.snippets.Embeds.errors.NotFoundError;
 import discord.snippets.Embeds.errors.StandardError;
 import discord.snippets.Embeds.trackInfo.PlayTrack;
@@ -12,9 +13,7 @@ import io.github.cdimascio.dotenv.Dotenv;
 import net.dv8tion.jda.api.audio.AudioSendHandler;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
-import net.dv8tion.jda.api.interactions.Interaction;
 import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.managers.AudioManager;
 import org.jetbrains.annotations.NotNull;
@@ -23,39 +22,55 @@ import utils.customExceptions.ChannelNotFoundException;
 import utils.customExceptions.GuildNotFoundException;
 import utils.customExceptions.JDANotFoundException;
 import utils.customExceptions.LinkInterpretation.*;
-import utils.customExceptions.LinkInterpretation.youtubeApi.VideoNotFoundException;
 import utils.customExceptions.checks.CheckFailedException;
+import utils.discord.EventExtender;
 import utils.linkProcessing.LinkInterpreter;
 import utils.linkProcessing.interpretations.Interpretation;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Objects;
 
-public class Play {
+public class Play implements Command {
 
-    private static void sendEphermal(
-            @NotNull Interaction event,
-            MessageEmbed messageEmbed) {
-        event
-                .replyEmbeds(messageEmbed)
-                .setEphemeral(true)
-                .queue();
+    private static String checkParameters(EventExtender event)
+            throws CheckFailedException {
+        if (event.event.getOption("url") == null) {
+            throw new CheckFailedException("No URL provided");
+        }
+        return Objects.requireNonNull(event.event.getOption("url")).getAsString();
     }
 
-    public static void trigger(@NotNull SlashCommandEvent event, String url) {
+    public static void trigger(@NotNull SlashCommandEvent scEvent) {
+        EventExtender event = new EventExtender(scEvent);
+        String url;
+        try {
+            url = checkParameters(event);
+        } catch (CheckFailedException e) {
+            event
+                .replyEphemeral(
+                        StandardError.build("No URL provided")
+                );
+            return;
+        }
+
         Dotenv dotenv = Dotenv.load();
-        Guild guild = event.getGuild();
-        Member member = event.getMember();
+        Guild guild = scEvent.getGuild();
+        Member member = scEvent.getMember();
         String applicationId = dotenv.get("APPLICATIONID");
 
         try {
             Checks.slashCommandCheck(
-                    event,
+                    scEvent,
                     applicationId,
                     member,
                     guild
             );
+        } catch (CheckFailedException e) {
+            return;
+        }
+
+        try {
+            checkParameters(event);
         } catch (CheckFailedException e) {
             return;
         }
@@ -69,10 +84,10 @@ public class Play {
                             guild.getId()
                     );
         } catch (JDANotFoundException e) {
-            sendEphermal(
-                    event,
-                    StandardError.build("Could not get an AudioManager")
-            );
+            event
+                    .replyEphemeral(
+                            StandardError.build(Messages.GENERAL_ERROR)
+                    );
             return;
         }
         AudioPlayer player;
@@ -91,68 +106,22 @@ public class Play {
                             member.getVoiceState().getChannel().getId()
                     );
         }
+
         AudioSendHandler handler = manager.getSendingHandler();
         if (handler == null) {
             manager.setSendingHandler(new AudioPlayerSendHandler(player));
         }
 
-        if (!LinkInterpreter.isValid(url)) {
-            sendEphermal(
-                    event,
-                    StandardError.build(Messages.INVALID_URL)
-            );
+        if (LinkInterpreter.isValid(url)) {
+            event
+                    .replyEphemeral(
+                            StandardError.build(Messages.PLAY_INVALID_URL)
+                    );
             return;
         }
 
-        String soundCloudSearcher;
-        try {
-            soundCloudSearcher = LinkInterpreter.convertToSoundCloud(url);
-        } catch(PlatformNotFoundException e) {
-            sendEphermal(
-                    event,
-                    StandardError.build(Messages.PLATFORM_NOT_FOUND)
-            );
-            return;
-        } catch(InvalidURLException e) {
-            sendEphermal(
-                    event,
-                    StandardError.build(Messages.INVALID_URL)
-            );
-            return;
-        } catch(VideoNotFoundException e) {
-            sendEphermal(
-                    event,
-                    StandardError.build(Messages.VIDEO_NOT_FOUND)
-            );
-            return;
-        } catch(InternalError e) {
-            sendEphermal(
-                    event,
-                    StandardError.build(Messages.INTERNAL_ERROR)
-            );
-            return;
-        } catch(IOException | RequestException e) {
-            sendEphermal(
-                    event,
-                    StandardError.build(Messages.COULD_NOT_SEND_REQUEST)
-            );
-            return;
-        } catch(IllegalStateException e) {
-            sendEphermal(
-                    event,
-                    StandardError.build(Messages.GENERAL_ERROR)
-            );
-            return;
-        } catch (InvalidPlatformException e) {
-            sendEphermal(
-                    event,
-                    StandardError.build(Messages.INVALID_PLATFORM)
-            );
-            return;
-        }
-
-        InteractionHook interactionHook = event.getHook();
-        event.deferReply().queue();
+        InteractionHook interactionHook = scEvent.getHook();
+        scEvent.deferReply().queue();
 
         AudioResultHandler audioResultHandler = new AudioResultHandler(
                 player,
@@ -182,14 +151,14 @@ public class Play {
             try {
                 interpretationHashMap = LinkInterpreter.interpret(url);
             } catch(InvalidURLException e) {
-                event
+                scEvent
                         .replyEmbeds(
                                 StandardError.build(Messages.INVALID_URL)
                         )
                         .queue();
                 return;
             } catch(PlatformNotFoundException e) {
-                event
+                scEvent
                         .replyEmbeds(
                                 StandardError.build(Messages.PLATFORM_NOT_FOUND)
                         )
@@ -198,7 +167,7 @@ public class Play {
             }
 
             try {
-                event
+                scEvent
                         .replyEmbeds(
                                 PlayTrack.build(
                                         audioResultHandler.audioTrack,
@@ -209,7 +178,7 @@ public class Play {
                         )
                         .queue();
             } catch (NoSCInterpretationException e) {
-                event
+                scEvent
                         .replyEmbeds(
                                 NotFoundError.build(
                                         "I could not find information about the song on SoundCloud"

@@ -58,29 +58,6 @@ public class YoutubeApi {
         return "";
     }
 
-    public static String[] getTitleAndAuthor(String url)
-            throws IOException, RequestException, InvalidURLException, InternalError, VideoNotFoundException {
-        String id = extractId(url);
-        JSONObject youtubeInfo = LinkInterpreter.sendRequest(
-                String.format(
-                        getVideoInformationUrl,
-                        id,
-                        getApiKey()
-                )
-        );
-        if (youtubeInfo.getJSONArray("items").isEmpty()) {
-            throw new VideoNotFoundException("Video with the Id: " + id);
-        }
-        JSONObject snippet = youtubeInfo.getJSONArray("items").getJSONObject(0).getJSONObject("snippet");
-
-        String author = snippet.getString("channelTitle");
-        if (author.contains("- Topic")) {
-            author = author.split(" - Topic")[0];
-        }
-
-        return new String[] {snippet.getString("title"), author};
-    }
-
     /**
      * Converts the duration from the passed String that we get from YouTube to a long
      * @param duration passed from YouTube

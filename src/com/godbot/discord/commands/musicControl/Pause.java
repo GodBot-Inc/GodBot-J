@@ -2,6 +2,7 @@ package discord.commands.musicControl;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import discord.audio.PlayerVault;
+import discord.commands.Command;
 import discord.snippets.Embeds.errors.StandardError;
 import discord.snippets.Messages;
 import io.github.cdimascio.dotenv.Dotenv;
@@ -15,7 +16,7 @@ import utils.customExceptions.GuildNotFoundException;
 import utils.customExceptions.checks.CheckFailedException;
 import utils.discord.EventExtender;
 
-public class Pause {
+public class Pause implements Command {
     public static void trigger(SlashCommandEvent scEvent) {
         Dotenv dotenv = Dotenv.load();
         Guild guild = scEvent.getGuild();
@@ -32,7 +33,7 @@ public class Pause {
                     guild
             );
         } catch (CheckFailedException e) {
-            event.sendEphermal(
+            event.replyEphemeral(
                     StandardError.build(
                             Messages.GENERAL_ERROR
                     )
@@ -53,14 +54,14 @@ public class Pause {
                                     .getId()
                     );
         } catch (GuildNotFoundException e) {
-            event.sendEphermal(
+            event.replyEphemeral(
                     StandardError.build(
                             Messages.NO_PLAYER_IN_GUILD
                     )
             );
             return;
         } catch (ChannelNotFoundException e) {
-            event.sendEphermal(
+            event.replyEphemeral(
                     StandardError.build(
                             Messages.NO_PLAYER_IN_VC
                     )
@@ -69,14 +70,14 @@ public class Pause {
         }
 
         if (player.getPlayingTrack() == null) {
-            event.sendEphermal(
+            event.replyEphemeral(
                     StandardError.build(
                             Messages.NO_PLAYING_TRACK
                     )
             );
         }
         if (player.isPaused()) {
-            event.sendEphermal(
+            event.replyEphemeral(
                     StandardError.build(
                             "Player is already paused"
                     )

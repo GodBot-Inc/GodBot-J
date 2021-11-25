@@ -2,15 +2,16 @@ package utils.linkProcessing;
 
 import discord.snippets.Keys;
 import org.json.JSONObject;
+import utils.apis.spotify.SpotifyApi;
 import utils.apis.youtube.YoutubeApi;
-import utils.customExceptions.LinkInterpretation.InvalidPlatformException;
 import utils.customExceptions.LinkInterpretation.InvalidURLException;
 import utils.customExceptions.LinkInterpretation.PlatformNotFoundException;
 import utils.customExceptions.LinkInterpretation.RequestException;
 import utils.customExceptions.LinkInterpretation.youtubeApi.CouldNotExtractInfoException;
 import utils.customExceptions.LinkInterpretation.youtubeApi.VideoNotFoundException;
 import utils.linkProcessing.interpretations.Interpretation;
-import utils.linkProcessing.interpretations.soundcloud.SoundCloudInterpretation;
+import utils.linkProcessing.interpretations.Playable;
+import utils.linkProcessing.interpretations.spotify.SpotifyInterpretation;
 import utils.linkProcessing.interpretations.youtube.YoutubeInterpretation;
 import utils.linkProcessing.interpretations.youtube.YoutubeVideoInterpretation;
 import utils.logging.LinkProcessingLogger;
@@ -39,8 +40,9 @@ import java.util.*;
 /*
  * Procedure of the LinkInterpreter in the future
  * 1. Check url (isValid, platform, type etc.)
- * 2. Check if the given video/playlist/album exists on another platform than the one given with the link
- * 3. Gather Information about the song from the platforms: yt, spotify, soundcloud and put it into an
+ * 2. Return Id or URL of the song given
+ * 3. Check if the given video/playlist/album exists on another platform than the one given with the link
+ * 4. Gather Information about the song from the platforms: yt, spotify, soundcloud and put it into an
  * Interpretation object
  */
 
@@ -54,15 +56,15 @@ public class LinkInterpreter {
     public static boolean isValid(String url) {
         try {
             new URL(url).toURI();
-            return true;
-        } catch (MalformedURLException | URISyntaxException e) {
             return false;
+        } catch (MalformedURLException | URISyntaxException e) {
+            return true;
         }
     }
 
     public static HashMap<String, Interpretation> interpret(String url)
             throws InvalidURLException, PlatformNotFoundException {
-        if (!isValid(url)) {
+        if (isValid(url)) {
             throw new InvalidURLException(String.format("Url %s is not valid", url));
         }
         String platform = getPlatform(url);
@@ -79,36 +81,28 @@ public class LinkInterpreter {
                 } catch(IOException | RequestException ignore) {}
                 break;
             case "spotify":
-            case "soundcloud":
+                SpotifyInterpretation spotifyInterpretation = spotInterpret(url);
             default:
                 throw new IllegalStateException("Unexpected value: " + platform);
         }
         return interpretations;
     }
 
-    public static String convertToSoundCloud(String url)
-            throws
-            PlatformNotFoundException,
-            InvalidURLException,
-            VideoNotFoundException,
-            InternalError,
-            IOException,
-            IllegalStateException,
-            RequestException,
-            InvalidPlatformException {
+    /**
+     *
+     * @param url that should be processed
+     * @return Playable which is passed to the Play Command
+     * @throws PlatformNotFoundException If the platform of the link could not be determined
+     */
+    public static void getPlayable(String url)
+            throws PlatformNotFoundException {
         String platform = getPlatform(url);
-        return switch (platform) {
-            case "soundcloud" -> url;
-            case "spotify" -> {
-//                String[] titleAndAuthor = SpotifyApi.getTitleAndAuthor(url);
-                throw new InvalidPlatformException("Spotify is not supported yet");
-            }
-            case "youtube" -> {
-//                String[] titleAndAuthor = YoutubeApi.getTitleAndAuthor(url);
-                throw new InvalidPlatformException("YouTube is not supported yet");
-            }
-            default -> throw new IllegalStateException("Unexpected Value: " + platform);
-        };
+//        switch (platform) {
+//            case "youtube":
+//            case "spotify":
+//            case "soundcloud":
+//
+//        }
     }
 
     /**
@@ -160,6 +154,7 @@ public class LinkInterpreter {
             response.append(inputLine);
         }
         bufferedReader.close();
+        System.out.println(response);
         return new JSONObject(response.toString());
     }
 
@@ -167,13 +162,13 @@ public class LinkInterpreter {
     private static HashMap<String, String> ytGetTypeAndId(String url) throws InvalidURLException {
         if (url.contains("list=")) {
             String id = url.split("list=")[0].split("&")[0];
-            return new HashMap<String, String>() {{
+            return new HashMap<>() {{
                 put("type", "playlist");
                 put("id", id);
             }};
         } else if (url.contains("watch?v=") && !url.contains("list=")) {
             String id = url.split("watch?v=")[0].split("&")[0];
-            return new HashMap<String, String>() {{
+            return new HashMap<>() {{
                 put("type", "video");
                 put("id", id);
             }};
@@ -195,42 +190,16 @@ public class LinkInterpreter {
     // YT END
 
     // Spotify
-    // Spotify END
-
-    // SoundCloud
-    private static SoundCloudInterpretation scInterpret(String url)
-        throws IOException, RequestException, InvalidURLException, InternalError {
-        return new SoundCloudInterpretation() {
-            @Override
-            public long getDuration() {
-                return 0;
-            }
-
-            @Override
-            public String getAuthor() {
-                return null;
-            }
-
-            @Override
-            public String getTitle() {
-                return null;
-            }
-
-            @Override
-            public String getUrl() {
-                return null;
-            }
-
-            @Override
-            public String getAuthorUrl() {
-                return null;
-            }
-
-            @Override
-            public String getThumbnailUrl() {
-                return null;
-            }
-        };
+    private static TypeAndId spotGetTypeAndId(String url)
+            throws InvalidURLException {
+        // TODO Split the link so you get the type and id of the given thing
     }
-    // SoundCloud END
+
+    private static SpotifyInterpretation spotInterpret(String url)
+            throws InvalidURLException {
+        LinkProcessingLogger logger = getLogger();
+        TypeAndId typeAndId = spotGetTypeAndId(url);
+        // TODO Call spotify api to gather information about the song
+    }
+    // Spotify END
 }

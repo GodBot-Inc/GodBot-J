@@ -2,6 +2,7 @@ package discord.audio.lavaplayer;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
+import com.sedmelluq.discord.lavaplayer.source.soundcloud.SoundCloudAudioTrack;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
@@ -60,8 +61,8 @@ public class AudioResultHandler implements AudioLoadResultHandler {
         }
         this.actionType = "playlistLoaded";
         audioManager.openAudioConnection(channel);
-        this.nowPlaying = PlayerManager.playTrack(player, audioPlaylist.getSelectedTrack());
-        this.audioTrack = audioPlaylist.getSelectedTrack();
+        this.nowPlaying = PlayerManager.playTrack(player, audioPlaylist.getTracks().get(0));
+        this.audioTrack = audioPlaylist.getTracks().get(0);
     }
 
     @Override

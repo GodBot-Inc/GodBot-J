@@ -6,6 +6,7 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import utils.customExceptions.checks.CheckFailedException;
+import utils.customExceptions.checks.VoiceCheckFailedException;
 import utils.discord.EventExtender;
 
 public class Checks {
@@ -15,22 +16,23 @@ public class Checks {
             String applicationId,
             Member member,
             Guild guild
-    ) throws CheckFailedException {
+    ) throws CheckFailedException,
+            VoiceCheckFailedException {
         EventExtender event = new EventExtender(slashCommandEvent);
         if (applicationId == null) {
-            event.sendEphermal(
+            event.replyEphemeral(
                     StandardError.build("The application was not found")
             );
             throw new CheckFailedException("Application was not found");
         }
         if (guild == null) {
-            event.sendEphermal(
+            event.replyEphemeral(
                     StandardError.build("Your guild was not found")
             );
             throw new CheckFailedException("Guild is null");
         }
         if (member == null) {
-            event.sendEphermal(
+            event.replyEphemeral(
                     StandardError.build(Messages.GENERAL_ERROR)
             );
             throw new CheckFailedException("Member is null");
@@ -41,10 +43,10 @@ public class Checks {
                                 .getVoiceState()
                                 .getChannel() == null
         ) {
-            event.sendEphermal(
+            event.replyEphemeral(
                     StandardError.build(Messages.NOT_CONNECTED_TO_VC)
             );
-            throw new CheckFailedException("Member not connected to VC");
+            throw new VoiceCheckFailedException("Member not connected to VC");
         }
     }
 }

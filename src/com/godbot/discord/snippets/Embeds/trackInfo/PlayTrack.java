@@ -113,6 +113,7 @@ public class PlayTrack {
             boolean nowPlaying,
             HashMap<String, Interpretation> interpretations
     ) throws NoSCInterpretationException {
+        // rewrite this so it fits the no SC Api style
         return new EmbedBuilder()
                 .setTitle(nowPlaying ? "Playing" : "Queued")
                 .setDescription(

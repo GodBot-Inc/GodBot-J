@@ -3,6 +3,7 @@ package discord.listeners;
 import discord.commands.music.Play;
 import discord.commands.musicControl.Pause;
 import discord.commands.musicControl.Resume;
+import discord.commands.musicControl.Stop;
 import discord.snippets.Embeds.errors.StandardError;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.User;
@@ -67,10 +68,11 @@ public class InteractionListener extends ListenerAdapter {
                             .queue();
                     return;
                 }
-                Play.trigger(event, urlParameter.getAsString());
+                Play.trigger(event);
             }
             case "pause" -> Pause.trigger(event);
             case "resume" -> Resume.trigger(event);
+            case "stop" -> Stop.trigger(event);
         }
     }
 }

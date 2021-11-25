@@ -6,20 +6,20 @@ import net.dv8tion.jda.api.interactions.Interaction;
 
 public class EventExtender {
 
-    private final SlashCommandEvent event;
+    public final SlashCommandEvent event;
 
     public EventExtender(SlashCommandEvent event) {
         this.event = event;
     }
 
-    public void sendEphermal(String message) {
+    public void replyEphemeral(String message) {
         event
                 .reply(message)
                 .setEphemeral(true)
                 .queue();
     }
 
-    public void sendEphermal(MessageEmbed embed) {
+    public void replyEphemeral(MessageEmbed embed) {
         event
                 .replyEmbeds(embed)
                 .setEphemeral(true)

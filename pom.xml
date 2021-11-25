@@ -31,29 +31,40 @@
 
     <dependencies>
         <dependency>
+            // JDA is the library we use for discord communication (Api Wrapper)
             <groupId>net.dv8tion</groupId>
             <artifactId>JDA</artifactId>
             <version>4.3.0_334</version>
         </dependency>
         <dependency>
+            // java-dotenv is a .env library
             <groupId>io.github.cdimascio</groupId>
             <artifactId>java-dotenv</artifactId>
             <version>5.2.2</version>
         </dependency>
-      <dependency>
-        <groupId>org.mongodb</groupId>
-        <artifactId>mongo-java-driver</artifactId>
-        <version>3.11.0</version>
-      </dependency>
         <dependency>
+            // MongoDB (Database) communication
+            <groupId>org.mongodb</groupId>
+            <artifactId>mongo-java-driver</artifactId>
+            <version>3.11.0</version>
+        </dependency>
+        <dependency>
+            // Lavaplayer is the player we use to fetch, play and manage our music
             <groupId>com.github.sedmelluq</groupId>
             <artifactId>lavaplayer</artifactId>
             <version>PR650-9af0c892ff-1</version>
         </dependency>
         <dependency>
+            // Json is for working with JSON, since the YT api wrappers are trash
             <groupId>org.json</groupId>
             <artifactId>json</artifactId>
             <version>20210307</version>
+        </dependency>
+        <dependency>
+            // Spotify Api Wrapper
+            <groupId>se.michaelthelin.spotify</groupId>
+            <artifactId>spotify-web-api-java</artifactId>
+            <version>7.0.0</version>
         </dependency>
     </dependencies>
 </project>
