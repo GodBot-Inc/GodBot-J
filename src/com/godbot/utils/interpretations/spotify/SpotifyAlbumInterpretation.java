@@ -14,6 +14,11 @@ public class SpotifyAlbumInterpretation implements SpotifyInterpretation {
     }
 
     @Override
+    public @NotNull String getCreatorLink() {
+        return null;
+    }
+
+    @Override
     public @NotNull String getTitle() {
         return null;
     }

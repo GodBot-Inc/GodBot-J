@@ -106,7 +106,6 @@ public class LinkInterpreter {
     // Spotify
     private static TypeAndId spotGetTypeAndId(String url)
             throws InvalidURLException {
-        // TODO Split the link so you get the type and id of the given thing
         return new TypeAndId("moin", "moin");
     }
 
@@ -114,7 +113,6 @@ public class LinkInterpreter {
             throws InvalidURLException {
         LinkProcessingLogger logger = getLogger();
         TypeAndId typeAndId = spotGetTypeAndId(url);
-        // TODO Call spotify api to gather information about the song
         return new SpotifyInterpretation() {
             @Override
             public long getDuration() {
@@ -123,6 +121,11 @@ public class LinkInterpreter {
 
             @Override
             public @NotNull String getCreator() {
+                return null;
+            }
+
+            @Override
+            public @NotNull String getCreatorLink() {
                 return null;
             }
 

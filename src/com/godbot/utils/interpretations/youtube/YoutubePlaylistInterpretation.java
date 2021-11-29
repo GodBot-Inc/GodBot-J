@@ -7,16 +7,27 @@ import java.util.ArrayList;
 public class YoutubePlaylistInterpretation implements YoutubeInterpretation {
 
     private final long duration;
-    private final String author;
+    private final String creator;
+    private final String creatorUri;
     private final String title;
     private final String uri;
     private final String thumbnailUri;
     private final int size;
     private final ArrayList<String> videoIds;
 
-    public YoutubePlaylistInterpretation(long duration, String author, String title, String uri, String thumbnailUri, int size, ArrayList<String> videoIds) {
+    public YoutubePlaylistInterpretation(
+            long duration,
+            String creator,
+            String creatorUri,
+            String title,
+            String uri,
+            String thumbnailUri,
+            int size,
+            ArrayList<String> videoIds
+    ) {
         this.duration = duration;
-        this.author = author;
+        this.creator = creator;
+        this.creatorUri = creatorUri;
         this.title = title;
         this.uri = uri;
         this.thumbnailUri = thumbnailUri;
@@ -30,7 +41,7 @@ public class YoutubePlaylistInterpretation implements YoutubeInterpretation {
                 "YoutubePlaylistInterpretation=[duration=%s, author=%s, title=%s, uri=%s, thumbnailUri=%s, " +
                         "size=%s, videoIds=%s]",
                 duration,
-                author,
+                creator,
                 title,
                 uri,
                 thumbnailUri,
@@ -46,7 +57,12 @@ public class YoutubePlaylistInterpretation implements YoutubeInterpretation {
 
     @Override
     public @NotNull String getCreator() {
-        return this.author;
+        return this.creator;
+    }
+
+    @Override
+    public @NotNull String getCreatorLink() {
+        return this.creatorUri;
     }
 
     @Override

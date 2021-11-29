@@ -25,7 +25,6 @@ public class SpotApi {
     private static final SpotApi OBJ = new SpotApi();
 
     private SpotApi() {
-        // TODO Error handling and remove variable confusion
         Dotenv dotenv = Dotenv.load();
         String client_id = dotenv.get("SPOT_CLIENT_ID");
         String client_secret = dotenv.get("SPOT_CLIENT_SECRET");
@@ -89,7 +88,6 @@ public class SpotApi {
      * @return the title and the author in a String array
      */
     public String getTitleAndAuthor(TypeAndId typeAndId) throws IOException, ParseException, SpotifyWebApiException {
-        // TODO FIRST WRITE FUNCTION
         spotifyApi.getTrack(typeAndId.Id).build().execute();
         return "Title - Author";
     }

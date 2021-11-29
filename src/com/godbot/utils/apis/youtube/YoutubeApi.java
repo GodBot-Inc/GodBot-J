@@ -18,6 +18,8 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 // TODO Make youtubeApi section VideoType 10 (music) only so we can use youtube music links
+// TODO THIS WILL BE FIRST: Replace links and weird sending with api wrapper:
+// https://github.com/googleapis/google-api-java-client-services/tree/main/clients/google-api-services-youtube/v3/1.30.1
 public class YoutubeApi {
 
     private static final String getPlaylistInfoUrl =
@@ -54,7 +56,7 @@ public class YoutubeApi {
                     "&key=%s";
 
     private static String extractId(String url) {
-        // TODO FIRST WRITE FUNCTION
+
         return "";
     }
 
