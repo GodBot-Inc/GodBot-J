@@ -2,7 +2,7 @@ package discord.snippets.Embeds.errors;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
-import utils.discord.Emojis;
+import utils.discord.EmojiIds;
 
 import java.awt.*;
 
@@ -12,7 +12,7 @@ public class EmptyError {
                 .setDescription(
                         String.format(
                                 "%s %s",
-                                Emojis.NotFound2,
+                                EmojiIds.NotFound2,
                                 description
                         )
                 )

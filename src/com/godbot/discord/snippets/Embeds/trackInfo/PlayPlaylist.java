@@ -4,7 +4,7 @@ import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
-import utils.EmojiIds;
+import utils.discord.EmojiIds;
 import utils.interpretations.Interpretation;
 import utils.interpretations.spotify.SpotifyPlaylistInterpretation;
 import utils.interpretations.youtube.YoutubePlaylistInterpretation;
@@ -12,24 +12,18 @@ import utils.interpretations.youtube.YoutubePlaylistInterpretation;
 import java.awt.*;
 
 public class PlayPlaylist {
-    public static String formatSource(Interpretation link) {
-        if (link instanceof YoutubePlaylistInterpretation) {
+    public static String formatSingelSource(Interpretation interpretation) {
+        if (interpretation instanceof YoutubePlaylistInterpretation) {
             return String.format(
                     "%s %s",
                     EmojiIds.youtubeEmoji,
-                    link.getUrl()
+                    interpretation.getUrl()
             );
-        } else if (link instanceof SpotifyPlaylistInterpretation) {
+        } else if (interpretation instanceof SpotifyPlaylistInterpretation) {
             return String.format(
                     "%s %s",
                     EmojiIds.spotifyEmoji,
-                    link.getUrl()
-            );
-        } else if (link instanceof SoundCloudPlaylistInterpretation) {
-            return String.format(
-                    "%s %s",
-                    EmojiIds.soundcloudEmoji,
-                    link.getUrl()
+                    interpretation.getUrl()
             );
         } else {
             return String.format(
@@ -58,7 +52,7 @@ public class PlayPlaylist {
                 .setColor(Color.ORANGE)
                 .setThumbnail(link.getThumbnailUrl())
                 .addField("Creator", link.getCreator(), true)
-                .addField(formatSource(link), "", true)
+                .addField(formatSingelSource(link), "", true)
                 .addField("Tracks", String.valueOf(playlist.getTracks().size()), true)
                 .setFooter(
                         String.format(

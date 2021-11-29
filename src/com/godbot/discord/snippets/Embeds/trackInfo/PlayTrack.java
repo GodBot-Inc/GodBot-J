@@ -5,7 +5,7 @@ import discord.snippets.Keys;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
-import utils.EmojiIds;
+import utils.discord.EmojiIds;
 import utils.audio.DurationCalc;
 import utils.customExceptions.LinkInterpretation.InterpretationsEmpty;
 import utils.interpretations.Interpretation;
