@@ -1,4 +1,6 @@
-package utils.linkProcessing.interpretations.youtube;
+package utils.interpretations.youtube;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 
@@ -43,22 +45,22 @@ public class YoutubePlaylistInterpretation implements YoutubeInterpretation {
     }
 
     @Override
-    public String getAuthor() {
+    public @NotNull String getCreator() {
         return this.author;
     }
 
     @Override
-    public String getTitle() {
+    public @NotNull String getTitle() {
         return this.title;
     }
 
     @Override
-    public String getUrl() {
+    public @NotNull String getUrl() {
         return this.uri;
     }
 
     @Override
-    public String getThumbnailUrl() {
+    public @NotNull String getThumbnailUrl() {
         return this.thumbnailUri;
     }
 

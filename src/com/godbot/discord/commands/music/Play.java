@@ -25,7 +25,7 @@ import utils.customExceptions.LinkInterpretation.*;
 import utils.customExceptions.checks.CheckFailedException;
 import utils.discord.EventExtender;
 import utils.linkProcessing.LinkInterpreter;
-import utils.linkProcessing.interpretations.Interpretation;
+import utils.interpretations.Interpretation;
 
 import java.util.HashMap;
 import java.util.Objects;
@@ -112,7 +112,7 @@ public class Play implements Command {
             manager.setSendingHandler(new AudioPlayerSendHandler(player));
         }
 
-        if (LinkInterpreter.isValid(url)) {
+        if (Checks.linkIsValid(url)) {
             event
                     .replyEphemeral(
                             StandardError.build(Messages.PLAY_INVALID_URL)

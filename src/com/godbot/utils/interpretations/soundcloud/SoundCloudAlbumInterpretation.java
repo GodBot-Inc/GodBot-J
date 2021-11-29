@@ -1,4 +1,6 @@
-package utils.linkProcessing.interpretations.soundcloud;
+package utils.interpretations.soundcloud;
+
+import org.jetbrains.annotations.NotNull;
 
 public class SoundCloudAlbumInterpretation implements SoundCloudInterpretation {
     @Override
@@ -7,7 +9,7 @@ public class SoundCloudAlbumInterpretation implements SoundCloudInterpretation {
     }
 
     @Override
-    public String getAuthor() {
+    public @NotNull String getCreator() {
         return null;
     }
 
@@ -17,17 +19,17 @@ public class SoundCloudAlbumInterpretation implements SoundCloudInterpretation {
     }
 
     @Override
-    public String getTitle() {
+    public @NotNull String getTitle() {
         return null;
     }
 
     @Override
-    public String getUrl() {
+    public @NotNull String getUrl() {
         return null;
     }
 
     @Override
-    public String getThumbnailUrl() {
+    public @NotNull String getThumbnailUrl() {
         return null;
     }
 }

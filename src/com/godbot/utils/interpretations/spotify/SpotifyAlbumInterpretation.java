@@ -1,4 +1,6 @@
-package utils.linkProcessing.interpretations.spotify;
+package utils.interpretations.spotify;
+
+import org.jetbrains.annotations.NotNull;
 
 public class SpotifyAlbumInterpretation implements SpotifyInterpretation {
     @Override
@@ -7,22 +9,22 @@ public class SpotifyAlbumInterpretation implements SpotifyInterpretation {
     }
 
     @Override
-    public String getAuthor() {
+    public @NotNull String getCreator() {
         return null;
     }
 
     @Override
-    public String getTitle() {
+    public @NotNull String getTitle() {
         return null;
     }
 
     @Override
-    public String getUrl() {
+    public @NotNull String getUrl() {
         return null;
     }
 
     @Override
-    public String getThumbnailUrl() {
+    public @NotNull String getThumbnailUrl() {
         return null;
     }
 }

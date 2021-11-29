@@ -1,6 +1,6 @@
-package utils.linkProcessing.interpretations.soundcloud;
+package utils.interpretations.soundcloud;
 
-import utils.linkProcessing.interpretations.Interpretation;
+import utils.interpretations.Interpretation;
 
 public interface SoundCloudInterpretation extends Interpretation {
     /**

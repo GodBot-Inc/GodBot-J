@@ -5,10 +5,10 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import utils.EmojiIds;
-import utils.linkProcessing.interpretations.Interpretation;
-import utils.linkProcessing.interpretations.soundcloud.SoundCloudPlaylistInterpretation;
-import utils.linkProcessing.interpretations.spotify.SpotifyPlaylistInterpretation;
-import utils.linkProcessing.interpretations.youtube.YoutubePlaylistInterpretation;
+import utils.interpretations.Interpretation;
+import utils.interpretations.soundcloud.SoundCloudPlaylistInterpretation;
+import utils.interpretations.spotify.SpotifyPlaylistInterpretation;
+import utils.interpretations.youtube.YoutubePlaylistInterpretation;
 
 import java.awt.*;
 
@@ -58,7 +58,7 @@ public class PlayPlaylist {
                 )
                 .setColor(Color.ORANGE)
                 .setThumbnail(link.getThumbnailUrl())
-                .addField("Creator", link.getAuthor(), true)
+                .addField("Creator", link.getCreator(), true)
                 .addField(formatSource(link), "", true)
                 .addField("Tracks", String.valueOf(playlist.getTracks().size()), true)
                 .setFooter(

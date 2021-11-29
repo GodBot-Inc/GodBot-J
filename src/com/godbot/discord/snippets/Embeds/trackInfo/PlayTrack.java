@@ -7,9 +7,8 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import utils.EmojiIds;
 import utils.audio.DurationCalc;
-import utils.customExceptions.LinkInterpretation.NoSCInterpretationException;
-import utils.linkProcessing.interpretations.Interpretation;
-import utils.linkProcessing.interpretations.soundcloud.SoundCloudInterpretation;
+import utils.interpretations.Interpretation;
+import utils.interpretations.soundcloud.SoundCloudInterpretation;
 
 import java.awt.*;
 import java.util.HashMap;
@@ -112,8 +111,7 @@ public class PlayTrack {
             Member requester,
             boolean nowPlaying,
             HashMap<String, Interpretation> interpretations
-    ) throws NoSCInterpretationException {
-        // rewrite this so it fits the no SC Api style
+    ) {
         return new EmbedBuilder()
                 .setTitle(nowPlaying ? "Playing" : "Queued")
                 .setDescription(

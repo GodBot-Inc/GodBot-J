@@ -1,11 +1,13 @@
-package utils.linkProcessing.interpretations.youtube;
+package utils.interpretations.youtube;
 
-import utils.linkProcessing.interpretations.Interpretation;
+import org.jetbrains.annotations.NotNull;
+import utils.interpretations.Interpretation;
 
 public class YoutubeVideoInterpretation implements YoutubeInterpretation, Interpretation {
 
     private final long duration;
     private final String author;
+    private final String authorLink;
     private final String title;
     private final String uri;
     private final String thumbnailUri;
@@ -14,9 +16,21 @@ public class YoutubeVideoInterpretation implements YoutubeInterpretation, Interp
     private final long views;
     private final long comments;
 
-    public YoutubeVideoInterpretation(long duration, String author, String title, String uri, String thumbnailUri, long likes, long dislikes, long views, long comments) {
+    public YoutubeVideoInterpretation(
+            long duration,
+            String author,
+            String authorLInk,
+            String title,
+            String uri,
+            String thumbnailUri,
+            long likes,
+            long dislikes,
+            long views,
+            long comments
+    ) {
         this.duration = duration;
         this.author = author;
+        this.authorLink = authorLInk;
         this.title = title;
         this.uri = uri;
         this.thumbnailUri = thumbnailUri;
@@ -49,22 +63,26 @@ public class YoutubeVideoInterpretation implements YoutubeInterpretation, Interp
     }
 
     @Override
-    public String getAuthor() {
+    public @NotNull String getCreator() {
         return this.author;
     }
 
+    @NotNull public String getCreatorLink() {
+        return this.authorLink;
+    }
+
     @Override
-    public String getTitle() {
+    public @NotNull String getTitle() {
         return this.title;
     }
 
     @Override
-    public String getUrl() {
+    public @NotNull String getUrl() {
         return this.uri;
     }
 
     @Override
-    public String getThumbnailUrl() {
+    public @NotNull String getThumbnailUrl() {
         return this.thumbnailUri;
     }
 

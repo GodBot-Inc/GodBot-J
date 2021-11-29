@@ -1,6 +1,6 @@
-package utils.linkProcessing.interpretations.youtube;
+package utils.interpretations.youtube;
 
-import utils.linkProcessing.interpretations.Interpretation;
+import utils.interpretations.Interpretation;
 
 /**
  * Wrapper for all YoutubeInterpretations

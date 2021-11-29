@@ -9,6 +9,10 @@ import utils.customExceptions.checks.CheckFailedException;
 import utils.customExceptions.checks.VoiceCheckFailedException;
 import utils.discord.EventExtender;
 
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
+import java.net.URL;
+
 public class Checks {
 
     public static void slashCommandCheck(
@@ -47,6 +51,15 @@ public class Checks {
                     StandardError.build(Messages.NOT_CONNECTED_TO_VC)
             );
             throw new VoiceCheckFailedException("Member not connected to VC");
+        }
+    }
+
+    public static boolean linkIsValid(String url) {
+        try {
+            new URL(url).toURI();
+            return false;
+        } catch (MalformedURLException | URISyntaxException e) {
+            return true;
         }
     }
 }

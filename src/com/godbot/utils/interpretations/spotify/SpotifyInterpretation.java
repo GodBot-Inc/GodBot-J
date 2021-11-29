@@ -1,6 +1,6 @@
-package utils.linkProcessing.interpretations.spotify;
+package utils.interpretations.spotify;
 
-import utils.linkProcessing.interpretations.Interpretation;
+import utils.interpretations.Interpretation;
 
 /**
  * Wrapper for all types of SpotifyInterpretations

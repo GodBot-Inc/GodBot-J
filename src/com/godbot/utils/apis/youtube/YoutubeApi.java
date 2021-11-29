@@ -9,9 +9,9 @@ import utils.customExceptions.LinkInterpretation.InvalidURLException;
 import utils.customExceptions.LinkInterpretation.RequestException;
 import utils.customExceptions.LinkInterpretation.youtubeApi.CouldNotExtractInfoException;
 import utils.customExceptions.LinkInterpretation.youtubeApi.VideoNotFoundException;
-import utils.linkProcessing.LinkInterpreter;
-import utils.linkProcessing.interpretations.youtube.YoutubePlaylistInterpretation;
-import utils.linkProcessing.interpretations.youtube.YoutubeVideoInterpretation;
+import utils.linkProcessing.LinkHelper;
+import utils.interpretations.youtube.YoutubePlaylistInterpretation;
+import utils.interpretations.youtube.YoutubeVideoInterpretation;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -135,6 +135,8 @@ public class YoutubeApi {
             author = author.split(" - Tpoic")[0];
         }
 
+        String authorLink = snippet.getString("channelId");
+
         String title = snippet.getString("title");
 
         long viewCount = Integer.parseInt(statistics.getString("viewCount"));
@@ -165,6 +167,7 @@ public class YoutubeApi {
         return new YoutubeVideoInterpretation(
                 duration,
                 author,
+                "§",
                 title,
                 String.format(
                         "https://www.youtube.com/watch?v=%s",
@@ -192,7 +195,7 @@ public class YoutubeApi {
      */
     public static YoutubeVideoInterpretation getVideoInformation(String id)
             throws IOException, RequestException, InvalidURLException, CouldNotExtractInfoException, VideoNotFoundException, InternalError {
-        JSONObject videoInfo = LinkInterpreter.sendRequest(String.format(
+        JSONObject videoInfo = LinkHelper.sendRequest(String.format(
                 getVideoInformationUrl,
                 id,
                 getApiKey()
@@ -225,7 +228,7 @@ public class YoutubeApi {
      */
     private static long getVideoDuration(String id)
             throws InvalidURLException, IOException, RequestException, InternalError {
-        return convertDuration(LinkInterpreter.sendRequest(
+        return convertDuration(LinkHelper.sendRequest(
                 String.format(
                         getVideoInformationUrl,
                         id,
@@ -259,14 +262,14 @@ public class YoutubeApi {
      */
     public static YoutubePlaylistInterpretation getPlaylistInformation(String id)
             throws InvalidURLException, IOException, RequestException, InternalError {
-        JSONObject playlistInfo = LinkInterpreter.sendRequest(
+        JSONObject playlistInfo = LinkHelper.sendRequest(
                 String.format(
                         getPlaylistInfoUrl,
                         id,
                         getApiKey()
                 )
         );
-        JSONObject playlistItems = LinkInterpreter.sendRequest(
+        JSONObject playlistItems = LinkHelper.sendRequest(
                 String.format(
                         getPlaylistItemsUrl,
                         id,
@@ -332,7 +335,7 @@ public class YoutubeApi {
                 duration += getVideoDuration(videoId);
                 videoIds.add(videoId);
             }
-            playlistItemsObject = LinkInterpreter.sendRequest(
+            playlistItemsObject = LinkHelper.sendRequest(
                     String.format(
                             playlistItemsUrlWithToken,
                             playlistItemsObject.getString("nextPageToken"),
