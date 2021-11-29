@@ -5,7 +5,7 @@ import discord.audio.lavaplayer.AudioPlayerSendHandler;
 import discord.audio.lavaplayer.AudioResultHandler;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import discord.commands.Command;
-import discord.snippets.Embeds.errors.NotFoundError;
+import discord.snippets.Embeds.errors.EmptyError;
 import discord.snippets.Embeds.errors.StandardError;
 import discord.snippets.Embeds.trackInfo.PlayTrack;
 import discord.snippets.Messages;
@@ -166,6 +166,13 @@ public class Play implements Command {
                 return;
             }
 
+            if (interpretationHashMap.isEmpty()) {
+                scEvent.replyEmbeds(
+                        EmptyError.build(Messages.INTERPRETATIONS_EMPTY)
+                )
+                        .queue();
+            }
+
             try {
                 scEvent
                         .replyEmbeds(
@@ -177,13 +184,10 @@ public class Play implements Command {
                                 )
                         )
                         .queue();
-            } catch (NoSCInterpretationException e) {
-                scEvent
-                        .replyEmbeds(
-                                NotFoundError.build(
-                                        "I could not find information about the song on SoundCloud"
-                                )
-                        )
+            } catch (InterpretationsEmpty e) {
+                scEvent.replyEmbeds(
+                        EmptyError.build(Messages.INTERPRETATIONS_EMPTY)
+                )
                         .queue();
             }
         }

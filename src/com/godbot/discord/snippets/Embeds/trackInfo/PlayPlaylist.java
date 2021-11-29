@@ -6,7 +6,6 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import utils.EmojiIds;
 import utils.interpretations.Interpretation;
-import utils.interpretations.soundcloud.SoundCloudPlaylistInterpretation;
 import utils.interpretations.spotify.SpotifyPlaylistInterpretation;
 import utils.interpretations.youtube.YoutubePlaylistInterpretation;
 

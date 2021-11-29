@@ -350,6 +350,7 @@ public class YoutubeApi {
         return new YoutubePlaylistInterpretation(
                 duration,
                 author,
+                "moin",
                 title,
                 String.format(
                         "https://www.youtube.com/playlist?list=%s",

@@ -7,24 +7,31 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import utils.EmojiIds;
 import utils.audio.DurationCalc;
+import utils.customExceptions.LinkInterpretation.InterpretationsEmpty;
 import utils.interpretations.Interpretation;
-import utils.interpretations.soundcloud.SoundCloudInterpretation;
+import utils.interpretations.InterpretationExtraction;
+import utils.interpretations.spotify.SpotifySongInterpretation;
+import utils.interpretations.youtube.YoutubeVideoInterpretation;
 
 import java.awt.*;
 import java.util.HashMap;
 
 public class PlayTrack {
 
-    private static final String defaultThumbnail = "https://cdn-icons.flaticon.com/png/512/3083/premium/3083417.png?token=exp=1634997669~hmac=f6a9fef992b7627500be77fe042b0077";
+    private static final String defaultThumbnail = "https://1drv.ms/u/s!AlVdLKL47GJiyDZp4Xj_HoD5eWV4?e=mPMGL6";
 
     public static String formatSources(HashMap<String, Interpretation> interpretations) {
         StringBuilder builder = new StringBuilder();
-        if (interpretations.containsKey("YoutubeVideo")) {
+        YoutubeVideoInterpretation ytInterpretation = InterpretationExtraction
+                .getYTVideoInterpretation(interpretations);
+        SpotifySongInterpretation spotifySongInterpretation = InterpretationExtraction
+                .getSpotSongInterpretation(interpretations);
+        if (ytInterpretation != null) {
             builder.append(
                     String.format(
                             "%s %s\n",
                             EmojiIds.youtubeEmoji,
-                            interpretations.get("YoutubeVideo").getUrl()
+                            ytInterpretation.getUrl()
                     )
             );
         } else {
@@ -36,7 +43,7 @@ public class PlayTrack {
             );
         }
 
-        if (interpretations.containsKey(Keys.SPOTSONG)) {
+        if (spotifySongInterpretation != null) {
             builder.append(
                     String.format(
                             "%s %s\n",
@@ -53,56 +60,42 @@ public class PlayTrack {
             );
         }
 
-        if (interpretations.containsKey(Keys.SCSONG)) {
-            builder.append(
-                    String.format(
-                            "%s %s",
-                            EmojiIds.soundcloudEmoji,
-                            interpretations.get(Keys.SCSONG).getUrl()
-                    )
-            );
-        } else {
-            builder.append(
-                    String.format(
-                            "%s -",
-                            EmojiIds.soundcloudEmoji
-                    )
-            );
-        }
         return builder.toString();
     }
 
+    private static String getAuthor(HashMap<String, Interpretation> interpretations) {
+        Interpretation interpretation = InterpretationExtraction.getFirstVideoInterpretation(interpretations);
+        if (interpretation == null) {
+            return "No Author Found";
+        }
+        return String.format(
+                "[%s](%s)",
+                interpretation.getCreator(),
+                interpretation.getCreatorLink()
+        );
+    }
+
     private static String getThumbnail(HashMap<String, Interpretation> interpretations) {
-        if (interpretations.containsKey(Keys.SCSONG)) {
-            return interpretations.get(Keys.SCSONG).getThumbnailUrl();
-        } else {
+        Interpretation interpretation = InterpretationExtraction.getFirstVideoInterpretation(interpretations);
+        if (interpretation == null) {
             return defaultThumbnail;
         }
+        return interpretation.getThumbnailUrl();
     }
 
     private static String formatDuration(HashMap<String, Interpretation> interpretations) {
-        if (interpretations.containsKey(Keys.SCSONG)) {
-            interpretations.get(Keys.SCSONG).getDuration();
-            String strDuration = DurationCalc.longToString(
-                    interpretations
-                            .get(Keys.SCSONG)
-                            .getDuration()
-            );
-            if (strDuration.split(":").length == 3) {
-                return String.format("**00:00:00 - %s**", strDuration);
-            } else {
-                return String.format("**00:00 - %s**", strDuration);
-            }
-        } else {
+        Interpretation interpretation = InterpretationExtraction.getFirstVideoInterpretation(interpretations);
+        if (interpretation == null) {
             return "**00:00 - 00:00**";
         }
-    }
-
-    private static String getAuthorLink(HashMap<String, Interpretation> interpretations) {
-        if (interpretations.containsKey(Keys.SCSONG)) {
-            return ((SoundCloudInterpretation) interpretations.get(Keys.SCSONG)).getAuthorUrl();
+        String strDuration = DurationCalc.longToString(interpretation.getDuration());
+        int strDurationLength = DurationCalc.longToString(interpretation.getDuration()).length();
+        if (strDurationLength == 3) {
+            return String.format("**00:00:00 - %s**", strDuration);
+        } else if (strDurationLength == 2) {
+            return String.format("**00:00 - %s**", strDuration);
         } else {
-            return "https://soundcloud.com";
+            return String.format("**00 - %s**", strDuration);
         }
     }
 
@@ -111,7 +104,7 @@ public class PlayTrack {
             Member requester,
             boolean nowPlaying,
             HashMap<String, Interpretation> interpretations
-    ) {
+    ) throws InterpretationsEmpty {
         return new EmbedBuilder()
                 .setTitle(nowPlaying ? "Playing" : "Queued")
                 .setDescription(
@@ -125,12 +118,9 @@ public class PlayTrack {
                 .setThumbnail(getThumbnail(interpretations))
                 .addField(
                         "Author",
-                        String.format(
-                                "[%s](%s)",
-                                track.getInfo().author,
-                                getAuthorLink(interpretations)
-                        ),
-                        true)
+                        getAuthor(interpretations),
+                        true
+                )
                 .addField("Sources", formatSources(interpretations), true)
                 .addField("Duration",
                         String.format(

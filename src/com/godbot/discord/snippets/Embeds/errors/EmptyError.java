@@ -6,13 +6,13 @@ import utils.discord.Emojis;
 
 import java.awt.*;
 
-public class StandardError {
+public class EmptyError {
     public static MessageEmbed build(String description) {
         return new EmbedBuilder()
                 .setDescription(
                         String.format(
                                 "%s %s",
-                                Emojis.godbotWarning,
+                                Emojis.NotFound2,
                                 description
                         )
                 )

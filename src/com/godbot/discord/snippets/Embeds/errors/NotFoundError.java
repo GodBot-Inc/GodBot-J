@@ -2,6 +2,7 @@ package discord.snippets.Embeds.errors;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
+import utils.discord.Emojis;
 
 import java.awt.*;
 
@@ -10,7 +11,8 @@ public class NotFoundError {
         return new EmbedBuilder()
                 .setDescription(
                         String.format(
-                                "<:noTracksFound:897394939586043934> %s",
+                                "%s %s",
+                                Emojis.NotFound,
                                 description
                         )
                 )
