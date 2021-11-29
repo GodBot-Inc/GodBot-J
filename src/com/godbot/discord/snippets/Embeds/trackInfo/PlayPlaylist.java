@@ -4,24 +4,27 @@ import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
+import utils.audio.DurationCalc;
 import utils.discord.EmojiIds;
 import utils.interpretations.Interpretation;
+import utils.interpretations.InterpretationExtraction;
 import utils.interpretations.spotify.SpotifyPlaylistInterpretation;
 import utils.interpretations.youtube.YoutubePlaylistInterpretation;
 
 import java.awt.*;
+import java.util.HashMap;
 
 public class PlayPlaylist {
-    public static String formatSingelSource(Interpretation interpretation) {
+    public static String formatSource(Interpretation interpretation) {
         if (interpretation instanceof YoutubePlaylistInterpretation) {
             return String.format(
-                    "%s %s",
+                    "%s [YouTube](%s)",
                     EmojiIds.youtubeEmoji,
                     interpretation.getUrl()
             );
         } else if (interpretation instanceof SpotifyPlaylistInterpretation) {
             return String.format(
-                    "%s %s",
+                    "%s [Spotify](%s)",
                     EmojiIds.spotifyEmoji,
                     interpretation.getUrl()
             );
@@ -33,31 +36,42 @@ public class PlayPlaylist {
         }
     }
 
-    public static MessageEmbed embed(AudioPlaylist playlist, Member requester, boolean nowPlaying, Interpretation link) {
-        String title;
-        if (nowPlaying) {
-            title = "Playing";
+    private static String formatDuration(Interpretation interpretation) {
+        String strDuration = DurationCalc.longToString(interpretation.getDuration());
+        int strDurationLength = DurationCalc.longToString(interpretation.getDuration()).length();
+        if (strDurationLength == 3) {
+            return String.format("**00:00:00 - %s**", strDuration);
+        } else if (strDurationLength == 2) {
+            return String.format("**00:00 - %s**", strDuration);
         } else {
-            title = "Queued";
+            return String.format("**00 - %s**", strDuration);
         }
+    }
+
+    public static MessageEmbed build(
+            AudioPlaylist playlist,
+            Member requester,
+            boolean nowPlaying,
+            Interpretation playlistInterpretation
+    ) {
         return new EmbedBuilder()
-                .setTitle(title)
+                .setTitle(nowPlaying ? "Playing" : "Queued")
                 .setDescription(
                         String.format(
                             "[%s](%s)",
                             playlist.getName(),
-                            link.getUrl()
+                            playlistInterpretation.getUrl()
                         )
                 )
                 .setColor(Color.ORANGE)
-                .setThumbnail(link.getThumbnailUrl())
-                .addField("Creator", link.getCreator(), true)
-                .addField(formatSingelSource(link), "", true)
-                .addField("Tracks", String.valueOf(playlist.getTracks().size()), true)
+                .setThumbnail(playlistInterpretation.getThumbnailUrl())
+                .addField("Creator", playlistInterpretation.getCreator(), true)
+                .addField("Sources", formatSource(playlistInterpretation), true)
+                .addField("Tracks", String.valueOf(playlist.getTracks().size()), false)
+                .addField("Duration", formatDuration(playlistInterpretation), true)
                 .setFooter(
                         String.format(
-                                "by %s",
-                                requester.getNickname()
+                                "by %s", requester.getEffectiveName()
                         ),
                         requester.getUser().getAvatarUrl()
                 )
