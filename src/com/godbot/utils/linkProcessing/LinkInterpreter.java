@@ -44,8 +44,6 @@ public class LinkInterpreter {
         return LinkProcessingLogger.getInstance();
     }
 
-    // TODO Logging
-
     public static HashMap<String, Interpretation> interpret(String url)
             throws InvalidURLException, PlatformNotFoundException {
         if (Checks.linkIsValid(url)) {

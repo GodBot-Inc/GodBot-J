@@ -10,7 +10,7 @@ import java.io.IOException;
 public class Test {
     public static void main(String[] args) throws IOException, RequestException, InvalidURLException {
         long start = System.currentTimeMillis();
-        YoutubeInterpretation ytInterpretation = YoutubeApi.getVideoInformation("0fw5Cyh21TE");
+        YoutubeInterpretation ytInterpretation = YoutubeApi.getVideoInformation("vSF3u5eaT7s");
         long end = System.currentTimeMillis();
         System.out.println(ytInterpretation);
         System.out.println(end - start);

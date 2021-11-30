@@ -16,8 +16,6 @@ public class AudioManagerVault {
 
     private static final AudioManagerVault managerObj = new AudioManagerVault();
 
-    // TODO Remove logging in helper classes / Functions since they are not necessary (only into database)
-
     //                ApplicationId       GuildId  Destination
     private final HashMap<String, HashMap<String, AudioManager>> audioManagerStorage = new HashMap<>();
     private final AudioLogger logger;

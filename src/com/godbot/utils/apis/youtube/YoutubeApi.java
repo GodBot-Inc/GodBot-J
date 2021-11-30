@@ -1,10 +1,8 @@
 package utils.apis.youtube;
 
-import io.github.cdimascio.dotenv.Dotenv;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import utils.customExceptions.LinkInterpretation.youtubeApi.ApiKeyNotRetreivedException;
 import utils.customExceptions.LinkInterpretation.InvalidURLException;
 import utils.customExceptions.LinkInterpretation.RequestException;
 import utils.customExceptions.LinkInterpretation.youtubeApi.CouldNotExtractInfoException;
@@ -17,43 +15,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Objects;
 
-// TODO Make youtubeApi section VideoType 10 (music) only so we can use youtube music links
-// TODO THIS WILL BE FIRST: Replace links and weird sending with api wrapper:
 // https://github.com/googleapis/google-api-java-client-services/tree/main/clients/google-api-services-youtube/v3/1.30.1
 public class YoutubeApi {
-
-    private static final String getPlaylistInfoUrl =
-            "https://youtube.googleapis.com/youtube/v3/" +
-                    "playlists?" +
-                    "part=snippet" +
-                    "&part=contentDetails" +
-                    "&id=%s" +
-                    "&maxResults=1" +
-                    "&key=%s";
-    private static final String getPlaylistItemsUrl =
-            "https://youtube.googleapis.com/youtube/v3/" +
-                    "playlistItems?" +
-                    "part=snippet" +
-                    "&part=contentDetails" +
-                    "&playlistId=%s" +
-                    "&key=%s";
-    private static final String getVideoInformationUrl =
-            "https://youtube.googleapis.com/youtube/v3/" +
-                    "videos?" +
-                    "part=contentDetails" +
-                    "&part=snippet" +
-                    "&part=statistics" +
-                    "&id=%s" +
-                    "&maxResults=1" +
-                    "&key=%s";
-    private static final String playlistItemsUrlWithToken =
-            "https://youtube.googleapis.com/youtube/v3/" +
-                    "playlistItems?" +
-                    "part=snippet" +
-                    "&part=contentDetails" +
-                    "&pageToken=%s" +
-                    "&playlistId=%s" +
-                    "&key=%s";
 
     private static String extractId(String url) {
 
@@ -91,15 +54,6 @@ public class YoutubeApi {
             }
         }
         return time;
-    }
-
-    private static String getApiKey() throws ApiKeyNotRetreivedException {
-        Dotenv dotenv = Dotenv.load();
-        String API_KEY = dotenv.get("YT_API_KEY");
-        if (API_KEY == null) {
-            throw new ApiKeyNotRetreivedException("Youtube Api key is null " + API_KEY);
-        }
-        return API_KEY;
     }
 
     /**
@@ -169,7 +123,7 @@ public class YoutubeApi {
         return new YoutubeVideoInterpretation(
                 duration,
                 author,
-                "§",
+                authorLink,
                 title,
                 String.format(
                         "https://www.youtube.com/watch?v=%s",
@@ -197,11 +151,11 @@ public class YoutubeApi {
      */
     public static YoutubeVideoInterpretation getVideoInformation(String id)
             throws IOException, RequestException, InvalidURLException, CouldNotExtractInfoException, VideoNotFoundException, InternalError {
-        JSONObject videoInfo = LinkHelper.sendRequest(String.format(
-                getVideoInformationUrl,
-                id,
-                getApiKey()
-        ));
+        JSONObject videoInfo = LinkHelper.sendRequest(
+                LinkConstructor.getYTVideo()
+                        .setId(id)
+                        .build()
+        );
 
         if (videoInfo.getJSONArray("items").isEmpty()) {
             throw new VideoNotFoundException("VideoId: " + id + " not found");
@@ -231,11 +185,9 @@ public class YoutubeApi {
     private static long getVideoDuration(String id)
             throws InvalidURLException, IOException, RequestException, InternalError {
         return convertDuration(LinkHelper.sendRequest(
-                String.format(
-                        getVideoInformationUrl,
-                        id,
-                        getApiKey()
-                )
+                LinkConstructor.getYTVideoDuration()
+                        .setId(id)
+                        .build()
         )
                         .getJSONArray("items")
                         .getJSONObject(0)
@@ -265,18 +217,14 @@ public class YoutubeApi {
     public static YoutubePlaylistInterpretation getPlaylistInformation(String id)
             throws InvalidURLException, IOException, RequestException, InternalError {
         JSONObject playlistInfo = LinkHelper.sendRequest(
-                String.format(
-                        getPlaylistInfoUrl,
-                        id,
-                        getApiKey()
-                )
+                LinkConstructor.getPlaylistInfo()
+                        .setId(id)
+                        .build()
         );
         JSONObject playlistItems = LinkHelper.sendRequest(
-                String.format(
-                        getPlaylistItemsUrl,
-                        id,
-                        getApiKey()
-                )
+                LinkConstructor.getPlaylistItems()
+                        .setId(id)
+                        .build()
         );
 
         if (playlistInfo.isEmpty()) {
@@ -338,12 +286,9 @@ public class YoutubeApi {
                 videoIds.add(videoId);
             }
             playlistItemsObject = LinkHelper.sendRequest(
-                    String.format(
-                            playlistItemsUrlWithToken,
-                            playlistItemsObject.getString("nextPageToken"),
-                            id,
-                            getApiKey()
-                    )
+                    LinkConstructor.getPlaylistItemsToken()
+                            .setId(id)
+                            .build()
             );
         }
 
