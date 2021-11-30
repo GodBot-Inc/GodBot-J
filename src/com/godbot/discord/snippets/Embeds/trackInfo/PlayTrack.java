@@ -130,7 +130,7 @@ public class PlayTrack {
                         false)
                 .setFooter(
                         String.format(
-                                "by %s", requester.getEffectiveName()),
+                                "Added %s", requester.getEffectiveName()),
                         requester.getUser().getAvatarUrl()
                 )
                 .build();

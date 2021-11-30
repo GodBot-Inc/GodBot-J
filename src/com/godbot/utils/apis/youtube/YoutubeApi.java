@@ -15,7 +15,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Objects;
 
-// https://github.com/googleapis/google-api-java-client-services/tree/main/clients/google-api-services-youtube/v3/1.30.1
 public class YoutubeApi {
 
     /**
@@ -66,7 +65,6 @@ public class YoutubeApi {
             JSONObject contentDetails,
             String id
     ) throws CouldNotExtractInfoException {
-
         if (snippet.isEmpty()) {
             throw new CouldNotExtractInfoException("Snippet is empty " + snippet);
         }
@@ -283,6 +281,7 @@ public class YoutubeApi {
             playlistItemsObject = LinkHelper.sendRequest(
                     UrlConstructor.getPlaylistItemsToken()
                             .setId(id)
+                            .setPageToken(playlistItemsObject.getString("nextPageToken"))
                             .build()
             );
         }
@@ -290,7 +289,7 @@ public class YoutubeApi {
         return new YoutubePlaylistInterpretation(
                 duration,
                 author,
-                "moin",
+                null,
                 title,
                 String.format(
                         "https://www.youtube.com/playlist?list=%s",

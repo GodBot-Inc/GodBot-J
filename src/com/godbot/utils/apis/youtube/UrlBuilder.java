@@ -12,7 +12,6 @@ public class UrlBuilder {
     private final String url;
     private String pageToken;
     private String id;
-    private String apiKey;
 
     public UrlBuilder(String url, boolean hasPage) {
         this.url = url;
@@ -42,13 +41,13 @@ public class UrlBuilder {
                     url,
                     pageToken,
                     id,
-                    apiKey
+                    getApiKey()
             );
         } else {
             return String.format(
                     url,
                     id,
-                    apiKey
+                    getApiKey()
             );
         }
     }

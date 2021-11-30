@@ -36,9 +36,20 @@ public class PlayPlaylist {
         }
     }
 
+    private static String getCreator(Interpretation interpretation) {
+        if (interpretation.getCreatorLink() == null) {
+            return interpretation.getCreator();
+        }
+        return String.format(
+                "[%s](%s)",
+                interpretation.getCreator(),
+                interpretation.getCreatorLink()
+        );
+    }
+
     private static String formatDuration(Interpretation interpretation) {
         String strDuration = DurationCalc.longToString(interpretation.getDuration());
-        int strDurationLength = DurationCalc.longToString(interpretation.getDuration()).length();
+        int strDurationLength = strDuration.length();
         if (strDurationLength == 3) {
             return String.format("**00:00:00 - %s**", strDuration);
         } else if (strDurationLength == 2) {
@@ -65,13 +76,13 @@ public class PlayPlaylist {
                 )
                 .setColor(Color.ORANGE)
                 .setThumbnail(playlistInterpretation.getThumbnailUrl())
-                .addField("Creator", playlistInterpretation.getCreator(), true)
+                .addField("Creator", getCreator(playlistInterpretation), true)
                 .addField("Sources", formatSource(playlistInterpretation), true)
                 .addField("Tracks", String.valueOf(playlist.getTracks().size()), false)
-                .addField("Duration", formatDuration(playlistInterpretation), true)
+                .addField("Total Duration", formatDuration(playlistInterpretation), true)
                 .setFooter(
                         String.format(
-                                "by %s", requester.getEffectiveName()
+                                "Added %s", requester.getEffectiveName()
                         ),
                         requester.getUser().getAvatarUrl()
                 )

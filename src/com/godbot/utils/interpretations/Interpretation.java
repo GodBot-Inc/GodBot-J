@@ -1,6 +1,7 @@
 package utils.interpretations;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /*
  Wrapper interface for all Interpretation types
@@ -19,7 +20,7 @@ public interface Interpretation {
     /**
      * @return The link to the author of the song
      */
-    @NotNull String getCreatorLink();
+    @Nullable String getCreatorLink();
 
     /**
      * @return the title of the song
