@@ -18,11 +18,6 @@ import java.util.Objects;
 // https://github.com/googleapis/google-api-java-client-services/tree/main/clients/google-api-services-youtube/v3/1.30.1
 public class YoutubeApi {
 
-    private static String extractId(String url) {
-
-        return "";
-    }
-
     /**
      * Converts the duration from the passed String that we get from YouTube to a long
      * @param duration passed from YouTube
@@ -152,7 +147,7 @@ public class YoutubeApi {
     public static YoutubeVideoInterpretation getVideoInformation(String id)
             throws IOException, RequestException, InvalidURLException, CouldNotExtractInfoException, VideoNotFoundException, InternalError {
         JSONObject videoInfo = LinkHelper.sendRequest(
-                LinkConstructor.getYTVideo()
+                UrlConstructor.getYTVideo()
                         .setId(id)
                         .build()
         );
@@ -185,7 +180,7 @@ public class YoutubeApi {
     private static long getVideoDuration(String id)
             throws InvalidURLException, IOException, RequestException, InternalError {
         return convertDuration(LinkHelper.sendRequest(
-                LinkConstructor.getYTVideoDuration()
+                UrlConstructor.getYTVideoDuration()
                         .setId(id)
                         .build()
         )
@@ -217,12 +212,12 @@ public class YoutubeApi {
     public static YoutubePlaylistInterpretation getPlaylistInformation(String id)
             throws InvalidURLException, IOException, RequestException, InternalError {
         JSONObject playlistInfo = LinkHelper.sendRequest(
-                LinkConstructor.getPlaylistInfo()
+                UrlConstructor.getPlaylistInfo()
                         .setId(id)
                         .build()
         );
         JSONObject playlistItems = LinkHelper.sendRequest(
-                LinkConstructor.getPlaylistItems()
+                UrlConstructor.getPlaylistItems()
                         .setId(id)
                         .build()
         );
@@ -286,7 +281,7 @@ public class YoutubeApi {
                 videoIds.add(videoId);
             }
             playlistItemsObject = LinkHelper.sendRequest(
-                    LinkConstructor.getPlaylistItemsToken()
+                    UrlConstructor.getPlaylistItemsToken()
                             .setId(id)
                             .build()
             );

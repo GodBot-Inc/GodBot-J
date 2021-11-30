@@ -1,12 +1,11 @@
 package utils.apis.youtube;
 
 import io.github.cdimascio.dotenv.Dotenv;
-import utils.customExceptions.LinkInterpretation.youtubeApi.ApiKeyNotRetreivedException;
 
 /**
  * Link Builder is used to construct a link using . notation
  */
-public class LinkBuilder {
+public class UrlBuilder {
 
     private final boolean hasPage;
 
@@ -15,19 +14,19 @@ public class LinkBuilder {
     private String id;
     private String apiKey;
 
-    public LinkBuilder(String url, boolean hasPage) {
+    public UrlBuilder(String url, boolean hasPage) {
         this.url = url;
         this.hasPage = hasPage;
     }
 
-    public LinkBuilder setPageToken(String pageToken) {
+    public UrlBuilder setPageToken(String pageToken) {
         if (hasPage) {
             this.pageToken = pageToken;
         }
         return this;
     }
 
-    public LinkBuilder setId(String id) {
+    public UrlBuilder setId(String id) {
         this.id = id;
         return this;
     }

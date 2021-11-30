@@ -21,6 +21,11 @@ public class LinkProcessingLogger implements DefaultLogger {
         this.dbCommunication.linkProcessingLog(loggerObj.getDBScheme());
     }
 
+    public void infoAndSave(LoggerContent loggerObj) {
+        this.logger.info(loggerObj.getAsString());
+        this.dbCommunication.linkProcessingLog(loggerObj.getDBScheme());
+    }
+
     @Override
     public void warn(LoggerContent loggerObj) {
         this.logger.info(loggerObj.getAsString());

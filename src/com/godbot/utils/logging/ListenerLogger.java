@@ -4,29 +4,29 @@ import utils.database.MongoCommunication;
 
 import java.util.logging.Logger;
 
-public class CommandLogger implements DefaultLogger {
+public class ListenerLogger implements DefaultLogger{
 
     private final Logger logger;
     private final MongoCommunication dbCommunication;
 
-    public CommandLogger(String loggerName) {
+    public ListenerLogger(String loggerName) {
         this.logger = Logger.getLogger(loggerName);
-        this.dbCommunication = MongoCommunication.getInstance();
+        dbCommunication = MongoCommunication.getInstance();
     }
 
     @Override
     public void info(LoggerContent loggerObj) {
-        logger.info(loggerObj.getAsString());
+        this.logger.info(loggerObj.getAsString());
     }
 
     public void infoAndSave(LoggerContent loggerObj) {
-        logger.info(loggerObj.getAsString());
-        dbCommunication.audioProcessLog(loggerObj.getDBScheme());
+        this.logger.info(loggerObj.getAsString());
+        dbCommunication.commandLog(loggerObj.getDBScheme());
     }
 
     @Override
     public void warn(LoggerContent loggerObj) {
-        logger.warning(loggerObj.getAsString());
+        this.logger.info(loggerObj.getAsString());
         dbCommunication.audioProcessLog(loggerObj.getDBScheme());
     }
 }

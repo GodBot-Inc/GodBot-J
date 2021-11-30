@@ -10,19 +10,18 @@ import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
-import utils.logging.CommandLogger;
+import utils.logging.ListenerLogger;
 import utils.logging.LoggerContent;
 
 import javax.annotation.Nonnull;
-import javax.swing.text.html.Option;
 import java.util.HashMap;
 
 public class InteractionListener extends ListenerAdapter {
 
-    private final CommandLogger logger;
+    private final ListenerLogger logger;
 
     public InteractionListener() {
-        this.logger = CommandLogger.getInstance();
+        this.logger = new ListenerLogger("InteractionListener");
     }
 
     public HashMap<String, String> getLogArgs(@Nonnull SlashCommandEvent event) {

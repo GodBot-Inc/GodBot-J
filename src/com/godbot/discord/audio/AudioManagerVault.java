@@ -36,7 +36,7 @@ public class AudioManagerVault {
                         "info",
                         "AudioManagerVault-registerJDA",
                         "",
-                        new HashMap<String, String>() {{
+                        new HashMap<>() {{
                             put("applicationId", applicationId);
                         }}
                 )
