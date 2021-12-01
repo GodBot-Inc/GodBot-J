@@ -8,7 +8,6 @@ import se.michaelthelin.spotify.SpotifyApi;
 import se.michaelthelin.spotify.SpotifyHttpManager;
 import se.michaelthelin.spotify.exceptions.SpotifyWebApiException;
 import se.michaelthelin.spotify.model_objects.credentials.ClientCredentials;
-import se.michaelthelin.spotify.requests.authorization.client_credentials.ClientCredentialsRequest;
 import utils.customExceptions.LinkInterpretation.InternalServerError;
 import utils.customExceptions.LinkInterpretation.RateLimitException;
 import utils.customExceptions.LinkInterpretation.RequestException;

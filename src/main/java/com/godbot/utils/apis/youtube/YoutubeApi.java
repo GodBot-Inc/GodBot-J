@@ -1,5 +1,7 @@
 package utils.apis.youtube;
 
+import org.asynchttpclient.*;
+import org.asynchttpclient.util.HttpConstants;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -16,6 +18,20 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 public class YoutubeApi {
+
+    public static void sendAsyncRequest(String url, AsyncCompletionHandler<Object> handler) {
+        AsyncHttpClient client = new DefaultAsyncHttpClient(
+                new DefaultAsyncHttpClientConfig.Builder()
+                        .setMaxRedirects(2)
+                        .build()
+        );
+
+        Request request = new RequestBuilder(HttpConstants.Methods.GET)
+                .setUrl(url)
+                .build();
+
+        client.executeRequest(request, handler);
+    }
 
     /**
      * Converts the duration from the passed String that we get from YouTube to a long

@@ -8,7 +8,6 @@ import com.mongodb.client.MongoDatabase;
 import io.github.cdimascio.dotenv.Dotenv;
 
 import org.bson.Document;
-import utils.logging.LoggerContent;
 
 public class MongoCommunication {
 

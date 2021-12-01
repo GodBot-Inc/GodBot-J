@@ -11,11 +11,15 @@ import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.ChunkingFilter;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
+import org.apache.log4j.BasicConfigurator;
+import org.apache.log4j.spi.Configurator;
 
 import javax.security.auth.login.LoginException;
 
 public class GodBotSystem {
     public static void main(String[] args) throws LoginException, InterruptedException {
+        // BasicConfigurator.configure(); Standard configuration for log4j logging
+
         Dotenv dotenv = Dotenv.load();
 
         // Load Bot-Token into the program

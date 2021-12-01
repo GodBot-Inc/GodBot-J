@@ -7,12 +7,10 @@ import net.dv8tion.jda.api.entities.MessageEmbed;
 import utils.audio.DurationCalc;
 import utils.discord.EmojiIds;
 import utils.interpretations.Interpretation;
-import utils.interpretations.InterpretationExtraction;
 import utils.interpretations.spotify.SpotifyPlaylistInterpretation;
 import utils.interpretations.youtube.YoutubePlaylistInterpretation;
 
 import java.awt.*;
-import java.util.HashMap;
 
 public class PlayPlaylist {
     public static String formatSource(Interpretation interpretation) {

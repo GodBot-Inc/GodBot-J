@@ -2,8 +2,6 @@ package utils.logging;
 
 import java.util.logging.Logger;
 
-import utils.database.MongoCommunication;
-
 public class GeneralLogger implements DefaultLogger {
     
     private final Logger logger;

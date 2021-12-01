@@ -3,7 +3,7 @@
     <output-path>$PROJECT_DIR$/out/artifacts/GodBot_J_jar</output-path>
     <root id="archive" name="GodBot-J.jar">
       <element id="directory" name="META-INF">
-        <element id="file-copy" path="$PROJECT_DIR$/src/com/godbot/META-INF/MANIFEST.MF" />
+        <element id="file-copy" path="$PROJECT_DIR$/src/main/java/com/godbot/META-INF/MANIFEST.MF" />
       </element>
       <element id="module-output" name="GodBot-J" />
       <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/jetbrains/annotations/16.0.1/annotations-16.0.1.jar" path-in-jar="/" />
