@@ -53,7 +53,7 @@ public class AudioManagerVault {
                         "info",
                         "AudioManagerVault-registerGuild",
                         "",
-                        new HashMap<String, String>() {{
+                        new HashMap<>() {{
                             put("applicationId", applicationId);
                             put("GuildId", guild.getId());
                             put("GuildName", guild.getName());
@@ -73,7 +73,7 @@ public class AudioManagerVault {
                         "info",
                         "AudioManagerVault-removeJDA",
                         "",
-                        new HashMap<String, String>() {{
+                        new HashMap<>() {{
                             put("applicationId", applicationId);
                         }}
                 )
@@ -91,7 +91,7 @@ public class AudioManagerVault {
                         "info",
                         "AudioManagerVault-removeGuild",
                         "",
-                        new HashMap<String, String>() {{
+                        new HashMap<>() {{
                             put("applicationId", applicationId);
                             put("GuildId", guildId);
                         }}

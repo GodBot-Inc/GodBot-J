@@ -51,7 +51,7 @@ public class PlayerVault {
                         "info",
                         "PlayerVault-storePlayer",
                         "",
-                        new HashMap<String, String>() {{
+                        new HashMap<>() {{
                             put("GuildId", guildID);
                             put("channelId", channelID);
                         }}
@@ -86,7 +86,7 @@ public class PlayerVault {
                         "info",
                         "PlayerVault-removePlayer",
                         "",
-                        new HashMap<String, String>() {{
+                        new HashMap<>() {{
                             put("GuildId", guildID);
                             put("channelId", channelID);
                         }}
@@ -105,7 +105,7 @@ public class PlayerVault {
                         "info",
                         "PlayerVault-removeGuild",
                         "",
-                        new HashMap<String, String>() {{
+                        new HashMap<>() {{
                             put("GuildId", guildID);
                         }}
                 )

@@ -63,7 +63,7 @@ public class PlayerManager {
                         "info",
                         "PlayerManager-removePlayer",
                         "",
-                        new HashMap<String, String>() {{
+                        new HashMap<>() {{
                             put("GuildId", guildID);
                             put("channelId", channelID);
                         }}

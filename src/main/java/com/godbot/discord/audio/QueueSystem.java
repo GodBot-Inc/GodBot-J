@@ -66,7 +66,7 @@ public class QueueSystem {
                     "info",
                     "QueueSystem-getNextAndDelete",
                     "",
-                    new HashMap<String, String>() {{
+                    new HashMap<>() {{
                         put("track", queueStorage.get(player).get(0).getInfo().title);
                     }}
             )
@@ -95,7 +95,7 @@ public class QueueSystem {
                         "info",
                         "QueueSystem-addTrack",
                         "",
-                        new HashMap<String, String>() {{
+                        new HashMap<>() {{
                             put("track", track.getInfo().title);
                         }}
                 )

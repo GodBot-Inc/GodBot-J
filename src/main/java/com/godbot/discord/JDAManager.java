@@ -26,7 +26,7 @@ public class JDAManager {
                         "info",
                         "JDAManager-registerJDA",
                         "",
-                        new HashMap<String, String>() {{
+                        new HashMap<>() {{
                             put("botName", botName);
                         }}
                 )
@@ -42,7 +42,7 @@ public class JDAManager {
                         "info",
                         "JDAManager-getJDA",
                         "",
-                        new HashMap<String, String>() {{
+                        new HashMap<>() {{
                             put("botName", botName);
                         }}
                 )
