@@ -1,4 +1,4 @@
-package discord.audio.lavaplayer;
+package com.godbot.discord.audio.lavaplayer;
 
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;

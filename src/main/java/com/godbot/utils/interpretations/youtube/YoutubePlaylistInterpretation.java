@@ -1,4 +1,4 @@
-package utils.interpretations.youtube;
+package com.godbot.utils.interpretations.youtube;
 
 import org.jetbrains.annotations.NotNull;
 

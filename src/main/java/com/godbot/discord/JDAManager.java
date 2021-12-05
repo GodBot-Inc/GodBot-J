@@ -1,9 +1,9 @@
-package discord;
+package com.godbot.discord;
 
+import com.godbot.utils.customExceptions.JDANotFoundException;
+import com.godbot.utils.logging.GeneralLogger;
+import com.godbot.utils.logging.LoggerContent;
 import net.dv8tion.jda.api.JDA;
-import utils.customExceptions.JDANotFoundException;
-import utils.logging.GeneralLogger;
-import utils.logging.LoggerContent;
 
 import java.util.HashMap;
 

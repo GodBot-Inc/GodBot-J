@@ -1,13 +1,13 @@
-package discord.audio.lavaplayer;
+package com.godbot.discord.audio.lavaplayer;
 
+import com.godbot.discord.audio.PlayerManager;
+import com.godbot.discord.snippets.Embeds.errors.NotFoundError;
+import com.godbot.discord.snippets.Embeds.errors.StandardError;
 import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
-import discord.audio.PlayerManager;
-import discord.snippets.Embeds.errors.NotFoundError;
-import discord.snippets.Embeds.errors.StandardError;
 import net.dv8tion.jda.api.entities.VoiceChannel;
 import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.managers.AudioManager;

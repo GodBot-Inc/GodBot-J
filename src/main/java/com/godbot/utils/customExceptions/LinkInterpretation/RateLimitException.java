@@ -1,4 +1,4 @@
-package utils.customExceptions.LinkInterpretation;
+package com.godbot.utils.customExceptions.LinkInterpretation;
 
 public class RateLimitException extends RuntimeException {
     public RateLimitException(String errorMessage) {

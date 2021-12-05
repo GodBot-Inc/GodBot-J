@@ -1,9 +1,8 @@
-package utils.interpretations.youtube;
+package com.godbot.utils.interpretations.youtube;
 
 import org.jetbrains.annotations.NotNull;
-import utils.interpretations.Interpretation;
 
-public class YoutubeVideoInterpretation implements YoutubeInterpretation, Interpretation {
+public class YoutubeVideoInterpretation implements YoutubeInterpretation {
 
     private final long duration;
     private final String author;

@@ -1,4 +1,4 @@
-package utils.linkProcessing;
+package com.godbot.utils.linkProcessing;
 
 import org.jetbrains.annotations.NotNull;
 

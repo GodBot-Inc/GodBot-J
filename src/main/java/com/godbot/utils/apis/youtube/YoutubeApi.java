@@ -1,37 +1,21 @@
-package utils.apis.youtube;
+package com.godbot.utils.apis.youtube;
 
-import org.asynchttpclient.*;
-import org.asynchttpclient.util.HttpConstants;
+import com.godbot.utils.customExceptions.LinkInterpretation.InvalidURLException;
+import com.godbot.utils.customExceptions.LinkInterpretation.RequestException;
+import com.godbot.utils.customExceptions.LinkInterpretation.youtubeApi.CouldNotExtractInfoException;
+import com.godbot.utils.customExceptions.LinkInterpretation.youtubeApi.VideoNotFoundException;
+import com.godbot.utils.interpretations.youtube.YoutubePlaylistInterpretation;
+import com.godbot.utils.interpretations.youtube.YoutubeVideoInterpretation;
+import com.godbot.utils.linkProcessing.LinkHelper;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import utils.customExceptions.LinkInterpretation.InvalidURLException;
-import utils.customExceptions.LinkInterpretation.RequestException;
-import utils.customExceptions.LinkInterpretation.youtubeApi.CouldNotExtractInfoException;
-import utils.customExceptions.LinkInterpretation.youtubeApi.VideoNotFoundException;
-import utils.linkProcessing.LinkHelper;
-import utils.interpretations.youtube.YoutubePlaylistInterpretation;
-import utils.interpretations.youtube.YoutubeVideoInterpretation;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Objects;
 
 public class YoutubeApi {
-
-    public static void sendAsyncRequest(String url, AsyncCompletionHandler<Object> handler) {
-        AsyncHttpClient client = new DefaultAsyncHttpClient(
-                new DefaultAsyncHttpClientConfig.Builder()
-                        .setMaxRedirects(2)
-                        .build()
-        );
-
-        Request request = new RequestBuilder(HttpConstants.Methods.GET)
-                .setUrl(url)
-                .build();
-
-        client.executeRequest(request, handler);
-    }
 
     /**
      * Converts the duration from the passed String that we get from YouTube to a long
@@ -212,6 +196,15 @@ public class YoutubeApi {
             return false;
         }
         return true;
+    }
+
+    /**
+     * A function to get the playlist information asynchronous (hopefully faster)
+     * @param id of the playlist
+     * @return YoutubePlaylistInterpretation Object which contains all info
+     */
+    public static YoutubePlaylistInterpretation getPlaylistInfoAsync(String id) {
+
     }
 
     /**

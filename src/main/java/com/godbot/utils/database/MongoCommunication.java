@@ -1,4 +1,4 @@
-package utils.database;
+package com.godbot.utils.database;
 
 import com.mongodb.*;
 

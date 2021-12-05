@@ -1,15 +1,17 @@
-package discord.audio;
+package com.godbot.discord.audio;
 
+import com.godbot.utils.customExceptions.audio.PlayerNotFoundException;
+import com.godbot.utils.customExceptions.audio.QueueEmptyException;
+import com.godbot.utils.logging.AudioLogger;
+import com.godbot.utils.logging.LoggerContent;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
-import utils.customExceptions.audio.PlayerNotFoundException;
-import utils.customExceptions.audio.QueueEmptyException;
-import utils.logging.AudioLogger;
 
 import javax.management.openmbean.KeyAlreadyExistsException;
 import java.security.KeyException;
-import java.util.*;
-import utils.logging.LoggerContent;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 public class QueueSystem {
 

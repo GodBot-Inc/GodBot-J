@@ -1,4 +1,4 @@
-package discord.listeners;
+package com.godbot.discord.listeners;
 
 import net.dv8tion.jda.api.events.ReadyEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;

@@ -1,14 +1,14 @@
-package discord.snippets.Embeds.trackInfo;
+package com.godbot.discord.snippets.Embeds.trackInfo;
 
+import com.godbot.utils.audio.DurationCalc;
+import com.godbot.utils.discord.EmojiIds;
+import com.godbot.utils.interpretations.Interpretation;
+import com.godbot.utils.interpretations.spotify.SpotifyPlaylistInterpretation;
+import com.godbot.utils.interpretations.youtube.YoutubePlaylistInterpretation;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
-import utils.audio.DurationCalc;
-import utils.discord.EmojiIds;
-import utils.interpretations.Interpretation;
-import utils.interpretations.spotify.SpotifyPlaylistInterpretation;
-import utils.interpretations.youtube.YoutubePlaylistInterpretation;
 
 import java.awt.*;
 

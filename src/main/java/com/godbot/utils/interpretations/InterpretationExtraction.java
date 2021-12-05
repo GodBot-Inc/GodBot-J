@@ -1,9 +1,9 @@
-package utils.interpretations;
+package com.godbot.utils.interpretations;
 
+import com.godbot.discord.snippets.Keys;
+import com.godbot.utils.interpretations.spotify.SpotifySongInterpretation;
+import com.godbot.utils.interpretations.youtube.YoutubeVideoInterpretation;
 import com.mongodb.lang.Nullable;
-import discord.snippets.Keys;
-import utils.interpretations.spotify.SpotifySongInterpretation;
-import utils.interpretations.youtube.YoutubeVideoInterpretation;
 
 import java.util.HashMap;
 

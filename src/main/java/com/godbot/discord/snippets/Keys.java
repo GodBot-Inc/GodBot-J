@@ -1,4 +1,4 @@
-package discord.snippets;
+package com.godbot.discord.snippets;
 
 public final class Keys {
 

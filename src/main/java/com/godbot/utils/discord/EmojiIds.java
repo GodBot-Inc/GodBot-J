@@ -1,4 +1,4 @@
-package utils.discord;
+package com.godbot.utils.discord;
 
 public class EmojiIds {
 

@@ -1,6 +1,7 @@
-package utils.interpretations.youtube;
+package com.godbot.utils.interpretations.youtube;
 
-import utils.interpretations.Interpretation;
+
+import com.godbot.utils.interpretations.Interpretation;
 
 /**
  * Wrapper for all YoutubeInterpretations

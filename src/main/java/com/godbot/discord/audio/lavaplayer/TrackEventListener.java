@@ -1,13 +1,13 @@
-package discord.audio.lavaplayer;
+package com.godbot.discord.audio.lavaplayer;
 
-import discord.audio.QueueSystem;
+import com.godbot.discord.audio.QueueSystem;
+import com.godbot.utils.customExceptions.audio.PlayerNotFoundException;
+import com.godbot.utils.customExceptions.audio.QueueEmptyException;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.event.AudioEventAdapter;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
-import utils.customExceptions.audio.PlayerNotFoundException;
-import utils.customExceptions.audio.QueueEmptyException;
 
 public class TrackEventListener extends AudioEventAdapter {
     @Override

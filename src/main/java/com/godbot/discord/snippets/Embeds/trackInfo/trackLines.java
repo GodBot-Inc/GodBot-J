@@ -1,4 +1,4 @@
-package discord.snippets.Embeds.trackInfo;
+package com.godbot.discord.snippets.Embeds.trackInfo;
 
 public class trackLines {
     public static String build(long currentMs, long maxMs) {

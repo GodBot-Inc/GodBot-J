@@ -1,4 +1,4 @@
-package utils.interpretations;
+package com.godbot.utils.interpretations;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

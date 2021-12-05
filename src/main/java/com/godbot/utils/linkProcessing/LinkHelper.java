@@ -1,9 +1,11 @@
-package utils.linkProcessing;
+package com.godbot.utils.linkProcessing;
 
+import com.godbot.utils.customExceptions.LinkInterpretation.InvalidURLException;
+import com.godbot.utils.customExceptions.LinkInterpretation.PlatformNotFoundException;
+import com.godbot.utils.customExceptions.LinkInterpretation.RequestException;
+import org.asynchttpclient.*;
+import org.asynchttpclient.util.HttpConstants;
 import org.json.JSONObject;
-import utils.customExceptions.LinkInterpretation.InvalidURLException;
-import utils.customExceptions.LinkInterpretation.PlatformNotFoundException;
-import utils.customExceptions.LinkInterpretation.RequestException;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -65,5 +67,28 @@ public class LinkHelper {
         bufferedReader.close();
         System.out.println(response);
         return new JSONObject(response.toString());
+    }
+
+    /**
+     * A function to send asynchronous http requests
+     * @param url to send the request to
+     * @param handler is used when a message is received
+     */
+    public static void sendAsyncRequest(String url, AsyncCompletionHandler<Object> handler) {
+        AsyncHttpClient client = new DefaultAsyncHttpClient(
+                new DefaultAsyncHttpClientConfig.Builder()
+                        .setMaxRedirects(2)
+                        .build()
+        );
+
+        Request request = new RequestBuilder(HttpConstants.Methods.GET)
+                .setUrl(url)
+                .build();
+
+        /*
+         After this is called, the request was sent, but not received.
+         So other things can be executed while we wait for an answer.
+         */
+        client.executeRequest(request, handler);
     }
 }

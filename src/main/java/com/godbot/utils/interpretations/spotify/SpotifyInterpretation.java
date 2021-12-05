@@ -1,6 +1,7 @@
-package utils.interpretations.spotify;
+package com.godbot.utils.interpretations.spotify;
 
-import utils.interpretations.Interpretation;
+
+import com.godbot.utils.interpretations.Interpretation;
 
 /**
  * Wrapper for all types of SpotifyInterpretations

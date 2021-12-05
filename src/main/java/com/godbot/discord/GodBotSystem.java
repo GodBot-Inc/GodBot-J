@@ -1,9 +1,9 @@
-package discord;
+package com.godbot.discord;
 
-import discord.audio.AudioManagerVault;
+import com.godbot.discord.audio.AudioManagerVault;
+import com.godbot.discord.listeners.BotStateListener;
+import com.godbot.discord.listeners.InteractionListener;
 import io.github.cdimascio.dotenv.Dotenv;
-import discord.listeners.BotStateListener;
-import discord.listeners.InteractionListener;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
@@ -11,8 +11,6 @@ import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.ChunkingFilter;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
-import org.apache.log4j.BasicConfigurator;
-import org.apache.log4j.spi.Configurator;
 
 import javax.security.auth.login.LoginException;
 

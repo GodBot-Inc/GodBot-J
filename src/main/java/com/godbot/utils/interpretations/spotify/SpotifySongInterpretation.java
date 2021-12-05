@@ -1,7 +1,7 @@
-package utils.interpretations.spotify;
+package com.godbot.utils.interpretations.spotify;
 
+import com.godbot.utils.interpretations.Interpretation;
 import org.jetbrains.annotations.NotNull;
-import utils.interpretations.Interpretation;
 
 public class SpotifySongInterpretation implements Interpretation {
     @Override

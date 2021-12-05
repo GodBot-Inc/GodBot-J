@@ -1,17 +1,17 @@
-package discord.listeners;
+package com.godbot.discord.listeners;
 
-import discord.commands.music.Play;
-import discord.commands.musicControl.Pause;
-import discord.commands.musicControl.Resume;
-import discord.commands.musicControl.Stop;
-import discord.snippets.Embeds.errors.StandardError;
+import com.godbot.discord.commands.music.Play;
+import com.godbot.discord.commands.musicControl.Pause;
+import com.godbot.discord.commands.musicControl.Resume;
+import com.godbot.discord.commands.musicControl.Stop;
+import com.godbot.discord.snippets.Embeds.errors.StandardError;
+import com.godbot.utils.logging.ListenerLogger;
+import com.godbot.utils.logging.LoggerContent;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
-import utils.logging.ListenerLogger;
-import utils.logging.LoggerContent;
 
 import javax.annotation.Nonnull;
 import java.util.HashMap;

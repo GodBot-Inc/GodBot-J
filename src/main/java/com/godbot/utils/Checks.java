@@ -1,13 +1,13 @@
-package utils;
+package com.godbot.utils;
 
-import discord.snippets.Embeds.errors.StandardError;
-import discord.snippets.Messages;
+import com.godbot.discord.snippets.Embeds.errors.StandardError;
+import com.godbot.discord.snippets.Messages;
+import com.godbot.utils.customExceptions.checks.CheckFailedException;
+import com.godbot.utils.customExceptions.checks.VoiceCheckFailedException;
+import com.godbot.utils.discord.EventExtender;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
-import utils.customExceptions.checks.CheckFailedException;
-import utils.customExceptions.checks.VoiceCheckFailedException;
-import utils.discord.EventExtender;
 
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;

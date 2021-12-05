@@ -1,6 +1,6 @@
-package utils.logging;
+package com.godbot.utils.logging;
 
-import utils.database.MongoCommunication;
+import com.godbot.utils.database.MongoCommunication;
 
 import java.util.logging.Logger;
 

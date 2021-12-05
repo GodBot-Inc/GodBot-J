@@ -1,5 +1,9 @@
-package utils.apis.spotify;
+package com.godbot.utils.apis.spotify;
 
+import com.godbot.utils.customExceptions.LinkInterpretation.InternalServerError;
+import com.godbot.utils.customExceptions.LinkInterpretation.RateLimitException;
+import com.godbot.utils.customExceptions.LinkInterpretation.RequestException;
+import com.godbot.utils.linkProcessing.TypeAndId;
 import io.github.cdimascio.dotenv.Dotenv;
 import org.apache.hc.core5.http.ParseException;
 import org.json.JSONException;
@@ -8,10 +12,6 @@ import se.michaelthelin.spotify.SpotifyApi;
 import se.michaelthelin.spotify.SpotifyHttpManager;
 import se.michaelthelin.spotify.exceptions.SpotifyWebApiException;
 import se.michaelthelin.spotify.model_objects.credentials.ClientCredentials;
-import utils.customExceptions.LinkInterpretation.InternalServerError;
-import utils.customExceptions.LinkInterpretation.RateLimitException;
-import utils.customExceptions.LinkInterpretation.RequestException;
-import utils.linkProcessing.TypeAndId;
 
 import java.io.IOException;
 import java.net.URI;

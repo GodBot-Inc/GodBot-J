@@ -1,8 +1,8 @@
-package discord.snippets.Embeds.errors;
+package com.godbot.discord.snippets.Embeds.errors;
 
+import com.godbot.utils.discord.EmojiIds;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
-import utils.discord.EmojiIds;
 
 import java.awt.*;
 

@@ -1,4 +1,4 @@
-package utils.customExceptions.audio;
+package com.godbot.utils.customExceptions.audio;
 
 
 public class QueueEmptyException extends Exception {

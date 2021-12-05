@@ -1,6 +1,5 @@
-package utils.logging;
+package com.godbot.utils.logging;
 
-import com.mongodb.BasicDBObject;
 import org.bson.Document;
 
 import java.time.LocalDateTime;

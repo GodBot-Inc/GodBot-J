@@ -1,17 +1,16 @@
-package discord.audio;
+package com.godbot.discord.audio;
 
+import com.godbot.discord.audio.lavaplayer.TrackEventListener;
+import com.godbot.utils.customExceptions.ChannelNotFoundException;
+import com.godbot.utils.customExceptions.GuildNotFoundException;
+import com.godbot.utils.customExceptions.audio.PlayerNotFoundException;
+import com.godbot.utils.logging.AudioLogger;
+import com.godbot.utils.logging.LoggerContent;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
-
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
-import discord.audio.lavaplayer.TrackEventListener;
-import utils.logging.LoggerContent;
-import utils.customExceptions.ChannelNotFoundException;
-import utils.customExceptions.GuildNotFoundException;
-import utils.customExceptions.audio.PlayerNotFoundException;
-import utils.logging.AudioLogger;
 
 import javax.management.openmbean.KeyAlreadyExistsException;
 import java.util.HashMap;

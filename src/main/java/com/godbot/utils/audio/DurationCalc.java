@@ -1,4 +1,4 @@
-package utils.audio;
+package com.godbot.utils.audio;
 
 public final class DurationCalc {
 

@@ -1,4 +1,4 @@
-package utils.logging;
+package com.godbot.utils.logging;
 
 import java.util.logging.Logger;
 

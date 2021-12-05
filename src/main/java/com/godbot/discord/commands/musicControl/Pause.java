@@ -1,20 +1,20 @@
-package discord.commands.musicControl;
+package com.godbot.discord.commands.musicControl;
 
+import com.godbot.discord.audio.PlayerVault;
+import com.godbot.discord.commands.Command;
+import com.godbot.discord.snippets.Embeds.errors.StandardError;
+import com.godbot.discord.snippets.Messages;
+import com.godbot.utils.Checks;
+import com.godbot.utils.customExceptions.ChannelNotFoundException;
+import com.godbot.utils.customExceptions.GuildNotFoundException;
+import com.godbot.utils.customExceptions.checks.CheckFailedException;
+import com.godbot.utils.discord.EventExtender;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
-import discord.audio.PlayerVault;
-import discord.commands.Command;
-import discord.snippets.Embeds.errors.StandardError;
-import discord.snippets.Messages;
 import io.github.cdimascio.dotenv.Dotenv;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
-import utils.Checks;
-import utils.customExceptions.ChannelNotFoundException;
-import utils.customExceptions.GuildNotFoundException;
-import utils.customExceptions.checks.CheckFailedException;
-import utils.discord.EventExtender;
 
 public class Pause implements Command {
     public static void trigger(SlashCommandEvent scEvent) {

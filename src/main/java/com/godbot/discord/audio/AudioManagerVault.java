@@ -1,13 +1,13 @@
-package discord.audio;
+package com.godbot.discord.audio;
 
-import discord.JDAManager;
+import com.godbot.discord.JDAManager;
+import com.godbot.utils.customExceptions.JDANotFoundException;
+import com.godbot.utils.customExceptions.audio.ApplicationNotFoundException;
+import com.godbot.utils.logging.AudioLogger;
+import com.godbot.utils.logging.LoggerContent;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.managers.AudioManager;
-import utils.customExceptions.JDANotFoundException;
-import utils.logging.LoggerContent;
-import utils.customExceptions.audio.ApplicationNotFoundException;
-import utils.logging.AudioLogger;
 
 import java.util.HashMap;
 import java.util.List;

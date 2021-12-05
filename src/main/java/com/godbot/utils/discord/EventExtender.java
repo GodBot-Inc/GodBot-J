@@ -1,8 +1,7 @@
-package utils.discord;
+package com.godbot.utils.discord;
 
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
-import net.dv8tion.jda.api.interactions.Interaction;
 
 public class EventExtender {
 

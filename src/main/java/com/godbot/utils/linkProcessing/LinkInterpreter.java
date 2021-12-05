@@ -1,22 +1,23 @@
-package utils.linkProcessing;
+package com.godbot.utils.linkProcessing;
 
-import discord.snippets.Keys;
+import com.godbot.discord.snippets.Keys;
+import com.godbot.utils.Checks;
+import com.godbot.utils.apis.youtube.YoutubeApi;
+import com.godbot.utils.customExceptions.LinkInterpretation.InvalidURLException;
+import com.godbot.utils.customExceptions.LinkInterpretation.PlatformNotFoundException;
+import com.godbot.utils.customExceptions.LinkInterpretation.RequestException;
+import com.godbot.utils.customExceptions.LinkInterpretation.youtubeApi.CouldNotExtractInfoException;
+import com.godbot.utils.customExceptions.LinkInterpretation.youtubeApi.VideoNotFoundException;
+import com.godbot.utils.interpretations.Interpretation;
+import com.godbot.utils.interpretations.spotify.SpotifyInterpretation;
+import com.godbot.utils.interpretations.youtube.YoutubeInterpretation;
+import com.godbot.utils.interpretations.youtube.YoutubeVideoInterpretation;
+import com.godbot.utils.logging.LinkProcessingLogger;
 import org.jetbrains.annotations.NotNull;
-import utils.Checks;
-import utils.apis.youtube.YoutubeApi;
-import utils.customExceptions.LinkInterpretation.InvalidURLException;
-import utils.customExceptions.LinkInterpretation.PlatformNotFoundException;
-import utils.customExceptions.LinkInterpretation.RequestException;
-import utils.customExceptions.LinkInterpretation.youtubeApi.CouldNotExtractInfoException;
-import utils.customExceptions.LinkInterpretation.youtubeApi.VideoNotFoundException;
-import utils.interpretations.Interpretation;
-import utils.interpretations.spotify.SpotifyInterpretation;
-import utils.interpretations.youtube.YoutubeInterpretation;
-import utils.interpretations.youtube.YoutubeVideoInterpretation;
-import utils.logging.LinkProcessingLogger;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Objects;
 
 /*
  * Procedure of the LinkInterpreter:

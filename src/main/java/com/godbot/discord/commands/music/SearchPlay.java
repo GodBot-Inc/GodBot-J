@@ -1,6 +1,7 @@
-package discord.commands.music;
+package com.godbot.discord.commands.music;
 
-import discord.commands.Command;
+
+import com.godbot.discord.commands.Command;
 
 public class SearchPlay implements Command {
     public static void trigger() {

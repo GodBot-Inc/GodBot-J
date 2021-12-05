@@ -1,4 +1,4 @@
-package utils.apis.youtube;
+package com.godbot.utils.apis.youtube;
 
 import io.github.cdimascio.dotenv.Dotenv;
 
