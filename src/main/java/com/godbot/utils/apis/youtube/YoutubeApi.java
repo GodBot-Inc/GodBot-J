@@ -1,5 +1,6 @@
 package com.godbot.utils.apis.youtube;
 
+import com.godbot.utils.audio.DurationCalc;
 import com.godbot.utils.customExceptions.LinkInterpretation.InvalidURLException;
 import com.godbot.utils.customExceptions.LinkInterpretation.RequestException;
 import com.godbot.utils.customExceptions.LinkInterpretation.youtubeApi.CouldNotExtractInfoException;
@@ -12,43 +13,15 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.util.ArrayList;
 import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
 
 public class YoutubeApi {
-
-    /**
-     * Converts the duration from the passed String that we get from YouTube to a long
-     * @param duration passed from YouTube
-     * @return duration in milliseconds
-     */
-    private static long convertDuration(String duration) {
-        long time = 0;
-        if (duration.contains("PT") || duration.contains("PM")) {
-            duration = duration.substring(2);
-        }
-        if (duration.contains("H")) {
-            // multiply hours with 3600000 to get milliseconds
-            time += Long.parseLong(duration.split("H")[0]) * 3600000;
-        }
-        if (duration.contains("M")) {
-            if (time != 0) {
-                time += Long.parseLong(duration.split("M")[0].substring(1)) * 60000;
-            } else {
-                time += Long.parseLong(duration.split("M")[0]) * 60000;
-            }
-        }
-        if (duration.contains("S")) {
-            if (duration.contains("M")) {
-                time += Long.parseLong(duration.split("M")[1].substring(0, 1)) * 1000;
-            } else if (duration.contains("H")) {
-                time += Long.parseLong(duration.split("H")[1].substring(0, 1)) * 1000;
-            } else {
-                time += Long.parseLong(duration.substring(0, 1)) * 1000;
-            }
-        }
-        return time;
-    }
 
     /**
      * Call it and pass the following arguments to get a YoutubeVideoInterpretation
@@ -111,7 +84,7 @@ public class YoutubeApi {
             comments = Integer.parseInt(statistics.getString("commentCount"));
         }
 
-        long duration = convertDuration(contentDetails.getString("duration"));
+        long duration = DurationCalc.ytStringToLong(contentDetails.getString("duration"));
 
         return new YoutubeVideoInterpretation(
                 duration,
@@ -175,18 +148,22 @@ public class YoutubeApi {
      * @throws RequestException If the request returned an invalid return code
      * @throws InternalError If YouTube has issues resolving the request
      */
-    private static long getVideoDuration(String id)
+    public static long getVideoDuration(String id)
             throws InvalidURLException, IOException, RequestException, InternalError {
-        return convertDuration(LinkHelper.sendRequest(
-                UrlConstructor.getYTVideoDuration()
-                        .setId(id)
-                        .build()
-        )
-                        .getJSONArray("items")
-                        .getJSONObject(0)
-                        .getJSONObject("contentDetails")
-                        .getString("duration")
-        );
+        try {
+            return DurationCalc.ytStringToLong(LinkHelper.sendRequest(
+                                    UrlConstructor.getYTVideoDuration()
+                                            .setId(id)
+                                            .build()
+                            )
+                            .getJSONArray("items")
+                            .getJSONObject(0)
+                            .getJSONObject("contentDetails")
+                            .getString("duration")
+            );
+        } catch (JSONException e) {
+            return 0;
+        }
     }
 
     private static boolean checkToken(JSONObject jsonObject) {
@@ -198,13 +175,189 @@ public class YoutubeApi {
         return true;
     }
 
-    /**
-     * A function to get the playlist information asynchronous (hopefully faster)
-     * @param id of the playlist
-     * @return YoutubePlaylistInterpretation Object which contains all info
-     */
     public static YoutubePlaylistInterpretation getPlaylistInfoAsync(String id) {
+        String playlistInfoUrl = UrlConstructor.getPlaylistInfo()
+                .setId(id)
+                .build();
+        String playlistItemsUrl = UrlConstructor.getPlaylistItems()
+                .setId(id)
+                .build();
 
+        HttpClient httpClient = HttpClient.newHttpClient();
+
+        HttpRequest.Builder httpRequestBuilder = HttpRequest.newBuilder();
+
+        HttpRequest playlistInfoRequest = httpRequestBuilder
+                .uri(URI.create(playlistInfoUrl))
+                .GET()
+                .build();
+        HttpRequest playlistItemsRequest = httpRequestBuilder
+                .uri(URI.create(playlistItemsUrl))
+                .GET()
+                .build();
+
+        CompletableFuture<HttpResponse<String>> playlistItems = httpClient.sendAsync(
+                playlistItemsRequest,
+                HttpResponse.BodyHandlers.ofString()
+        );
+        CompletableFuture<HttpResponse<String>> playlistInfoFuture = httpClient.sendAsync(
+                playlistInfoRequest,
+                HttpResponse.BodyHandlers.ofString()
+        );
+        JSONObject playlistInfo = new JSONObject(playlistInfoFuture.join().body());
+
+        if (playlistInfo.isEmpty()) {
+            throw new CouldNotExtractInfoException("PlaylistInfo is empty");
+        }
+        if (playlistInfo.getJSONArray("items").isEmpty()) {
+            throw new VideoNotFoundException("PlaylistId: " + id + " could not be found");
+        }
+
+        JSONObject contentDetails;
+        JSONObject snippet;
+        try {
+            contentDetails = playlistInfo
+                    .getJSONArray("items")
+                    .getJSONObject(0)
+                    .getJSONObject("contentDetails");
+        }  catch (JSONException e) {
+            throw new CouldNotExtractInfoException("ContentDetails was not found");
+        }
+        try {
+            snippet = playlistInfo
+                    .getJSONArray("items")
+                    .getJSONObject(0)
+                    .getJSONObject("snippet");
+        }  catch (JSONException e) {
+            throw new CouldNotExtractInfoException("Snippet was not found");
+        }
+
+        String author = snippet.getString("channelTitle");
+        if (author.contains("Topic")) {
+            author = author.split(" - Topic")[0];
+        }
+
+        String title = snippet.getString("title");
+
+        String thumbnail;
+        if (!snippet.getJSONObject("thumbnails").isEmpty()) {
+            thumbnail = snippet.getJSONObject("thumbnails").getJSONObject("standard").getString("url");
+        } else {
+            thumbnail = null;
+        }
+
+        int itemCount = contentDetails.getInt("itemCount");
+
+        long duration = 0;
+
+        JSONObject playlistItemsObject = new JSONObject(playlistItems.join().body());
+        System.out.println(playlistItemsObject);
+        ArrayList<String> videoIds = new ArrayList<>();
+        JSONArray array;
+        ArrayList<CompletableFuture<Long>> responseList = new ArrayList<>();
+
+        while (checkToken(playlistItemsObject)) {
+            array = playlistItemsObject.getJSONArray("items");
+            String url;
+
+            try {
+                url = UrlConstructor.getPlaylistItemsToken()
+                        .setId(playlistItemsObject.getString("nextPageToken"))
+                        .build();
+            } catch (JSONException e) {
+                return new YoutubePlaylistInterpretation(
+                        duration,
+                        author,
+                        null,
+                        title,
+                        String.format(
+                                "https://www.youtube.com/playlist=list=%s",
+                                id
+                        ),
+                        thumbnail,
+                        itemCount,
+                        videoIds
+                );
+            }
+
+            HttpRequest nextPageRequest = httpRequestBuilder
+                    .uri(URI.create(url))
+                    .build();
+
+            CompletableFuture<JSONObject> nextPage = httpClient.sendAsync(
+                    nextPageRequest,
+                    HttpResponse.BodyHandlers.ofString()
+            ).thenApply(YoutubeApi::toJSON);
+
+            for (int i = 0; i < array.length(); i++) {
+                String videoId;
+                try {
+                    videoId = array
+                            .getJSONObject(i)
+                            .getJSONObject("contentDetails")
+                            .getString("videoId");
+                } catch (JSONException e) {
+                    continue;
+                }
+
+                videoIds.add(videoId);
+
+                url = UrlConstructor.getYTVideoDuration()
+                        .setId(videoId)
+                        .build();
+
+                HttpRequest videoDurationRequest = httpRequestBuilder
+                        .uri(URI.create(url))
+                        .GET()
+                        .build();
+
+                CompletableFuture<Long> videoDuration = httpClient.sendAsync(
+                        videoDurationRequest,
+                        HttpResponse.BodyHandlers.ofString()
+                )
+                        .thenApply(YoutubeApi::extractDuration)
+                        .thenApply(DurationCalc::ytStringToLong);
+
+                responseList.add(videoDuration);
+            }
+
+            playlistItemsObject = nextPage.join();
+        }
+
+        for (CompletableFuture<Long> singleDuration : responseList) {
+            duration += singleDuration.join();
+        }
+
+        return new YoutubePlaylistInterpretation(
+                duration,
+                author,
+                null,
+                title,
+                String.format(
+                        "https://www.youtube.com/playlist=list=%s",
+                        id
+                ),
+                thumbnail,
+                itemCount,
+                videoIds
+        );
+    }
+
+    private static JSONObject toJSON(HttpResponse<String> response) {
+        return new JSONObject(response.body());
+    }
+
+    private static String extractDuration(HttpResponse<String> videoResponse) {
+        JSONObject toExtract = new JSONObject(videoResponse.body());
+        try {
+            return toExtract
+                    .getJSONArray("items")
+                    .getJSONObject(0)
+                    .getJSONObject("contentDetails")
+                    .getString("duration");
+        } catch (JSONException e) {
+            return "PT0H0M0S";
+        }
     }
 
     /**
@@ -264,7 +417,7 @@ public class YoutubeApi {
 
         String thumbnail;
         if (!snippet.getJSONObject("thumbnails").isEmpty()) {
-            thumbnail = snippet.getJSONObject("thumbnails").getJSONObject("high").getString("url");
+            thumbnail = snippet.getJSONObject("thumbnails").getJSONObject("standard").getString("url");
         } else {
             thumbnail = null;
         }
@@ -279,10 +432,15 @@ public class YoutubeApi {
         while (checkToken(playlistItemsObject)) {
             array = playlistItemsObject.getJSONArray("items");
             for (int i = 0; i < array.length(); i++) {
-                String videoId = array
-                        .getJSONObject(i)
-                        .getJSONObject("contentDetails")
-                        .getString("videoId");
+                String videoId;
+                try {
+                    videoId = array
+                            .getJSONObject(i)
+                            .getJSONObject("contentDetails")
+                            .getString("videoId");
+                } catch (JSONException e) {
+                    continue;
+                }
 
                 duration += getVideoDuration(videoId);
                 videoIds.add(videoId);

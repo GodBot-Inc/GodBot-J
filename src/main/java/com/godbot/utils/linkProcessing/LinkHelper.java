@@ -74,21 +74,18 @@ public class LinkHelper {
      * @param url to send the request to
      * @param handler is used when a message is received
      */
-    public static void sendAsyncRequest(String url, AsyncCompletionHandler<Object> handler) {
-        AsyncHttpClient client = new DefaultAsyncHttpClient(
-                new DefaultAsyncHttpClientConfig.Builder()
-                        .setMaxRedirects(2)
-                        .build()
-        );
-
-        Request request = new RequestBuilder(HttpConstants.Methods.GET)
-                .setUrl(url)
-                .build();
-
+    public static void sendAsyncGetRequest(String url, AsyncCompletionHandler<Object> handler) {
         /*
          After this is called, the request was sent, but not received.
          So other things can be executed while we wait for an answer.
          */
-        client.executeRequest(request, handler);
+        new DefaultAsyncHttpClient(
+                new DefaultAsyncHttpClientConfig.Builder()
+                        .setMaxRedirects(2)
+                        .build()
+        ).executeRequest(
+                new RequestBuilder(HttpConstants.Methods.GET),
+                handler
+        );
     }
 }

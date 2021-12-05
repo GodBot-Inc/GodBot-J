@@ -61,7 +61,7 @@ public class YoutubePlaylistInterpretation implements YoutubeInterpretation {
     }
 
     @Override
-    public @NotNull String getCreatorLink() {
+    public String getCreatorLink() {
         return this.creatorUri;
     }
 

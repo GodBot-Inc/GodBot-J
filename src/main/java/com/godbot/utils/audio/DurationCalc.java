@@ -1,5 +1,7 @@
 package com.godbot.utils.audio;
 
+import java.util.Arrays;
+
 public final class DurationCalc {
 
     /**
@@ -14,22 +16,27 @@ public final class DurationCalc {
         }
         if (duration.contains("H")) {
             // multiply hours with 3600000 to get milliseconds
+            System.out.println(Arrays.toString(duration.split("H")));
             time += Long.parseLong(duration.split("H")[0]) * 3600000;
         }
         if (duration.contains("M")) {
             if (time != 0) {
-                time += Long.parseLong(duration.split("M")[0].substring(1)) * 60000;
+                time += Long.parseLong(duration.split("H")[1].split("M")[0]) * 60000;
+//                System.out.println(Arrays.toString(duration.split("M")));
+//                System.out.println(duration.split("M")[0].substring(1));
+//                time += Long.parseLong(duration.split("M")[0].substring(1)) * 60000;
             } else {
                 time += Long.parseLong(duration.split("M")[0]) * 60000;
             }
         }
         if (duration.contains("S")) {
             if (duration.contains("M")) {
-                time += Long.parseLong(duration.split("M")[1].substring(0, 1)) * 1000;
+                time += Long.parseLong(duration.split("M")[1].split("S")[0]) * 1000;
             } else if (duration.contains("H")) {
-                time += Long.parseLong(duration.split("H")[1].substring(0, 1)) * 1000;
+                time += Long.parseLong(duration.split("H")[1].split("S")[0]) * 1000;
             } else {
-                time += Long.parseLong(duration.substring(0, 1)) * 1000;
+                time += Long.parseLong(duration.split("S")[0]) * 1000;
+//                time += Long.parseLong(duration.substring(0, 1)) * 1000;
             }
         }
         return time;
