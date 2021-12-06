@@ -1,8 +1,8 @@
 package com.godbot.utils.apis.spotify;
 
-import com.godbot.utils.customExceptions.LinkInterpretation.InternalServerError;
-import com.godbot.utils.customExceptions.LinkInterpretation.RateLimitException;
-import com.godbot.utils.customExceptions.LinkInterpretation.RequestException;
+import com.godbot.utils.customExceptions.requests.InternalServerError;
+import com.godbot.utils.customExceptions.requests.RateLimitException;
+import com.godbot.utils.customExceptions.requests.RequestException;
 import com.godbot.utils.linkProcessing.TypeAndId;
 import io.github.cdimascio.dotenv.Dotenv;
 import org.apache.hc.core5.http.ParseException;

@@ -2,6 +2,7 @@ package com.godbot.utils.interpretations;
 
 import com.godbot.discord.snippets.Keys;
 import com.godbot.utils.interpretations.spotify.SpotifySongInterpretation;
+import com.godbot.utils.interpretations.youtube.YoutubePlaylistInterpretation;
 import com.godbot.utils.interpretations.youtube.YoutubeVideoInterpretation;
 import com.mongodb.lang.Nullable;
 
@@ -21,6 +22,12 @@ public class InterpretationExtraction {
             HashMap<String, Interpretation> interpretations
     ) {
         return (YoutubeVideoInterpretation) interpretations.getOrDefault(Keys.YTVIDEO, null);
+    }
+
+    @Nullable public static YoutubePlaylistInterpretation getYTPlaylistInterpretation(
+            HashMap<String, Interpretation> interpretations
+    ) {
+        return (YoutubePlaylistInterpretation) interpretations.getOrDefault(Keys.YTPLAYLIST, null);
     }
 
     public static SpotifySongInterpretation getSpotSongInterpretation(

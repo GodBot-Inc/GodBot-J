@@ -19,4 +19,6 @@ public final class Messages {
 
     public static final String INTERPRETATIONS_EMPTY = "I could not fetch any information about the song";
 
+    public static final String LOADING_FAILED = "Loading of the give song failed :thinking:";
+
 }

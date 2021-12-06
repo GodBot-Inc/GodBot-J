@@ -7,7 +7,9 @@ import com.godbot.discord.audio.lavaplayer.AudioPlayerSendHandler;
 import com.godbot.discord.audio.lavaplayer.AudioResultHandler;
 import com.godbot.discord.commands.Command;
 import com.godbot.discord.snippets.Embeds.errors.EmptyError;
+import com.godbot.discord.snippets.Embeds.errors.NotFoundError;
 import com.godbot.discord.snippets.Embeds.errors.StandardError;
+import com.godbot.discord.snippets.Embeds.trackInfo.PlayPlaylist;
 import com.godbot.discord.snippets.Embeds.trackInfo.PlayTrack;
 import com.godbot.discord.snippets.Messages;
 import com.godbot.utils.Checks;
@@ -20,6 +22,9 @@ import com.godbot.utils.customExceptions.LinkInterpretation.PlatformNotFoundExce
 import com.godbot.utils.customExceptions.checks.CheckFailedException;
 import com.godbot.utils.discord.EventExtender;
 import com.godbot.utils.interpretations.Interpretation;
+import com.godbot.utils.interpretations.InterpretationExtraction;
+import com.godbot.utils.interpretations.youtube.YoutubePlaylistInterpretation;
+import com.godbot.utils.linkProcessing.LinkHelper;
 import com.godbot.utils.linkProcessing.LinkInterpreter;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import io.github.cdimascio.dotenv.Dotenv;
@@ -127,73 +132,129 @@ public class Play implements Command {
         InteractionHook interactionHook = scEvent.getHook();
         scEvent.deferReply().queue();
 
+        String type;
+        try {
+            if (LinkHelper.isVideo(url)) {
+                type = "video";
+            } else {
+                type = "playlist";
+            }
+        } catch (InvalidURLException e) {
+            interactionHook
+                    .editOriginalEmbeds(
+                            StandardError.build(Messages.PLAY_INVALID_URL)
+                    ).queue();
+            return;
+        } catch (PlatformNotFoundException e) {
+            interactionHook
+                    .editOriginalEmbeds(
+                            StandardError.build(Messages.PLATFORM_NOT_FOUND)
+                    ).queue();
+            return;
+        }
+
         AudioResultHandler audioResultHandler = new AudioResultHandler(
                 player,
-                interactionHook,
                 manager,
                 member.getVoiceState().getChannel(),
                 url
         );
-        PlayerManager
+
+        if (type.equals("video")) {
+            PlayerManager
                 .getInstance()
                 .getManager()
                 .loadItem(
                         String.format("%s", url),
                         audioResultHandler
                 );
+        }
 
-        if (Objects.equals(
-                audioResultHandler.actionType,
-                "trackLoaded"
-        ) ||
-                Objects.equals(
-                        audioResultHandler.actionType,
-                        "playlistLoaded"
-                )
-        ) {
-            HashMap<String, Interpretation> interpretationHashMap;
-            try {
-                interpretationHashMap = LinkInterpreter.interpret(url);
-            } catch(InvalidURLException e) {
-                scEvent
-                        .replyEmbeds(
-                                StandardError.build(Messages.INVALID_URL)
-                        )
-                        .queue();
-                return;
-            } catch(PlatformNotFoundException e) {
-                scEvent
-                        .replyEmbeds(
-                                StandardError.build(Messages.PLATFORM_NOT_FOUND)
-                        )
-                        .queue();
+        switch (audioResultHandler.actionType) {
+            case "error" -> {
+                interactionHook
+                        .editOriginalEmbeds(
+                                StandardError.build(Messages.GENERAL_ERROR)
+                        ).queue();
                 return;
             }
-
-            if (interpretationHashMap.isEmpty()) {
-                scEvent.replyEmbeds(
-                        EmptyError.build(Messages.INTERPRETATIONS_EMPTY)
-                )
-                        .queue();
+            case "noMatches" -> {
+                interactionHook
+                        .editOriginalEmbeds(
+                                NotFoundError.build(Messages.VIDEO_NOT_FOUND)
+                        ).queue();
+                return;
             }
+            case "loadFailed" -> {
+                interactionHook
+                        .editOriginalEmbeds(
+                                StandardError.build(Messages.LOADING_FAILED)
+                        ).queue();
+                return;
+            }
+        }
 
-            try {
-                scEvent
-                        .replyEmbeds(
+        HashMap<String, Interpretation> interpretationHashMap;
+        try {
+            interpretationHashMap = LinkInterpreter.interpret(url);
+        } catch(InvalidURLException e) {
+            interactionHook
+                    .editOriginalEmbeds(
+                            StandardError.build(Messages.INVALID_URL)
+                    ).queue();
+            return;
+        } catch(PlatformNotFoundException e) {
+            interactionHook
+                    .editOriginalEmbeds(
+                            StandardError.build(Messages.PLATFORM_NOT_FOUND)
+                    ).queue();
+            return;
+        }
+
+        if (interpretationHashMap.isEmpty()) {
+            interactionHook
+                    .editOriginalEmbeds(
+                            EmptyError.build(Messages.INTERPRETATIONS_EMPTY)
+                    ).queue();
+        }
+
+        try {
+            if (type.equals("video")) {
+                interactionHook
+                        .editOriginalEmbeds(
                                 PlayTrack.build(
                                         audioResultHandler.audioTrack,
                                         member,
                                         audioResultHandler.nowPlaying,
                                         interpretationHashMap
                                 )
-                        )
-                        .queue();
-            } catch (InterpretationsEmpty e) {
-                scEvent.replyEmbeds(
-                        EmptyError.build(Messages.INTERPRETATIONS_EMPTY)
-                )
-                        .queue();
+                        ).queue();
+            } else {
+                YoutubePlaylistInterpretation youtubePlaylistInterpretation =
+                        InterpretationExtraction.getYTPlaylistInterpretation(interpretationHashMap);
+                if (youtubePlaylistInterpretation == null) {
+                    interactionHook
+                            .editOriginalEmbeds(
+                                    EmptyError.build(
+                                            Messages.INTERPRETATIONS_EMPTY
+                                    )
+                            ).queue();
+                    return;
+                }
+                interactionHook
+                        .editOriginalEmbeds(
+                                PlayPlaylist.build(
+                                        member,
+                                        audioResultHandler.nowPlaying,
+                                        youtubePlaylistInterpretation
+                                )
+                        ).queue();
             }
+        } catch (InterpretationsEmpty e) {
+            interactionHook
+                    .editOriginalEmbeds(
+                            EmptyError.build(Messages.INTERPRETATIONS_EMPTY)
+                    ).queue();
         }
     }
 }

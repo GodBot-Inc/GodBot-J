@@ -1,8 +1,78 @@
 package com.godbot.utils.interpretations.youtube;
 
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class YoutubeVideoInterpretation implements YoutubeInterpretation {
+
+    public static class VideoBuilder {
+
+        private long duration = 0;
+        private String author;
+        private String authorLink;
+        private String title;
+        private String uri;
+        private String thumbnailUri;
+        private long likes = 0;
+        private long dislikes = 0;
+        private long views = 0;
+        private long comments = 0;
+
+
+        public void setDuration(long duration) {
+            this.duration = duration;
+        }
+
+        public void setAuthor(String author) {
+            this.author = author;
+        }
+
+        public void setAuthorLink(String authorLink) {
+            this.authorLink = authorLink;
+        }
+
+        public void setTitle(String title) {
+            this.title = title;
+        }
+
+        public void setUri(String uri) {
+            this.uri = uri;
+        }
+
+        public void setThumbnailUri(String thumbnailUri) {
+            this.thumbnailUri = thumbnailUri;
+        }
+
+        public void setLikes(long likes) {
+            this.likes = likes;
+        }
+
+        public void setDislikes(long dislikes) {
+            this.dislikes = dislikes;
+        }
+
+        public void setViews(long views) {
+            this.views = views;
+        }
+
+        public void setComments(long comments) {
+            this.comments = comments;
+        }
+
+        public YoutubeVideoInterpretation build() {
+            return new YoutubeVideoInterpretation(
+                    duration,
+                    author,
+                    authorLink,
+                    title,
+                    uri,
+                    thumbnailUri,
+                    likes,
+                    dislikes,
+                    views,
+                    comments
+            );
+        }
+    }
 
     private final long duration;
     private final String author;
@@ -62,26 +132,26 @@ public class YoutubeVideoInterpretation implements YoutubeInterpretation {
     }
 
     @Override
-    public @NotNull String getCreator() {
+    public @Nullable String getCreator() {
         return this.author;
     }
 
-    @NotNull public String getCreatorLink() {
+    @Nullable public String getCreatorLink() {
         return this.authorLink;
     }
 
     @Override
-    public @NotNull String getTitle() {
+    public @Nullable String getTitle() {
         return this.title;
     }
 
     @Override
-    public @NotNull String getUrl() {
+    public @Nullable String getUrl() {
         return this.uri;
     }
 
     @Override
-    public @NotNull String getThumbnailUrl() {
+    public @Nullable String getThumbnailUrl() {
         return this.thumbnailUri;
     }
 

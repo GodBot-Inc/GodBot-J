@@ -22,10 +22,12 @@ public class PlayTrack {
 
     public static String formatSources(HashMap<String, Interpretation> interpretations) {
         StringBuilder builder = new StringBuilder();
+
         YoutubeVideoInterpretation ytInterpretation = InterpretationExtraction
                 .getYTVideoInterpretation(interpretations);
         SpotifySongInterpretation spotifySongInterpretation = InterpretationExtraction
                 .getSpotSongInterpretation(interpretations);
+
         if (ytInterpretation != null) {
             builder.append(
                     String.format(
@@ -106,7 +108,7 @@ public class PlayTrack {
             HashMap<String, Interpretation> interpretations
     ) throws InterpretationsEmpty {
         return new EmbedBuilder()
-                .setTitle(nowPlaying ? "Playing" : "Queued")
+                .setTitle("Song " + (nowPlaying ? "Loaded" : "Queued"))
                 .setDescription(
                         String.format(
                                 "[%s](%s)",

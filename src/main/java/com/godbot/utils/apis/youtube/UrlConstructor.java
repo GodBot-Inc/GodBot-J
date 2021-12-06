@@ -40,6 +40,9 @@ public class UrlConstructor {
                     "&playlistId=%s" +
                     "&key=%s";
 
+    private static final String watchUrl =
+            "https://youtube.com/watch?v=%s";
+
     private static final String getVideoInformation = "https://youtube.googleapis.com/youtube/v3/" +
             "videos?" +
             "part=contentDetails" +
@@ -61,6 +64,10 @@ public class UrlConstructor {
 
     @NotNull public static UrlBuilder getPlaylistItems() {
         return new UrlBuilder(getPlaylistItemsUrl, false);
+    }
+
+    @NotNull public static UrlBuilder getWatch() {
+        return new UrlBuilder(watchUrl, false);
     }
 
     @NotNull public static UrlBuilder getPlaylistItemsToken() {

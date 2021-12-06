@@ -2,22 +2,20 @@ package com.godbot.utils.linkProcessing;
 
 import com.godbot.discord.snippets.Keys;
 import com.godbot.utils.Checks;
+import com.godbot.utils.apis.youtube.UrlConstructor;
 import com.godbot.utils.apis.youtube.YoutubeApi;
 import com.godbot.utils.customExceptions.LinkInterpretation.InvalidURLException;
 import com.godbot.utils.customExceptions.LinkInterpretation.PlatformNotFoundException;
-import com.godbot.utils.customExceptions.LinkInterpretation.RequestException;
-import com.godbot.utils.customExceptions.LinkInterpretation.youtubeApi.CouldNotExtractInfoException;
-import com.godbot.utils.customExceptions.LinkInterpretation.youtubeApi.VideoNotFoundException;
+import com.godbot.utils.customExceptions.requests.RequestException;
+import com.godbot.utils.customExceptions.ytApi.CouldNotExtractInfoException;
+import com.godbot.utils.customExceptions.ytApi.VideoNotFoundException;
 import com.godbot.utils.interpretations.Interpretation;
-import com.godbot.utils.interpretations.spotify.SpotifyInterpretation;
 import com.godbot.utils.interpretations.youtube.YoutubeInterpretation;
 import com.godbot.utils.interpretations.youtube.YoutubeVideoInterpretation;
 import com.godbot.utils.logging.LinkProcessingLogger;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.Objects;
 
 /*
  * Procedure of the LinkInterpreter:
@@ -63,86 +61,60 @@ public class LinkInterpreter {
                     }
                 } catch(IOException | RequestException ignore) {}
                 break;
-            case "spotify":
-                SpotifyInterpretation spotifyInterpretation = spotInterpret(url);
+//            case "spotify":
+//                SpotifyInterpretation spotifyInterpretation = spotInterpret(url);
             default:
                 throw new IllegalStateException("Unexpected value: " + platform);
         }
         return interpretations;
     }
 
+    public static String getFirst(String url)
+            throws PlatformNotFoundException, InvalidURLException, IOException, RequestException {
+        String platform = LinkHelper.getPlatform(url);
+        if (platform.equals("youtube")) {
+            TypeAndId typeAndId = ytGetTypeAndId(url);
+            if (typeAndId.type.equals("playlist")) {
+                return YoutubeApi.getFirst(typeAndId.Id);
+            }
+            return UrlConstructor.getWatch().setId(typeAndId.Id).build();
+        }
+        throw new InvalidURLException("Url " + url + " could not be determined");
+    }
+
     // YT
-    private static HashMap<String, String> ytGetTypeAndId(String url) throws InvalidURLException {
+    public static TypeAndId ytGetTypeAndId(String url) throws InvalidURLException {
         if (url.contains("list=")) {
             String id = url.split("list=")[0].split("&")[0];
-            return new HashMap<>() {{
-                put("type", "playlist");
-                put("id", id);
-            }};
+            return new TypeAndId("playlist" , id);
         } else if (url.contains("watch?v=") && !url.contains("list=")) {
             String id = url.split("watch?v=")[0].split("&")[0];
-            return new HashMap<>() {{
-                put("type", "video");
-                put("id", id);
-            }};
+            return new TypeAndId("video", id);
         }
         throw new InvalidURLException(String.format("Could not fetch Type and Id of the given url %s", url));
     }
 
     private static YoutubeInterpretation ytInterpret(String url)
             throws InvalidURLException, IOException, RequestException, InternalError, CouldNotExtractInfoException, VideoNotFoundException {
-        LinkProcessingLogger logger = getLogger();
-        HashMap<String, String> typeAndId = ytGetTypeAndId(url);
-        if (Objects.equals(typeAndId.get("type"), "playlist")) {
-            return YoutubeApi.getPlaylistInformation(typeAndId.get("id"));
-        } else if (Objects.equals(typeAndId.get("type"), "video")) {
-            return YoutubeApi.getVideoInformation(typeAndId.get("id"));
+        TypeAndId typeAndId = ytGetTypeAndId(url);
+        if (typeAndId.type.equals("playlist")) {
+            return YoutubeApi.getPlaylistInfoAsync(typeAndId.Id);
+        } else if (typeAndId.type.equals("video")) {
+            return YoutubeApi.getVideoInformation(typeAndId.Id);
         }
-        throw new IllegalStateException("Unexpected value: " + typeAndId.get("type"));
+        throw new IllegalStateException("Unexpected value: " + typeAndId.type);
     }
     // YT END
 
     // Spotify
-    private static TypeAndId spotGetTypeAndId(String url)
-            throws InvalidURLException {
-        return new TypeAndId("moin", "moin");
-    }
-
-    private static SpotifyInterpretation spotInterpret(String url)
-            throws InvalidURLException {
-        LinkProcessingLogger logger = getLogger();
-        TypeAndId typeAndId = spotGetTypeAndId(url);
-        return new SpotifyInterpretation() {
-            @Override
-            public long getDuration() {
-                return 0;
-            }
-
-            @Override
-            public @NotNull String getCreator() {
-                return null;
-            }
-
-            @Override
-            public @NotNull String getCreatorLink() {
-                return null;
-            }
-
-            @Override
-            public @NotNull String getTitle() {
-                return null;
-            }
-
-            @Override
-            public @NotNull String getUrl() {
-                return null;
-            }
-
-            @Override
-            public @NotNull String getThumbnailUrl() {
-                return null;
-            }
-        };
-    }
+//    private static TypeAndId spotGetTypeAndId(String url)
+//            throws InvalidURLException {
+//        return new TypeAndId("moin", "moin");
+//    }
+//
+//    private static SpotifyInterpretation spotInterpret(String url)
+//            throws InvalidURLException {
+//        TypeAndId typeAndId = spotGetTypeAndId(url);
+//    }
     // Spotify END
 }

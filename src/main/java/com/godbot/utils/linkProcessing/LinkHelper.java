@@ -1,10 +1,9 @@
 package com.godbot.utils.linkProcessing;
 
-import com.godbot.utils.customExceptions.LinkInterpretation.InvalidURLException;
-import com.godbot.utils.customExceptions.LinkInterpretation.PlatformNotFoundException;
-import com.godbot.utils.customExceptions.LinkInterpretation.RequestException;
-import org.asynchttpclient.*;
-import org.asynchttpclient.util.HttpConstants;
+import com.godbot.utils.customExceptions.requests.*;
+import com.godbot.utils.customExceptions.LinkInterpretation.*;
+import com.godbot.utils.customExceptions.ytApi.QuotaExpired;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -12,6 +11,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.http.HttpResponse;
 
 public class LinkHelper {
 
@@ -29,9 +29,15 @@ public class LinkHelper {
         } else {
             throw new PlatformNotFoundException(String.format("Platform for lin %s could not be determined", url));
         }
-//        } else if (url.contains("https://soundcloud.com/")) {
-//            return "soundcloud";
-//        }
+    }
+
+    public static boolean isVideo(String url)
+            throws PlatformNotFoundException, InvalidURLException {
+        String platform = getPlatform(url);
+        if (platform.equals("youtube")) {
+            return LinkInterpreter.ytGetTypeAndId(url).type.equals("video");
+        }
+        throw new PlatformNotFoundException("Platform for Link " + url + " not found");
     }
 
     /**
@@ -69,23 +75,48 @@ public class LinkHelper {
         return new JSONObject(response.toString());
     }
 
+    public static void checkYTResponseCode(int code) {
+
+    }
+
     /**
-     * A function to send asynchronous http requests
-     * @param url to send the request to
-     * @param handler is used when a message is received
+     * Method to check the return code for async api calls
+     * @param response The response gotten from YouTube (first pass it here)
+     * @return The response, so we can actually receive it where it's needed
+     * @throws QuotaExpired If you can't send requests anymore for the day
+     * @throws BadRequestException Your fault
+     * @throws RateLimitException Too many requests at once
+     * @throws InternalServerError YouTube fucked up
+     * @throws EndpointMovedException They just moved an endpoint ;(
+     * @throws NotFoundException What are you calling again?
      */
-    public static void sendAsyncGetRequest(String url, AsyncCompletionHandler<Object> handler) {
-        /*
-         After this is called, the request was sent, but not received.
-         So other things can be executed while we wait for an answer.
-         */
-        new DefaultAsyncHttpClient(
-                new DefaultAsyncHttpClientConfig.Builder()
-                        .setMaxRedirects(2)
-                        .build()
-        ).executeRequest(
-                new RequestBuilder(HttpConstants.Methods.GET),
-                handler
-        );
+    public static HttpResponse<String> checkYTResponseCode(HttpResponse<String> response)
+            throws QuotaExpired,
+            BadRequestException,
+            RateLimitException,
+            InternalServerError,
+            EndpointMovedException,
+            NotFoundException {
+        JSONObject jsonObject;
+        int code;
+        try {
+            jsonObject = new JSONObject(response.body());
+            code = jsonObject
+                    .getJSONObject("error")
+                    .getJSONArray("errors")
+                    .getJSONObject(0)
+                    .getInt("code");
+        } catch (JSONException e) {
+            throw new BadRequestException();
+        }
+        switch (code) {
+            case 301, 303, 304, 307, 410 -> throw new EndpointMovedException();
+            case 400, 402, 405, 409, 412, 413, 416, 417, 428 -> throw new BadRequestException();
+            case 403 -> throw new QuotaExpired();
+            case 404 -> throw new NotFoundException();
+            case 429 -> throw new RateLimitException();
+            case 500, 501, 503 -> throw new InternalServerError();
+        }
+        return response;
     }
 }

@@ -1,4 +1,4 @@
-package com.godbot.utils.customExceptions.LinkInterpretation.youtubeApi;
+package com.godbot.utils.customExceptions.ytApi;
 
 public class VideoNotFoundException extends RuntimeException {
     public VideoNotFoundException(String errorMessage) {

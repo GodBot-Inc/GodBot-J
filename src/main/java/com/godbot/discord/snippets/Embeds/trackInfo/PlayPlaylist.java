@@ -5,7 +5,6 @@ import com.godbot.utils.discord.EmojiIds;
 import com.godbot.utils.interpretations.Interpretation;
 import com.godbot.utils.interpretations.spotify.SpotifyPlaylistInterpretation;
 import com.godbot.utils.interpretations.youtube.YoutubePlaylistInterpretation;
-import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
@@ -58,17 +57,16 @@ public class PlayPlaylist {
     }
 
     public static MessageEmbed build(
-            AudioPlaylist playlist,
             Member requester,
             boolean nowPlaying,
-            Interpretation playlistInterpretation
+            YoutubePlaylistInterpretation playlistInterpretation
     ) {
         return new EmbedBuilder()
                 .setTitle(nowPlaying ? "Playing" : "Queued")
                 .setDescription(
                         String.format(
                             "[%s](%s)",
-                            playlist.getName(),
+                            playlistInterpretation.getTitle(),
                             playlistInterpretation.getUrl()
                         )
                 )
@@ -76,7 +74,7 @@ public class PlayPlaylist {
                 .setThumbnail(playlistInterpretation.getThumbnailUrl())
                 .addField("Creator", getCreator(playlistInterpretation), true)
                 .addField("Sources", formatSource(playlistInterpretation), true)
-                .addField("Tracks", String.valueOf(playlist.getTracks().size()), false)
+                .addField("Tracks", String.valueOf(playlistInterpretation.getSize()), false)
                 .addField("Total Duration", formatDuration(playlistInterpretation), true)
                 .setFooter(
                         String.format(

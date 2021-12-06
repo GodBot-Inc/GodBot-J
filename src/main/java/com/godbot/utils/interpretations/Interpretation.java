@@ -1,6 +1,5 @@
 package com.godbot.utils.interpretations;
 
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /*
@@ -15,7 +14,7 @@ public interface Interpretation {
     /**
      * @return the author of the song
      */
-    @NotNull String getCreator();
+    @Nullable String getCreator();
 
     /**
      * @return The link to the author of the song
@@ -25,15 +24,15 @@ public interface Interpretation {
     /**
      * @return the title of the song
      */
-    @NotNull String getTitle();
+    @Nullable String getTitle();
 
     /**
      * @return the url of the song
      */
-    @NotNull String getUrl();
+    @Nullable String getUrl();
 
     /**
      * @return the url of the thumbnail
      */
-    @NotNull String getThumbnailUrl();
+    @Nullable String getThumbnailUrl();
 }

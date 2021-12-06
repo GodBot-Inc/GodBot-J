@@ -6,6 +6,71 @@ import java.util.ArrayList;
 
 public class YoutubePlaylistInterpretation implements YoutubeInterpretation {
 
+    public static class PlaylistBuilder {
+
+        private long duration = 0;
+        private String creator;
+        private String creatorUri;
+        private String title;
+        private String uri;
+        private String thumbnailUri;
+        private int size;
+        private ArrayList<String> videoIds;
+
+        public void setDuration(long duration) {
+            this.duration = duration;
+        }
+
+        public void addDuration(long duration) {
+            this.duration += duration;
+        }
+
+        public void setCreator(String creator) {
+            this.creator = creator;
+        }
+
+        public void setCreatorUri(String creatorUri) {
+            this.creatorUri = creatorUri;
+        }
+
+        public void setTitle(String title) {
+            this.title = title;
+        }
+
+        public void setUri(String uri) {
+            this.uri = uri;
+        }
+
+        public void setThumbnailUri(String thumbnailUri) {
+            this.thumbnailUri = thumbnailUri;
+        }
+
+        public void setSize(int size) {
+            this.size = size;
+        }
+
+        public void setVideoIds(ArrayList<String> videoIds) {
+            this.videoIds = videoIds;
+        }
+
+        public void addVideoId(String videoId) {
+            this.videoIds.add(videoId);
+        }
+
+        public YoutubePlaylistInterpretation build() {
+            return new YoutubePlaylistInterpretation(
+                    duration,
+                    creator,
+                    creatorUri,
+                    title,
+                    uri,
+                    thumbnailUri,
+                    size,
+                    videoIds
+            );
+        }
+    }
+
     private final long duration;
     private final String creator;
     private final String creatorUri;
