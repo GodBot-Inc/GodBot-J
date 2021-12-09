@@ -116,6 +116,18 @@ public class YoutubeApi {
         }
 
         builder.setDuration(DurationCalc.ytStringToLong(contentDetails.getString("duration")));
+        builder.setUri(
+                String.format(
+                        "https://youtube.com/watch?v=%s",
+                        id
+                )
+        );
+        builder.setMusicUri(
+                String.format(
+                        "https://music.youtube.com/watch?v=%s",
+                        id
+                )
+        );
 
         return builder.build();
     }

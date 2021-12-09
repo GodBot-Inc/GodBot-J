@@ -11,6 +11,7 @@ public class YoutubeVideoInterpretation implements YoutubeInterpretation {
         private String authorLink;
         private String title;
         private String uri;
+        private String musicUri;
         private String thumbnailUri;
         private long likes = 0;
         private long dislikes = 0;
@@ -58,6 +59,10 @@ public class YoutubeVideoInterpretation implements YoutubeInterpretation {
             this.comments = comments;
         }
 
+        public void setMusicUri(String uri) {
+            this.musicUri = uri;
+        }
+
         public YoutubeVideoInterpretation build() {
             return new YoutubeVideoInterpretation(
                     duration,
@@ -65,6 +70,7 @@ public class YoutubeVideoInterpretation implements YoutubeInterpretation {
                     authorLink,
                     title,
                     uri,
+                    musicUri,
                     thumbnailUri,
                     likes,
                     dislikes,
@@ -79,6 +85,7 @@ public class YoutubeVideoInterpretation implements YoutubeInterpretation {
     private final String authorLink;
     private final String title;
     private final String uri;
+    private final String musicUri;
     private final String thumbnailUri;
     private final long likes;
     private final long dislikes;
@@ -91,6 +98,7 @@ public class YoutubeVideoInterpretation implements YoutubeInterpretation {
             String authorLInk,
             String title,
             String uri,
+            String musicUri,
             String thumbnailUri,
             long likes,
             long dislikes,
@@ -102,6 +110,7 @@ public class YoutubeVideoInterpretation implements YoutubeInterpretation {
         this.authorLink = authorLInk;
         this.title = title;
         this.uri = uri;
+        this.musicUri = musicUri;
         this.thumbnailUri = thumbnailUri;
         this.likes = likes;
         this.dislikes = dislikes;
@@ -112,12 +121,13 @@ public class YoutubeVideoInterpretation implements YoutubeInterpretation {
     @Override
     public String toString() {
         return String.format(
-                "YoutubeVideoInterpretation=[duration=%s, author=%s, title=%s, uri=%s, " +
+                "YoutubeVideoInterpretation=[duration=%s, author=%s, title=%s, uri=%s, musicUri=%s, " +
                         "thumbnailUri=%s, likes=%s, dislikes=%s, views=%s, comments=%s]",
                 duration,
                 author,
                 title,
                 uri,
+                musicUri,
                 thumbnailUri,
                 likes,
                 dislikes,
@@ -148,6 +158,10 @@ public class YoutubeVideoInterpretation implements YoutubeInterpretation {
     @Override
     public @Nullable String getUrl() {
         return this.uri;
+    }
+
+    public @Nullable String getMusicUrl() {
+        return this.musicUri;
     }
 
     @Override

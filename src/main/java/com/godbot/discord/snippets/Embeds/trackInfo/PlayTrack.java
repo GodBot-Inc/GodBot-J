@@ -28,12 +28,29 @@ public class PlayTrack {
         SpotifySongInterpretation spotifySongInterpretation = InterpretationExtraction
                 .getSpotSongInterpretation(interpretations);
 
-        if (ytInterpretation != null) {
+        if (ytInterpretation != null && ytInterpretation.getUrl() != null) {
             builder.append(
                     String.format(
-                            "%s %s\n",
+                            "%s [YouTube](%s)\n",
                             EmojiIds.youtubeEmoji,
                             ytInterpretation.getUrl()
+                    )
+            );
+        } else {
+            builder.append(
+                    String.format(
+                            "%s -\n",
+                            EmojiIds.youtubeEmoji
+                    )
+            );
+        }
+
+        if (ytInterpretation != null && ytInterpretation.getMusicUrl() != null) {
+            builder.append(
+                    String.format(
+                            "%s [YouTube Music](%s)\n",
+                            EmojiIds.youtubeMusicEmoji,
+                            ytInterpretation.getMusicUrl()
                     )
             );
         } else {
@@ -48,7 +65,7 @@ public class PlayTrack {
         if (spotifySongInterpretation != null) {
             builder.append(
                     String.format(
-                            "%s %s\n",
+                            "%s [Spotify](%s)\n",
                             EmojiIds.spotifyEmoji,
                             interpretations.get(Keys.SPOTSONG).getUrl()
                     )
@@ -155,7 +172,7 @@ public class PlayTrack {
 
         return String.format(
                 "%s %s",
-                TrackLines.build(0, firstVideoInterpretation.getDuration()),
+                TrackLines.buildDefault(),
                 formatDuration(interpretations)
         );
     }
@@ -166,20 +183,13 @@ public class PlayTrack {
             boolean nowPlaying,
             HashMap<String, Interpretation> interpretations
     ) {
-        System.out.println("triggered");
-        System.out.println(interpretations);
-
         String description = getDescription(interpretations);
-        System.out.println("set description");
 
         String author = getAuthor(interpretations);
-        System.out.println("set author");
 
         String duration = getDuration(interpretations);
-        System.out.println("got duration");
 
         String thumbnail = getThumbnail(interpretations);
-        System.out.println("got thumbnail");
 
         return new EmbedBuilder()
                 .setTitle("Song " + (nowPlaying ? "Loaded" : "Queued"))
