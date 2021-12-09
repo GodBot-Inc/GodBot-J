@@ -1,6 +1,6 @@
 package com.godbot.discord.snippets.Embeds.trackInfo;
 
-public class trackLines {
+public class TrackLines {
     public static String build(long currentMs, long maxMs) {
         // ▬
         // :radio_button:
@@ -15,5 +15,9 @@ public class trackLines {
         }
         System.out.println(sb);
         return sb.toString();
+    }
+
+    public static String buildDefault() {
+        return ":radio_button:▬▬▬▬▬▬▬";
     }
 }

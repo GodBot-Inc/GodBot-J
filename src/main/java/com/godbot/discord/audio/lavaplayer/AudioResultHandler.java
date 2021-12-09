@@ -1,6 +1,6 @@
 package com.godbot.discord.audio.lavaplayer;
 
-import com.godbot.discord.audio.PlayerManager;
+import com.godbot.discord.audio.AudioPlayerManagerWrapper;
 import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
@@ -15,10 +15,18 @@ public class AudioResultHandler implements AudioLoadResultHandler {
     private final AudioManager audioManager;
     private final VoiceChannel channel;
 
-    public final String identifier;
-    public String actionType = null;
-    public boolean nowPlaying = false;
-    public AudioTrack audioTrack;
+    private final String identifier;
+    /*
+     1 -> TrackLoaded
+     2 -> PlaylistLoaded
+     3 -> NoMatches
+     4 -> NotLoaded
+     10 -> error
+     */
+    private int actionType = 0;
+    private AudioTrack audioTrack;
+    private AudioPlaylist audioPlaylist;
+    private boolean nowPlaying;
 
     public AudioResultHandler(
             AudioPlayer player,
@@ -35,38 +43,56 @@ public class AudioResultHandler implements AudioLoadResultHandler {
     @Override
     public void trackLoaded(AudioTrack audioTrack) {
         System.out.printf("TrackLoaded %s", identifier);
-        this.actionType = "trackLoaded";
+        this.actionType = 1;
         if (!audioManager.isConnected()) {
             audioManager.openAudioConnection(channel);
         }
-        this.nowPlaying = PlayerManager.playTrack(player, audioTrack);
-        this.audioTrack = audioTrack;
+        nowPlaying = AudioPlayerManagerWrapper.playTrack(player, audioTrack);
     }
     
     @Override
     public void playlistLoaded(AudioPlaylist audioPlaylist) {
         System.out.printf("playlistLoaded %s\n", identifier);
+        this.actionType = 2;
         if (audioPlaylist.getTracks().isEmpty()) {
-            actionType = "error";
+            this.actionType = 10;
             return;
         }
         if (!audioManager.isConnected()) {
             audioManager.openAudioConnection(channel);
         }
-        this.actionType = "playlistLoaded";
-        this.nowPlaying = PlayerManager.playTrack(player, audioPlaylist.getTracks().get(0));
-        this.audioTrack = audioPlaylist.getTracks().get(0);
+        nowPlaying = AudioPlayerManagerWrapper.playTrack(player, audioPlaylist.getTracks().get(0));
     }
 
     @Override
     public void noMatches() {
+        this.actionType = 3;
         System.out.printf("NoMatches %s", identifier);
-        actionType = "noMatches";
     }
 
     @Override
     public void loadFailed(FriendlyException e) {
+        this.actionType = 4;
         System.out.printf("LoadFailed %s", identifier);
-        actionType = "loadFailed";
+    }
+
+    public String getIdentifier() {
+        return identifier;
+    }
+
+    public int getActionType() {
+        return actionType;
+    }
+
+    public AudioTrack getAudioTrack() {
+        return audioTrack;
+    }
+
+    public AudioPlaylist getAudioPlaylist() {
+        return audioPlaylist;
+    }
+
+    public boolean isNowPlaying() {
+        return nowPlaying;
     }
 }

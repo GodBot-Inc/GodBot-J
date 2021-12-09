@@ -48,6 +48,9 @@ public final class DurationCalc {
      * @return the duration in such a format HH:MM:SS
      */
     public static String longToString(long duration) {
+        if (duration == 0) {
+            return "00:00";
+        }
         String strHours;
         String strMinutes;
         String strSeconds;

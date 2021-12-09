@@ -18,19 +18,19 @@ import java.util.HashMap;
 /**
  * A little confusing but essentially a collection of useful functions related to players
  */
-public class PlayerManager {
+public class AudioPlayerManagerWrapper {
 
-    private static final PlayerManager managerObj = new PlayerManager();
+    private static final AudioPlayerManagerWrapper managerObj = new AudioPlayerManagerWrapper();
     private final DefaultAudioPlayerManager playerManager;
     private final AudioLogger logger;
 
-    private PlayerManager() {
+    private AudioPlayerManagerWrapper() {
         playerManager = new DefaultAudioPlayerManager();
         AudioSourceManagers.registerRemoteSources(playerManager);
         logger = new AudioLogger(this.getClass().getName() + "Logger");
     }
 
-    public AudioPlayer createPlayer(String guildId, String channelId) throws KeyAlreadyExistsException {
+    private AudioPlayer createPlayer(String guildId, String channelId) throws KeyAlreadyExistsException {
         PlayerVault vault = PlayerVault.getInstance();
         QueueSystem queue = QueueSystem.getInstance();
         AudioPlayer player = playerManager.createPlayer();
@@ -48,6 +48,24 @@ public class PlayerManager {
                         }}
                 )
         );
+        return player;
+    }
+
+    public AudioPlayer getPlayer(String guildId, String channelId) {
+        AudioPlayer player;
+        try {
+            player = PlayerVault
+                    .getInstance()
+                    .getPlayer(
+                            guildId,
+                            channelId
+                    );
+        } catch (GuildNotFoundException | ChannelNotFoundException e) {
+            player = createPlayer(
+                    guildId,
+                    channelId
+            );
+        }
         return player;
     }
 
@@ -79,12 +97,12 @@ public class PlayerManager {
     public static boolean playTrack(AudioPlayer player, AudioTrack audioTrack) {
         QueueSystem queueSystem = QueueSystem.getInstance();
         try {
-            if (player.getPlayingTrack() != null) {
-                queueSystem.addTrack(player, audioTrack);
-                return false;
-            } else {
+            if (player.getPlayingTrack() == null) {
                 player.playTrack(audioTrack);
                 return true;
+            } else {
+                queueSystem.addTrack(player, audioTrack);
+                return false;
             }
         } catch(PlayerNotFoundException e) {
             queueSystem.registerPlayer(player);
@@ -105,7 +123,7 @@ public class PlayerManager {
         return this.playerManager;
     }
 
-    public static PlayerManager getInstance() {
+    public static AudioPlayerManagerWrapper getInstance() {
         return managerObj;
     }
 }

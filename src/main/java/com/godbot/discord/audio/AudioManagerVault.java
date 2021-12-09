@@ -1,10 +1,10 @@
 package com.godbot.discord.audio;
 
-import com.godbot.discord.JDAManager;
-import com.godbot.utils.customExceptions.JDANotFoundException;
+import com.godbot.discord.audio.lavaplayer.AudioPlayerSendHandler;
 import com.godbot.utils.customExceptions.audio.ApplicationNotFoundException;
 import com.godbot.utils.logging.AudioLogger;
 import com.godbot.utils.logging.LoggerContent;
+import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.managers.AudioManager;
@@ -16,45 +16,42 @@ public class AudioManagerVault {
 
     private static final AudioManagerVault managerObj = new AudioManagerVault();
 
-    //                ApplicationId       GuildId  Destination
-    private final HashMap<String, HashMap<String, AudioManager>> audioManagerStorage = new HashMap<>();
+    //                   BotJDA        GuildId  Destination
+    private final HashMap<JDA, HashMap<String, AudioManager>> audioManagerStorage = new HashMap<>();
     private final AudioLogger logger;
 
     private AudioManagerVault() {
         this.logger = new AudioLogger(this.getClass().getName() + "Logger");
     }
 
-    public void registerJDA(String applicationId, List<Guild> guilds) {
-        if (!audioManagerStorage.containsKey(applicationId)) {
-            audioManagerStorage.put(applicationId, new HashMap<>());
+    public void registerJDA(JDA botJDA, List<Guild> guilds) {
+        if (!audioManagerStorage.containsKey(botJDA)) {
+            audioManagerStorage.put(botJDA, new HashMap<>());
         }
         for (Guild guild : guilds) {
-            audioManagerStorage.get(applicationId).put(guild.getId(), guild.getAudioManager());
+            audioManagerStorage.get(botJDA).put(guild.getId(), guild.getAudioManager());
         }
         this.logger.info(
                 new LoggerContent(
                         "info",
                         "AudioManagerVault-registerJDA",
                         "",
-                        new HashMap<>() {{
-                            put("applicationId", applicationId);
-                        }}
+                        new HashMap<>()
                 )
         );
     }
 
-    public void registerGuild(String applicationId, Guild guild) {
-        if (!audioManagerStorage.containsKey(applicationId)) {
-            audioManagerStorage.put(applicationId, new HashMap<>());
+    public void registerGuild(JDA botJDA, Guild guild) {
+        if (!audioManagerStorage.containsKey(botJDA)) {
+            audioManagerStorage.put(botJDA, new HashMap<>());
         }
-        audioManagerStorage.get(applicationId).put(guild.getId(), guild.getAudioManager());
+        audioManagerStorage.get(botJDA).put(guild.getId(), guild.getAudioManager());
         this.logger.info(
                 new LoggerContent(
                         "info",
                         "AudioManagerVault-registerGuild",
                         "",
                         new HashMap<>() {{
-                            put("applicationId", applicationId);
                             put("GuildId", guild.getId());
                             put("GuildName", guild.getName());
                         }}
@@ -62,57 +59,45 @@ public class AudioManagerVault {
         );
     }
 
-    public void removeJDA(String applicationId)
-            throws ApplicationNotFoundException {
-        if (!audioManagerStorage.containsKey(applicationId)) {
-            throw new ApplicationNotFoundException("Could not find applicationId in storage " + applicationId);
-        }
-        audioManagerStorage.remove(applicationId);
+    public void removeJDA(JDA botJDA) {
+        audioManagerStorage.remove(botJDA);
         this.logger.info(
                 new LoggerContent(
                         "info",
                         "AudioManagerVault-removeJDA",
                         "",
-                        new HashMap<>() {{
-                            put("applicationId", applicationId);
-                        }}
+                        new HashMap<>()
                 )
         );
     }
 
-    public void removeGuild(String applicationId, String guildId)
+    public void removeGuild(JDA botJDA, String guildId)
             throws ApplicationNotFoundException {
-        if (!audioManagerStorage.containsKey(applicationId)) {
-            throw new ApplicationNotFoundException("Could not find applicationId in storage " + applicationId);
+        if (!audioManagerStorage.containsKey(botJDA)) {
+            throw new ApplicationNotFoundException("Could not find applicationId in storage " + botJDA);
         }
-        audioManagerStorage.get(applicationId).remove(guildId);
+        audioManagerStorage.get(botJDA).remove(guildId);
         this.logger.info(
                 new LoggerContent(
                         "info",
                         "AudioManagerVault-removeGuild",
                         "",
                         new HashMap<>() {{
-                            put("applicationId", applicationId);
                             put("GuildId", guildId);
                         }}
                 )
         );
     }
 
-    public AudioManager getAudioManager(String applicationId, String guildId)
-            throws JDANotFoundException {
-        if (!audioManagerStorage.containsKey(applicationId)) {
-            JDAManager jdaManager = JDAManager.getInstance();
-            JDA godbotJDA = jdaManager.getJDA("godbot");
-            registerJDA(applicationId, godbotJDA.getGuilds());
-            return getAudioManager(applicationId, guildId);
+    public AudioManager getAudioManager(JDA botJDA, String guildId) {
+        if (!audioManagerStorage.containsKey(botJDA)) {
+            registerJDA(botJDA, botJDA.getGuilds());
+            return getAudioManager(botJDA, guildId);
         }
-        if (!audioManagerStorage.get(applicationId).containsKey(guildId)) {
-            JDAManager jdaManager = JDAManager.getInstance();
-            JDA godbotJDA = jdaManager.getJDA("godbot");
-            Guild guild = godbotJDA.getGuildById(guildId);
-            registerGuild(applicationId, guild);
-            return getAudioManager(applicationId, guildId);
+        if (!audioManagerStorage.get(botJDA).containsKey(guildId)) {
+            Guild guild = botJDA.getGuildById(guildId);
+            registerGuild(botJDA, guild);
+            return getAudioManager(botJDA, guildId);
         }
         this.logger.info(
                 new LoggerContent(
@@ -120,12 +105,27 @@ public class AudioManagerVault {
                         "AudioManagerVault-getAudioManager",
                         "",
                         new HashMap<>() {{
-                            put("applicationId", applicationId);
                             put("GuildId", guildId);
                         }}
                 )
         );
-        return audioManagerStorage.get(applicationId).get(guildId);
+        return audioManagerStorage.get(botJDA).get(guildId);
+    }
+
+    public void checkSendingHandler(JDA botJDA, String guildId, AudioPlayer player) {
+        AudioManager audioManager;
+        if (!audioManagerStorage.containsKey(botJDA)) {
+            registerJDA(botJDA, botJDA.getGuilds());
+        }
+        if (!audioManagerStorage.get(botJDA).containsKey(guildId)) {
+            Guild guild = botJDA.getGuildById(guildId);
+            registerGuild(botJDA, guild);
+        }
+        audioManager = getAudioManager(botJDA, guildId);
+
+        if (audioManager.getSendingHandler() == null) {
+            audioManager.setSendingHandler(new AudioPlayerSendHandler(player));
+        }
     }
 
     public static AudioManagerVault getInstance() { return managerObj; }

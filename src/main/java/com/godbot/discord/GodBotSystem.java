@@ -31,8 +31,8 @@ public class GodBotSystem {
         assert APPLICATIONID != null;
         assert israAPPLICATIONID != null;
 
-        JDA godbotJDA = initializeBotFromToken(TOKEN, APPLICATIONID, "godbot", true);
-        JDA israJDA = initializeBotFromToken(israTOKEN, israAPPLICATIONID, "israfil", false);
+        JDA godbotJDA = initializeBotFromToken(TOKEN, APPLICATIONID, true);
+        JDA israJDA = initializeBotFromToken(israTOKEN, israAPPLICATIONID, false);
 
         godbotJDA.getPresence().setActivity(Activity.listening("dope music"));
         israJDA.getPresence().setActivity(Activity.listening("the GodBot System"));
@@ -42,7 +42,8 @@ public class GodBotSystem {
         israJDA.awaitReady();
     }
 
-    private static JDA initializeBotFromToken(String TOKEN, String applicationId, String botName, boolean listeners) throws LoginException {
+    private static JDA initializeBotFromToken(String TOKEN, String applicationId, boolean listeners)
+            throws LoginException {
         // Get a builder for the bot, so it can be customized / configured
         JDABuilder builder = JDABuilder.createDefault(TOKEN);
 
@@ -58,10 +59,10 @@ public class GodBotSystem {
         JDA botInstance = builder.build();
 
         // Save AudioManagers for every single Guild into the AudioManagerVault
-        AudioManagerVault.getInstance().registerJDA(applicationId, botInstance.getGuilds());
+        AudioManagerVault.getInstance().registerJDA(botInstance, botInstance.getGuilds());
 
         // Save the JDA Object into the JDAManager
-        JDAManager.getInstance().registerJDA(botName, botInstance);
+        JDAManager.getInstance().registerJDA(applicationId, botInstance);
 
         // Return bot Instance
         return botInstance;

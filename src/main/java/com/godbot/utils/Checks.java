@@ -16,16 +16,34 @@ import java.net.URL;
 public class Checks {
 
     public static void slashCommandCheck(
+            String applicationId,
+            Member member,
+            Guild guild
+    ) throws CheckFailedException {
+        if (applicationId == null) {
+            throw new CheckFailedException("Application was not found");
+        }
+        if (guild == null) {
+            throw new CheckFailedException("Guild is null");
+        }
+        if (member == null) {
+            throw new CheckFailedException("Member is null");
+        }
+        if (member.getVoiceState() == null || member.getVoiceState().getChannel() == null) {
+            throw new VoiceCheckFailedException("Member not connected to VC");
+        }
+    }
+
+    public static void slashCommandCheck(
             SlashCommandEvent slashCommandEvent,
             String applicationId,
             Member member,
             Guild guild
-    ) throws CheckFailedException,
-            VoiceCheckFailedException {
+    ) throws CheckFailedException{
         EventExtender event = new EventExtender(slashCommandEvent);
         if (applicationId == null) {
             event.replyEphemeral(
-                    StandardError.build("The application was not found")
+                    StandardError.build("The applicationId was not found")
             );
             throw new CheckFailedException("Application was not found");
         }
@@ -37,7 +55,7 @@ public class Checks {
         }
         if (member == null) {
             event.replyEphemeral(
-                    StandardError.build(Messages.GENERAL_ERROR)
+                    StandardError.build("Member could not be retrieved")
             );
             throw new CheckFailedException("Member is null");
         }

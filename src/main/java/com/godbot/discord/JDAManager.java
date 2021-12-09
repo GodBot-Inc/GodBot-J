@@ -12,30 +12,30 @@ public class JDAManager {
     private static final JDAManager managerObj = new JDAManager();
     private final GeneralLogger logger;
 
-    //                   BotName Destination
+    //               ApplicationId BotJDA
     private final HashMap<String, JDA> JDAStorage = new HashMap<>();
 
     private JDAManager() {
         this.logger = new GeneralLogger(this.getClass().getName() + "Logger");
     }
 
-    public void registerJDA(String botName, JDA jda) {
-        JDAStorage.put(botName, jda);
+    public void registerJDA(String applicationId, JDA jda) {
+        JDAStorage.put(applicationId, jda);
         this.logger.info(
                 new LoggerContent(
                         "info",
                         "JDAManager-registerJDA",
                         "",
                         new HashMap<>() {{
-                            put("botName", botName);
+                            put("applicationId", applicationId);
                         }}
                 )
         );
     }
 
-    public JDA getJDA(String botName) throws JDANotFoundException {
-        if (!JDAStorage.containsKey(botName)) {
-            throw new JDANotFoundException("Could not find the botName " + botName);
+    public JDA getJDA(String applicationId) throws JDANotFoundException {
+        if (!JDAStorage.containsKey(applicationId)) {
+            throw new JDANotFoundException("Could not find the botName " + applicationId);
         }
         this.logger.info(
                 new LoggerContent(
@@ -43,11 +43,11 @@ public class JDAManager {
                         "JDAManager-getJDA",
                         "",
                         new HashMap<>() {{
-                            put("botName", botName);
+                            put("applicationId", applicationId);
                         }}
                 )
         );
-        return JDAStorage.get(botName);
+        return JDAStorage.get(applicationId);
     }
 
     public static JDAManager getInstance() {

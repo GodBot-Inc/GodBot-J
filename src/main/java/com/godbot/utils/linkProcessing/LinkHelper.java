@@ -34,7 +34,9 @@ public class LinkHelper {
     public static boolean isVideo(String url)
             throws PlatformNotFoundException, InvalidURLException {
         String platform = getPlatform(url);
+        System.out.println("we got the platform!");
         if (platform.equals("youtube")) {
+            System.out.println("platform is YT");
             return LinkInterpreter.ytGetTypeAndId(url).type.equals("video");
         }
         throw new PlatformNotFoundException("Platform for Link " + url + " not found");

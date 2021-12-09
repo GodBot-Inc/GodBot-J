@@ -1,6 +1,6 @@
 package com.godbot.discord.commands.musicControl;
 
-import com.godbot.discord.audio.PlayerManager;
+import com.godbot.discord.audio.AudioPlayerManagerWrapper;
 import com.godbot.discord.audio.PlayerVault;
 import com.godbot.discord.commands.Command;
 import com.godbot.discord.snippets.Embeds.errors.StandardError;
@@ -9,7 +9,6 @@ import com.godbot.utils.Checks;
 import com.godbot.utils.customExceptions.ChannelNotFoundException;
 import com.godbot.utils.customExceptions.GuildNotFoundException;
 import com.godbot.utils.customExceptions.checks.CheckFailedException;
-import com.godbot.utils.customExceptions.checks.VoiceCheckFailedException;
 import com.godbot.utils.discord.EventExtender;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import io.github.cdimascio.dotenv.Dotenv;
@@ -35,16 +34,7 @@ public class Stop implements Command {
                     member,
                     guild
             );
-        } catch (CheckFailedException e) {
-            event
-                    .replyEphemeral(
-                            StandardError.build(
-                                    Messages.GENERAL_ERROR
-                            )
-                    );
-        } catch (VoiceCheckFailedException e) {
-            return;
-        }
+        } catch (CheckFailedException ignore) {}
 
         AudioPlayer player;
         try {
@@ -81,7 +71,7 @@ public class Stop implements Command {
             );
         }
 
-        PlayerManager.getInstance().stopPlayer(player);
+        AudioPlayerManagerWrapper.getInstance().stopPlayer(player);
 
         scEvent
                 .replyEmbeds(

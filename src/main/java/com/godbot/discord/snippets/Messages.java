@@ -8,7 +8,7 @@ public final class Messages {
             "If you want to search for a song use the /searchplay command";
     public static final String VIDEO_NOT_FOUND = "I could not find the video to your url";
     public static final String INTERNAL_ERROR = "The requested Api has some issues resolving my request";
-    public static final String COULD_NOT_SEND_REQUEST = "I have some issues getting the video information";
+    public static final String COULD_NOT_SEND_REQUEST = "I have some issues getting the song information";
     public static final String GENERAL_ERROR = "Mmmmhhh... An error occurred :thinking:";
     public static final String INVALID_PLATFORM = "The platform that you got your link from is not supported yet";
 
@@ -18,6 +18,10 @@ public final class Messages {
     public static final String NO_PLAYER_IN_VC = "There is no player registered for this VoiceChannel";
 
     public static final String INTERPRETATIONS_EMPTY = "I could not fetch any information about the song";
+    public static final String INTERPRETATIONS_FAILED = "Gathering information about your song ";
+
+    public static final String INFO_GATHERING_SONG_FAILED = "Gathering information about your song failed";
+    public static final String INFO_GATHERING_PLAYLIST_FAILED = "Gathering information about your playlist failed";
 
     public static final String LOADING_FAILED = "Loading of the give song failed :thinking:";
 

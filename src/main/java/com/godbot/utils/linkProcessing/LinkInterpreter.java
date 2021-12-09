@@ -51,7 +51,7 @@ public class LinkInterpreter {
         String platform = LinkHelper.getPlatform(url);
         HashMap<String, Interpretation> interpretations = new HashMap<>();
         switch (platform) {
-            case "youtube":
+            case "youtube" -> {
                 try {
                     YoutubeInterpretation youtubeInterpretation = ytInterpret(url);
                     if (youtubeInterpretation instanceof YoutubeVideoInterpretation) {
@@ -60,11 +60,12 @@ public class LinkInterpreter {
                         interpretations.put(Keys.YTPLAYLIST, youtubeInterpretation);
                     }
                 } catch(IOException | RequestException ignore) {}
-                break;
+            }
 //            case "spotify":
 //                SpotifyInterpretation spotifyInterpretation = spotInterpret(url);
-            default:
+            default -> {
                 throw new IllegalStateException("Unexpected value: " + platform);
+            }
         }
         return interpretations;
     }
@@ -85,10 +86,14 @@ public class LinkInterpreter {
     // YT
     public static TypeAndId ytGetTypeAndId(String url) throws InvalidURLException {
         if (url.contains("list=")) {
-            String id = url.split("list=")[0].split("&")[0];
+            System.out.println("url contains list=");
+            String id = url.split("list=")[1].split("&")[0];
+            System.out.println("p id gotten");
             return new TypeAndId("playlist" , id);
         } else if (url.contains("watch?v=") && !url.contains("list=")) {
-            String id = url.split("watch?v=")[0].split("&")[0];
+            System.out.println("contains watch?v=");
+            String id = url.split("watch\\?v=")[1].split("&")[0];
+            System.out.println("v id gotten");
             return new TypeAndId("video", id);
         }
         throw new InvalidURLException(String.format("Could not fetch Type and Id of the given url %s", url));
