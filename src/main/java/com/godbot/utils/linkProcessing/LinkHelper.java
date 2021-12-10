@@ -24,7 +24,7 @@ public class LinkHelper {
     public static String getPlatform(String url) throws PlatformNotFoundException {
         if (url.contains("https://open.spotify.com/")) {
             return "spotify";
-        } else if (url.contains("https://youtube.com/") || url.contains("https://music.youtube.com/")) {
+        } else if (url.contains("https://www.youtube.com/") || url.contains("https://music.youtube.com/")) {
             return "youtube";
         } else {
             throw new PlatformNotFoundException(String.format("Platform for lin %s could not be determined", url));
