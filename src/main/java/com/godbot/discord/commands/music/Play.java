@@ -3,12 +3,16 @@ package com.godbot.discord.commands.music;
 import com.godbot.discord.JDAManager;
 import com.godbot.discord.audio.AudioManagerVault;
 import com.godbot.discord.audio.AudioPlayerManagerWrapper;
+import com.godbot.discord.audio.PlayerVault;
+import com.godbot.discord.audio.QueueSystem;
 import com.godbot.discord.audio.lavaplayer.AudioResultHandler;
 import com.godbot.discord.commands.Command;
 import com.godbot.discord.snippets.Embeds.errors.StandardError;
 import com.godbot.discord.snippets.Embeds.trackInfo.PlayTrack;
 import com.godbot.discord.snippets.Messages;
 import com.godbot.utils.Checks;
+import com.godbot.utils.customExceptions.ChannelNotFoundException;
+import com.godbot.utils.customExceptions.GuildNotFoundException;
 import com.godbot.utils.customExceptions.LinkInterpretation.InvalidURLException;
 import com.godbot.utils.customExceptions.LinkInterpretation.PlatformNotFoundException;
 import com.godbot.utils.customExceptions.checks.CheckFailedException;
@@ -18,6 +22,7 @@ import com.godbot.utils.interpretations.Interpretation;
 import com.godbot.utils.linkProcessing.LinkHelper;
 import com.godbot.utils.linkProcessing.LinkInterpreter;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
+import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import io.github.cdimascio.dotenv.Dotenv;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
@@ -30,7 +35,9 @@ import net.dv8tion.jda.api.managers.AudioManager;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -201,8 +208,6 @@ public class Play implements Command {
                 } catch (InterruptedException ignore) {}
             }
 
-            System.out.println("response received");
-
             switch (audioResultHandler.getActionType()) {
                 case 10 -> {
                     interactionHook
@@ -255,12 +260,29 @@ public class Play implements Command {
                 return;
             }
 
-            System.out.println("building");
+            List<AudioTrack> queue = new ArrayList<>();
+            try {
+                queue = QueueSystem
+                        .getInstance()
+                        .getQueue(
+                                PlayerVault
+                                        .getInstance()
+                                        .getPlayer(
+                                                guild.getId(),
+                                                member.getVoiceState().getChannel().getId()
+                                        )
+                        );
+            } catch (GuildNotFoundException | ChannelNotFoundException ignore) {}
 
-            interactionHook.sendMessageEmbeds(PlayTrack.build(
+            int positionInQueue = queue.size() + 1;
+
+            interactionHook.sendMessageEmbeds(
+                    PlayTrack.standard(
                     member,
                     audioResultHandler.isNowPlaying(),
-                    interpretationHashMap
+                    interpretationHashMap,
+                    positionInQueue,
+                    positionInQueue
             )).queue();
         }
     }

@@ -102,7 +102,10 @@ public class YoutubeApi {
             );
         }
 
-        builder.setAuthorLink(snippet.getString("channelId"));
+        builder.setAuthorLink(String.format(
+                "https://youtube.com/channel/%s",
+                snippet.getString("channelId")
+        ));
         builder.setTitle(snippet.getString("title"));
         builder.setViews(Integer.parseInt(statistics.getString("viewCount")));
         if (!statistics.getString("likeCount").equals("")) {
