@@ -27,10 +27,18 @@ public class LinkHelper {
         } else if (url.contains("https://www.youtube.com/") || url.contains("https://music.youtube.com/")) {
             return "youtube";
         } else {
+            System.out.println("invalid platform");
             throw new PlatformNotFoundException(String.format("Platform for lin %s could not be determined", url));
         }
     }
 
+    /**
+     * A method that checks if the given link is a video link
+     * @param url The link that should be checked
+     * @return true if the link is a video link, false if not
+     * @throws PlatformNotFoundException if the platform could not be determined
+     * @throws InvalidURLException if the link is invalid
+     */
     public static boolean isVideo(String url)
             throws PlatformNotFoundException, InvalidURLException {
         String platform = getPlatform(url);
@@ -75,10 +83,6 @@ public class LinkHelper {
         bufferedReader.close();
         System.out.println(response);
         return new JSONObject(response.toString());
-    }
-
-    public static void checkYTResponseCode(int code) {
-
     }
 
     /**

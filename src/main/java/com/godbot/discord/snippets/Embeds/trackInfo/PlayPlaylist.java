@@ -1,5 +1,6 @@
 package com.godbot.discord.snippets.Embeds.trackInfo;
 
+import com.godbot.discord.snippets.Embeds.Colours;
 import com.godbot.utils.audio.DurationCalc;
 import com.godbot.utils.discord.EmojiIds;
 import com.godbot.utils.interpretations.Interpretation;
@@ -9,9 +10,17 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 
-import java.awt.*;
+import javax.annotation.CheckReturnValue;
 
 public class PlayPlaylist {
+
+    private static String getTitle(YoutubePlaylistInterpretation interpretation) {
+        if (interpretation.getTitle() == null) {
+            return "Playlist";
+        }
+        return interpretation.getTitle();
+    }
+
     public static String formatSource(Interpretation interpretation) {
         if (interpretation instanceof YoutubePlaylistInterpretation) {
             return String.format(
@@ -34,9 +43,17 @@ public class PlayPlaylist {
     }
 
     private static String getCreator(Interpretation interpretation) {
-        if (interpretation.getCreatorLink() == null) {
+        if (interpretation.getCreator() == null && interpretation.getCreatorLink() == null) {
+            return " - ";
+        } else if (interpretation.getCreator() == null && interpretation.getCreatorLink() != null) {
+            return String.format(
+                    "[Author](%s)",
+                    interpretation.getCreatorLink()
+            );
+        } else if (interpretation.getCreatorLink() == null) {
             return interpretation.getCreator();
         }
+
         return String.format(
                 "[%s](%s)",
                 interpretation.getCreator(),
@@ -56,21 +73,18 @@ public class PlayPlaylist {
         }
     }
 
-    public static MessageEmbed build(
+    @CheckReturnValue
+    public static MessageEmbed standard(
             Member requester,
             boolean nowPlaying,
             YoutubePlaylistInterpretation playlistInterpretation
     ) {
+
+        String title = getTitle(playlistInterpretation);
+
         return new EmbedBuilder()
-                .setTitle(nowPlaying ? "Playing" : "Queued")
-                .setDescription(
-                        String.format(
-                            "[%s](%s)",
-                            playlistInterpretation.getTitle(),
-                            playlistInterpretation.getUrl()
-                        )
-                )
-                .setColor(Color.ORANGE)
+                .setTitle(title + (nowPlaying ? "Loaded" : "Queued"))
+                .setColor(Colours.godbotHeavenYellow)
                 .setThumbnail(playlistInterpretation.getThumbnailUrl())
                 .addField("Creator", getCreator(playlistInterpretation), true)
                 .addField("Sources", formatSource(playlistInterpretation), true)

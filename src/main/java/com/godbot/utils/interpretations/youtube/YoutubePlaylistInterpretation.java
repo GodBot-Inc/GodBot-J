@@ -1,6 +1,6 @@
 package com.godbot.utils.interpretations.youtube;
 
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 
@@ -121,27 +121,27 @@ public class YoutubePlaylistInterpretation implements YoutubeInterpretation {
     }
 
     @Override
-    public @NotNull String getCreator() {
+    public @Nullable String getCreator() {
         return this.creator;
     }
 
     @Override
-    public String getCreatorLink() {
+    public @Nullable String getCreatorLink() {
         return this.creatorUri;
     }
 
     @Override
-    public @NotNull String getTitle() {
+    public @Nullable String getTitle() {
         return this.title;
     }
 
     @Override
-    public @NotNull String getUrl() {
+    public @Nullable String getUrl() {
         return this.uri;
     }
 
     @Override
-    public @NotNull String getThumbnailUrl() {
+    public @Nullable String getThumbnailUrl() {
         return this.thumbnailUri;
     }
 

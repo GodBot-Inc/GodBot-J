@@ -98,11 +98,15 @@ public class PlayTrack {
             return " - ";
         }
 
-        if (interpretation.getCreator() == null && interpretation.getCreatorLink() != null) {
+        if (interpretation.getCreator() == null && interpretation.getCreatorLink() == null) {
+            return " - ";
+        } else if (interpretation.getCreator() == null && interpretation.getCreatorLink() != null) {
             return String.format(
-                    "[Creator](%s)",
+                    "[Author](%s)",
                     interpretation.getCreatorLink()
             );
+        } else if (interpretation.getCreatorLink() == null) {
+            return interpretation.getCreator();
         }
 
         return String.format(

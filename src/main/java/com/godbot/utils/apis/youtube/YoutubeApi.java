@@ -83,12 +83,21 @@ public class YoutubeApi {
             throw new CouldNotExtractInfoException("Statistics were not found");
         }
 
-        builder.setThumbnailUri(
-                snippet
-                        .getJSONObject("thumbnails")
-                        .getJSONObject("standard")
-                        .getString("url")
-        );
+        try {
+            builder.setThumbnailUri(
+                    snippet
+                            .getJSONObject("thumbnails")
+                            .getJSONObject("standard")
+                            .getString("url")
+            );
+        } catch (JSONException e) {
+            builder.setThumbnailUri(
+                    snippet
+                            .getJSONObject("thumbnails")
+                            .getJSONObject("high")
+                            .getString("url")
+            );
+        }
 
         if (snippet.getString("channelTitle").contains("- Topic")) {
             builder.setAuthor(
@@ -281,12 +290,21 @@ public class YoutubeApi {
         interpretationBuilder.setTitle(snippet.getString("title"));
 
         if (!snippet.getJSONObject("thumbnails").isEmpty()) {
-            interpretationBuilder.setThumbnailUri(
-                    snippet
-                            .getJSONObject("thumbnails")
-                            .getJSONObject("standard")
-                            .getString("url")
-            );
+            try {
+                interpretationBuilder.setThumbnailUri(
+                        snippet
+                                .getJSONObject("thumbnails")
+                                .getJSONObject("standard")
+                                .getString("url")
+                );
+            } catch (JSONException e) {
+                interpretationBuilder.setThumbnailUri(
+                        snippet
+                                .getJSONObject("thumbnails")
+                                .getJSONObject("high")
+                                .getString("url")
+                );
+            }
         }
 
         interpretationBuilder.setSize(contentDetails.getInt("itemCount"));

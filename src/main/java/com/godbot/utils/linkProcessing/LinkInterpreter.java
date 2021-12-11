@@ -46,6 +46,7 @@ public class LinkInterpreter {
     public static HashMap<String, Interpretation> interpret(String url)
             throws InvalidURLException, PlatformNotFoundException {
         if (Checks.linkIsValid(url)) {
+            System.out.println("invalid url");
             throw new InvalidURLException(String.format("Url %s is not valid", url));
         }
         String platform = LinkHelper.getPlatform(url);
@@ -86,14 +87,10 @@ public class LinkInterpreter {
     // YT
     public static TypeAndId ytGetTypeAndId(String url) throws InvalidURLException {
         if (url.contains("list=")) {
-            System.out.println("url contains list=");
             String id = url.split("list=")[1].split("&")[0];
-            System.out.println("p id gotten");
             return new TypeAndId("playlist" , id);
         } else if (url.contains("watch?v=") && !url.contains("list=")) {
-            System.out.println("contains watch?v=");
             String id = url.split("watch\\?v=")[1].split("&")[0];
-            System.out.println("v id gotten");
             return new TypeAndId("video", id);
         }
         throw new InvalidURLException(String.format("Could not fetch Type and Id of the given url %s", url));

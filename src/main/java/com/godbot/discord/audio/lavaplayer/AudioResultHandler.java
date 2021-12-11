@@ -15,7 +15,6 @@ public class AudioResultHandler implements AudioLoadResultHandler {
     private final AudioManager audioManager;
     private final VoiceChannel channel;
 
-    private final String identifier;
     /*
      1 -> TrackLoaded
      2 -> PlaylistLoaded
@@ -31,28 +30,25 @@ public class AudioResultHandler implements AudioLoadResultHandler {
     public AudioResultHandler(
             AudioPlayer player,
             AudioManager audioManager,
-            VoiceChannel channel,
-            String identifier
+            VoiceChannel channel
     ) {
         this.player = player;
         this.audioManager = audioManager;
         this.channel = channel;
-        this.identifier = identifier;
     }
     
     @Override
     public void trackLoaded(AudioTrack audioTrack) {
-        System.out.printf("TrackLoaded %s", identifier);
         this.actionType = 1;
         if (!audioManager.isConnected()) {
             audioManager.openAudioConnection(channel);
         }
         nowPlaying = AudioPlayerManagerWrapper.playTrack(player, audioTrack);
+        this.audioTrack = audioTrack;
     }
     
     @Override
     public void playlistLoaded(AudioPlaylist audioPlaylist) {
-        System.out.printf("playlistLoaded %s\n", identifier);
         this.actionType = 2;
         if (audioPlaylist.getTracks().isEmpty()) {
             this.actionType = 10;
@@ -62,22 +58,17 @@ public class AudioResultHandler implements AudioLoadResultHandler {
             audioManager.openAudioConnection(channel);
         }
         nowPlaying = AudioPlayerManagerWrapper.playTrack(player, audioPlaylist.getTracks().get(0));
+        this.audioPlaylist = audioPlaylist;
     }
 
     @Override
     public void noMatches() {
         this.actionType = 3;
-        System.out.printf("NoMatches %s", identifier);
     }
 
     @Override
     public void loadFailed(FriendlyException e) {
         this.actionType = 4;
-        System.out.printf("LoadFailed %s", identifier);
-    }
-
-    public String getIdentifier() {
-        return identifier;
     }
 
     public int getActionType() {
