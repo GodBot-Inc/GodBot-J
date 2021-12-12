@@ -11,5 +11,6 @@ public class EmojiIds {
     public static final String NotFound2 = "<:notFound:914909341772046338>";
     public static final String godbotWarning = "<:godbotWarning:897386354567180369>";
     public static final String queueEmoji = "<:queue:918788788661133342>";
+    public static final String trackEmoji = "<:tracks:919540015648895026>";
 
 }

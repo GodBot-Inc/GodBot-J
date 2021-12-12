@@ -22,6 +22,16 @@ public class UrlConstructor {
                     "&part=contentDetails" +
                     "&playlistId=%s" +
                     "&key=%s";
+
+    private static final String getPlaylistItemsUrl2 = "https://youtube.googleapis.com/youtube/v3/playlistItems?" +
+            "part=snippet" +
+            "&part=contentDetails" +
+            "&playlistId=%s" +
+            "&key=%s";
+            /*
+
+             */
+
     private static final String getVideoInformationUrl =
             "https://youtube.googleapis.com/youtube/v3/" +
                     "videos?" +
@@ -63,7 +73,7 @@ public class UrlConstructor {
     }
 
     @NotNull public static UrlBuilder getPlaylistItems() {
-        return new UrlBuilder(getPlaylistItemsUrl, false);
+        return new UrlBuilder(getPlaylistItemsUrl2, false);
     }
 
     @NotNull public static UrlBuilder getWatch() {

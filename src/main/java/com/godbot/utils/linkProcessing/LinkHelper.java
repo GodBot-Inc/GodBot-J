@@ -56,11 +56,11 @@ public class LinkHelper {
      * @return the response of the website as JSONObject
      * @throws IOException If the request failed
      * @throws RequestException If the request returned an invalid return code
-     * @throws InvalidURLException If the passed URL is invalid
+     * @throws NotFoundException If the passed URL is invalid
      * @throws InternalError If the website has trouble processing the request
      */
     public static JSONObject sendRequest(String url)
-            throws IOException, RequestException, InvalidURLException, InternalError {
+            throws IOException, RequestException, NotFoundException, InternalError {
         URL obj = new URL(url);
         HttpURLConnection con = (HttpURLConnection) obj.openConnection();
         con.setRequestMethod("GET");
@@ -68,7 +68,7 @@ public class LinkHelper {
 
         switch (responseCode) {
             case 400, 401, 403 -> throw new RequestException("The request that was sent failed");
-            case 404 -> throw new InvalidURLException("The request returned a 404 error");
+            case 404 -> throw new NotFoundException("The request returned a 404 error");
             case 500, 501, 502, 503, 504 -> throw new InternalError("The site has some issues resolving your request");
         }
 

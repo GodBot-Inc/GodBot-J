@@ -176,10 +176,13 @@ public class YoutubeApi {
                 .setId(id)
                 .build();
 
+        System.out.println(id);
+        System.out.println(url);
+
         JSONObject playlistItems = LinkHelper.sendRequest(url);
 
         return String.format(
-                "https://www.youtube.com/watch?v=%s",
+                UrlConstructor.getWatch().build(),
                 playlistItems
                         .getJSONArray("items")
                         .getJSONObject(0)
@@ -189,6 +192,7 @@ public class YoutubeApi {
     }
 
     private static boolean checkToken(JSONObject jsonObject) {
+        System.out.println(jsonObject);
         try {
             jsonObject.get("nextPageToken");
         } catch(JSONException e) {
@@ -248,6 +252,20 @@ public class YoutubeApi {
 
         YoutubePlaylistInterpretation.PlaylistBuilder interpretationBuilder =
                 new YoutubePlaylistInterpretation.PlaylistBuilder();
+
+        interpretationBuilder.setUri(
+                String.format(
+                        "https://www.youtube.com/playlist?list=%s",
+                        id
+                )
+        );
+
+        interpretationBuilder.setMusicUri(
+                String.format(
+                        "https://music.youtube.com/playlist?list=%s",
+                        id
+                )
+        );
 
         if (playlistInfo.isEmpty()) {
             throw new CouldNotExtractInfoException("PlaylistInfo is empty");
@@ -315,27 +333,34 @@ public class YoutubeApi {
         JSONArray array;
         ArrayList<CompletableFuture<Long>> responseList = new ArrayList<>();
 
-        while (checkToken(playlistItemsObject)) {
+        while (true) {
+            System.out.println(playlistItemsObject);
             array = playlistItemsObject.getJSONArray("items");
-            String url;
+            String url = null;
 
+            boolean sendRequest;
             try {
                 url = UrlConstructor.getPlaylistItemsToken()
-                        .setId(playlistItemsObject.getString("nextPageToken"))
+                        .setId(id)
+                        .setPageToken(playlistItemsObject.getString("nextPageToken"))
                         .build();
+                sendRequest = true;
             } catch (JSONException e) {
-                return interpretationBuilder.build();
+                sendRequest = false;
             }
 
-            HttpRequest nextPageRequest = httpRequestBuilder
-                    .uri(URI.create(url))
-                    .build();
+            CompletableFuture<JSONObject> nextPage = null;
+            if (sendRequest) {
+                HttpRequest nextPageRequest = httpRequestBuilder
+                        .uri(URI.create(url))
+                        .build();
 
-            CompletableFuture<JSONObject> nextPage = httpClient.sendAsync(
-                    nextPageRequest,
-                    HttpResponse.BodyHandlers.ofString()
-                    )
-                    .thenApply(YoutubeApi::toJSON);
+                nextPage = httpClient.sendAsync(
+                                nextPageRequest,
+                                HttpResponse.BodyHandlers.ofString()
+                        )
+                        .thenApply(YoutubeApi::toJSON);
+            }
 
             for (int i = 0; i < array.length(); i++) {
                 String videoId;
@@ -367,6 +392,10 @@ public class YoutubeApi {
                         .thenApply(DurationCalc::ytStringToLong);
 
                 responseList.add(videoDuration);
+            }
+
+            if (nextPage == null) {
+                break;
             }
 
             playlistItemsObject = nextPage.join();

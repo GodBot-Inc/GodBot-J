@@ -8,9 +8,9 @@ import net.dv8tion.jda.api.entities.MessageEmbed;
 public class StandardError {
     public static MessageEmbed build(String description) {
         return new EmbedBuilder()
-                .setTitle(
+                .setDescription(
                         String.format(
-                                "%s %s",
+                                "%s **%s**",
                                 EmojiIds.godbotWarning,
                                 description
                         )

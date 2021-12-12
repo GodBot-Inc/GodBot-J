@@ -81,7 +81,7 @@ public class LinkInterpreter {
             }
             return UrlConstructor.getWatch().setId(typeAndId.Id).build();
         }
-        throw new InvalidURLException("Url " + url + " could not be determined");
+        throw new PlatformNotFoundException("Url " + url + " could not be determined");
     }
 
     // YT

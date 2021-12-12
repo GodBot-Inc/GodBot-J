@@ -124,12 +124,13 @@ public class PlayTrack {
         return interpretation.getThumbnailUrl();
     }
 
-    private static String formatDuration(HashMap<String, Interpretation> interpretations) {
+    public static String formatDuration(HashMap<String, Interpretation> interpretations) {
         Interpretation interpretation = InterpretationExtraction.getFirstVideoInterpretation(interpretations);
-        long duration = 0;
-        if (interpretation != null) {
-            duration = interpretation.getDuration();
+        if (interpretation == null) {
+            return "**00:00 - 00:00**";
         }
+
+        long duration = interpretation.getDuration();
 
         String strDuration = DurationCalc.longToString(duration);
         int strDurationLength = DurationCalc.longToString(duration).split(":").length;
@@ -148,7 +149,7 @@ public class PlayTrack {
 
         if (firstVideoInterpretation == null || firstVideoInterpretation.getDuration() == 0) {
             return String.format(
-                    "%s [00:00 - 00:00]",
+                    "%s -",
                     TrackLines.buildDefault()
             );
         }

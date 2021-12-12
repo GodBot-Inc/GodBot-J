@@ -212,6 +212,7 @@ public class Play implements Command {
                 firstUrl = LinkInterpreter.getFirst(url);
             } catch (IOException | RequestException ignore) {}
             catch (InvalidURLException e) {
+                System.out.println("get first threw invalid url");
                 interactionHook
                         .sendMessageEmbeds(
                                 StandardError.build(Messages.INVALID_URL)
@@ -253,16 +254,44 @@ public class Play implements Command {
             } catch (InterruptedException e) {
                 try {
                     interpretationHashMap = LinkInterpreter.interpret(url);
-                } catch (Exception e2) {
+                } catch (InvalidURLException invalidURLException) {
                     interactionHook
                             .sendMessageEmbeds(
                                     StandardError.build(
-                                            Messages.INFO_GATHERING_PLAYLIST_FAILED
+                                            Messages.INVALID_URL
+                                    )
+                            ).queue();
+                    return;
+                } catch (PlatformNotFoundException platformNotFoundException) {
+                    interactionHook
+                            .sendMessageEmbeds(
+                                    StandardError.build(
+                                            Messages.PLATFORM_NOT_FOUND
                                     )
                             ).queue();
                     return;
                 }
             } catch (ExecutionException e) {
+                System.out.println(e.getCause().toString());
+                if (e.getCause() instanceof InvalidURLException) {
+                    System.out.println("cause invalid url");
+                    interactionHook
+                            .sendMessageEmbeds(
+                                    StandardError.build(
+                                            Messages.INVALID_URL
+                                    )
+                            ).queue();
+                    return;
+                } else if (e.getCause() instanceof PlatformNotFoundException) {
+                    System.out.println("platform not found");
+                    interactionHook
+                            .sendMessageEmbeds(
+                                    StandardError.build(
+                                            Messages.PLATFORM_NOT_FOUND
+                                    )
+                            ).queue();
+                    return;
+                }
                 interactionHook
                         .sendMessageEmbeds(
                                 StandardError.build(

@@ -22,23 +22,63 @@ public class PlayPlaylist {
     }
 
     public static String formatSource(Interpretation interpretation) {
+        StringBuilder stringBuilder = new StringBuilder();
+
         if (interpretation instanceof YoutubePlaylistInterpretation) {
-            return String.format(
-                    "%s [YouTube](%s)",
-                    EmojiIds.youtubeEmoji,
-                    interpretation.getUrl()
-            );
-        } else if (interpretation instanceof SpotifyPlaylistInterpretation) {
-            return String.format(
-                    "%s [Spotify](%s)",
-                    EmojiIds.spotifyEmoji,
-                    interpretation.getUrl()
+            stringBuilder.append(
+                    String.format(
+                            "%s [YouTube](%s)\n" +
+                                    "%s [YouTube Music](%s)\n",
+                            EmojiIds.youtubeEmoji,
+                            interpretation.getUrl(),
+                            EmojiIds.youtubeMusicEmoji,
+                            ((YoutubePlaylistInterpretation) interpretation).getMusicUri()
+                    )
             );
         } else {
-            return String.format(
-                    "%s -",
-                    EmojiIds.coolMusicIcon
+            stringBuilder.append(
+                    String.format(
+                            "%s YouTube -\n" +
+                                    "%s YouTube Music\n",
+                            EmojiIds.youtubeEmoji,
+                            EmojiIds.youtubeMusicEmoji
+                    )
             );
+        }
+        if (interpretation instanceof SpotifyPlaylistInterpretation) {
+            stringBuilder.append(
+                    String.format(
+                            "%s [Spotify](%s)",
+                            EmojiIds.spotifyEmoji,
+                            interpretation.getUrl()
+                    )
+            );
+        } else {
+            stringBuilder.append(
+                    String.format(
+                            "%s Spotify",
+                            EmojiIds.spotifyEmoji
+                    )
+            );
+        }
+        return stringBuilder.toString();
+    }
+
+    private static String formatDuration(Interpretation interpretation) {
+        if (interpretation == null) {
+            return "**00:00 - 00:00**";
+        }
+
+        long duration = interpretation.getDuration();
+
+        String strDuration = DurationCalc.longToString(duration);
+        int strDurationLength = DurationCalc.longToString(duration).split(":").length;
+        if (strDurationLength == 3) {
+            return String.format("**00:00:00 - %s**", strDuration);
+        } else if (strDurationLength == 2) {
+            return String.format("**00:00 - %s**", strDuration);
+        } else {
+            return String.format("**00 - %s**", strDuration);
         }
     }
 
@@ -61,16 +101,19 @@ public class PlayPlaylist {
         );
     }
 
-    private static String formatDuration(Interpretation interpretation) {
-        String strDuration = DurationCalc.longToString(interpretation.getDuration());
-        int strDurationLength = strDuration.length();
-        if (strDurationLength == 3) {
-            return String.format("**00:00:00 - %s**", strDuration);
-        } else if (strDurationLength == 2) {
-            return String.format("**00:00 - %s**", strDuration);
-        } else {
-            return String.format("**00 - %s**", strDuration);
+    public static String getDuration(Interpretation interpretation) {
+        if (interpretation.getDuration() == 0) {
+            return String.format(
+                    "%s -",
+                    TrackLines.buildDefault()
+            );
         }
+
+        return String.format(
+                "%s %s",
+                TrackLines.buildDefault(),
+                formatDuration(interpretation)
+        );
     }
 
     @CheckReturnValue
@@ -83,13 +126,22 @@ public class PlayPlaylist {
         String title = getTitle(playlistInterpretation);
 
         return new EmbedBuilder()
-                .setTitle(title + (nowPlaying ? "Loaded" : "Queued"))
+                .setTitle(title + " " + (nowPlaying ? "Loaded" : "Queued"))
                 .setColor(Colours.godbotHeavenYellow)
                 .setThumbnail(playlistInterpretation.getThumbnailUrl())
+                // TODO Remove Creator and add Position in Queue instead (after Tracks)
                 .addField("Creator", getCreator(playlistInterpretation), true)
                 .addField("Sources", formatSource(playlistInterpretation), true)
-                .addField("Tracks", String.valueOf(playlistInterpretation.getSize()), false)
-                .addField("Total Duration", formatDuration(playlistInterpretation), true)
+                .addField(
+                        "Tracks",
+                        String.format(
+                            "%s %s",
+                            EmojiIds.trackEmoji,
+                            playlistInterpretation.getSize()
+                        ),
+                        true
+                )
+                .addField("Total Duration", getDuration(playlistInterpretation), false)
                 .setFooter(
                         String.format(
                                 "Added %s", requester.getEffectiveName()

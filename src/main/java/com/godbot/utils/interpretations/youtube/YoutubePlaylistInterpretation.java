@@ -13,9 +13,10 @@ public class YoutubePlaylistInterpretation implements YoutubeInterpretation {
         private String creatorUri;
         private String title;
         private String uri;
+        private String musicUri;
         private String thumbnailUri;
-        private int size;
-        private ArrayList<String> videoIds;
+        private int size = 0;
+        private ArrayList<String> videoIds = new ArrayList<>();
 
         public void setDuration(long duration) {
             this.duration = duration;
@@ -41,6 +42,10 @@ public class YoutubePlaylistInterpretation implements YoutubeInterpretation {
             this.uri = uri;
         }
 
+        public void setMusicUri(String uri) {
+            this.musicUri = uri;
+        }
+
         public void setThumbnailUri(String thumbnailUri) {
             this.thumbnailUri = thumbnailUri;
         }
@@ -64,6 +69,7 @@ public class YoutubePlaylistInterpretation implements YoutubeInterpretation {
                     creatorUri,
                     title,
                     uri,
+                    musicUri,
                     thumbnailUri,
                     size,
                     videoIds
@@ -76,6 +82,7 @@ public class YoutubePlaylistInterpretation implements YoutubeInterpretation {
     private final String creatorUri;
     private final String title;
     private final String uri;
+    private final String musicUri;
     private final String thumbnailUri;
     private final int size;
     private final ArrayList<String> videoIds;
@@ -86,6 +93,7 @@ public class YoutubePlaylistInterpretation implements YoutubeInterpretation {
             String creatorUri,
             String title,
             String uri,
+            String musicUri,
             String thumbnailUri,
             int size,
             ArrayList<String> videoIds
@@ -95,6 +103,7 @@ public class YoutubePlaylistInterpretation implements YoutubeInterpretation {
         this.creatorUri = creatorUri;
         this.title = title;
         this.uri = uri;
+        this.musicUri = musicUri;
         this.thumbnailUri = thumbnailUri;
         this.size = size;
         this.videoIds = videoIds;
@@ -138,6 +147,10 @@ public class YoutubePlaylistInterpretation implements YoutubeInterpretation {
     @Override
     public @Nullable String getUrl() {
         return this.uri;
+    }
+
+    public @Nullable String getMusicUri() {
+        return this.musicUri;
     }
 
     @Override

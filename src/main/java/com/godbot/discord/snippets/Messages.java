@@ -3,7 +3,8 @@ package com.godbot.discord.snippets;
 public final class Messages {
 
     public static final String PLATFORM_NOT_FOUND = "I could not determine the corresponding platform to your url";
-    public static final String INVALID_URL = "The given url is invalid";
+    public static final String INVALID_URL = "The given url is invalid. " +
+            "The Song or Playlist you want to access might be private.";
     public static final String PLAY_INVALID_URL = "The given url is invalid. " +
             "If you want to search for a song use the /searchplay command";
     public static final String VIDEO_NOT_FOUND = "I could not find the video to your url";

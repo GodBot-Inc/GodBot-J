@@ -17,7 +17,8 @@ public class AudioPlayerSendHandler implements AudioSendHandler {
         this.audioPlayer = audioPlayer;
 
         // Maximum data package, which can be sent: 4096 bytes -> 0.004096 mb
-        this.buffer = ByteBuffer.allocate(10000);
+        // Maximum data package, which can be sent: 349568 bytes -> 8192 kb/s
+        this.buffer = ByteBuffer.allocate(349568);
         this.frame = new MutableAudioFrame();
         this.frame.setBuffer(buffer);
     }
