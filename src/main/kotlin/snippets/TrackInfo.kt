@@ -137,7 +137,7 @@ private fun formatPlaylistSource(playlistInfo: PlaylistPlayableInfo): String {
     if (playlistInfo is YouTubePlaylist && playlistInfo.uri != null) {
         stringBuilder.append(
             String.format(
-                "%s [YouTube](%s)",
+                "%s [YouTube](%s)\n",
                 EmojiIds.youtubeEmoji,
                 playlistInfo.uri,
             )
@@ -146,7 +146,7 @@ private fun formatPlaylistSource(playlistInfo: PlaylistPlayableInfo): String {
         stringBuilder.append(
             String.format(
                 String.format(
-                    " %s YouTube -",
+                    " %s YouTube -\n",
                     EmojiIds.youtubeEmoji
                 )
             )
@@ -155,7 +155,7 @@ private fun formatPlaylistSource(playlistInfo: PlaylistPlayableInfo): String {
     if (playlistInfo is SpotifyPlaylist && playlistInfo.uri != null) {
         stringBuilder.append(
             String.format(
-                "%s [Spotify](%s)",
+                "%s [Spotify](%s)\n",
                 EmojiIds.spotifyEmoji,
                 playlistInfo.uri
             )
@@ -163,7 +163,7 @@ private fun formatPlaylistSource(playlistInfo: PlaylistPlayableInfo): String {
     } else {
         stringBuilder.append(
             String.format(
-                "%s -",
+                "%s -\n",
                 EmojiIds.spotifyEmoji
             )
         )
