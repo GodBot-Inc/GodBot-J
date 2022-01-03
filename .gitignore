@@ -14,7 +14,7 @@
 
 # Kotlin
 .idea/**/kotlin_builtins
-build
+build/
 
 # AWS User-specific
 .idea/**/aws.xml
