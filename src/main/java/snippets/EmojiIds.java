@@ -24,4 +24,6 @@ public class EmojiIds {
     public static final String pause = "<:pause:919800523195023420>";
     public static final String nextTrack = "<:gb_next_track:919800514953224282>";
     public static final String lastTrack = "<:last_track:919800506770145340>";
+    public static final String noLoop = "<:no_loop:927499145588146186>";
+    public static final String loop = "<:gb_loop:927499133915373568>";
 }

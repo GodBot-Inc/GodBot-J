@@ -65,6 +65,7 @@ fun clearQueue(event: EventExtender) {
     }
 
     val items: Int = player.queue.size
+    player.clearQueue()
 
     event.reply(
         EmbedBuilder()

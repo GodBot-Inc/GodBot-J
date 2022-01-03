@@ -18,7 +18,7 @@ class AudioPlayerExtender(
 
     var loop: Boolean = false
     var shuffle: Boolean = false
-    val queue = ArrayList<AudioTrackExtender>()
+    var queue = ArrayList<AudioTrackExtender>()
     var lastTrack: AudioTrackExtender? = null
     var currentTrack: AudioTrackExtender? = null
     private val audioManager: AudioManager
@@ -114,7 +114,7 @@ class AudioPlayerExtender(
     }
 
     fun clearQueue() {
-        queue.clear()
+        queue = ArrayList()
     }
 
 }

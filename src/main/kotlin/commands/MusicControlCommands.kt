@@ -12,11 +12,12 @@ import singeltons.AudioPlayerManagerWrapper
 import singeltons.JDAManager
 import singeltons.PlayerVault
 import snippets.Colours
+import snippets.EmojiIds
 import snippets.ErrorMessages
 import snippets.standardError
 import utils.*
 
-fun removeTrigger(event: EventExtender) {
+fun remove(event: EventExtender) {
     fun removeCheckParameters(event: SlashCommandEvent): Long {
         val position: OptionMapping = event.getOption("position") ?: throw ArgumentNotFoundException()
         return position.asLong
@@ -158,15 +159,20 @@ fun loop(event: EventExtender) {
     if (player.loop == mode && player.loop) {
         event.replyEphemeral(standardError("The Player is already in Loop Mode"))
         return
+    } else if (player.loop == mode) {
+        event.replyEphemeral(standardError("Loop mode is not activated for the Player"))
+        return
     }
+
+    player.loop = mode
 
     event.reply(
         EmbedBuilder()
             .setTitle(
                 if (mode) {
-                    "Loop Mode Enabled"
+                    "${EmojiIds.loop} Loop Mode Enabled"
                 } else {
-                    "Loop Mode Disabled"
+                    "${EmojiIds.noLoop} Loop Mode Disabled"
                 }
             )
             .setColor(Colours.godbotYellow)

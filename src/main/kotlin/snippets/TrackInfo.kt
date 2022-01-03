@@ -114,6 +114,7 @@ fun playVideo(
         DurationCalc.longToStringPlus(firstVideoInterpretation?.duration ?: 0)
     )
 
+    // TODO Loaded and Queued wrong (look from where it's passed)
     return EmbedBuilder()
         .setTitle((firstVideoInterpretation?.title ?: "Song") + if (nowPlaying) " Loaded" else " Queued")
         .setThumbnail(firstVideoInterpretation?.thumbnailUri ?: defaultThumbnail)
@@ -131,14 +132,15 @@ fun playVideo(
         .build()
 }
 
-
 private fun formatPlaylistSource(playlistInfo: PlaylistPlayableInfo): String {
     val stringBuilder = StringBuilder()
     if (playlistInfo is YouTubePlaylist && playlistInfo.uri != null) {
         stringBuilder.append(
-            " %s [YouTube](%s)",
-            EmojiIds.youtubeEmoji,
-            playlistInfo.uri,
+            String.format(
+                "%s [YouTube](%s)",
+                EmojiIds.youtubeEmoji,
+                playlistInfo.uri,
+            )
         )
     } else {
         stringBuilder.append(

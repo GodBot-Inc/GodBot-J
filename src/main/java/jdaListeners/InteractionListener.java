@@ -64,8 +64,9 @@ public class InteractionListener extends ListenerAdapter {
             case "skip" -> Skip.trigger(event);
             case "queue" -> Queue.trigger(event);
             case "clear-queue" -> GeneralCommandsKt.clearQueue(new EventExtender(event));
-            case "remove" -> MusicControlCommandsKt.removeTrigger(new EventExtender(event));
+            case "remove" -> MusicControlCommandsKt.remove(new EventExtender(event));
             case "leave" -> GeneralCommandsKt.leave(new EventExtender(event));
+            case "loop" -> MusicControlCommandsKt.loop(new EventExtender(event));
         }
     }
 

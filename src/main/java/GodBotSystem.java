@@ -15,9 +15,7 @@ import singeltons.JDAManager;
 import javax.security.auth.login.LoginException;
 
 public class GodBotSystem {
-    public static void main(String[] args) throws LoginException, InterruptedException {
-        // BasicConfigurator.configure(); Standard configuration for log4j logging
-
+    public static void main(String[] args) {
         Dotenv dotenv = Dotenv.load();
 
         // Load Bot-Token into the program
