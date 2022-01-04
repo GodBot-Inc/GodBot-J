@@ -34,11 +34,11 @@ private fun getPositionInQueue(position: Int, queueSize: Int): String {
     if (position == 0 && queueSize == 0) {
         return String.format("%s -", EmojiIds.queueEmoji)
     } else if (position == 0) {
-        return String.format("%s -/%s", EmojiIds.queueEmoji, queueSize)
+        return String.format("%s 1 - %s", EmojiIds.queueEmoji, queueSize)
     } else if (queueSize == 0) {
         return String.format("%s %s", EmojiIds.queueEmoji, position)
     }
-    return String.format("%s %s/%s", EmojiIds.queueEmoji, position, queueSize)
+    return String.format("%s %s - %s", EmojiIds.queueEmoji, position, queueSize)
 }
 
 private fun getAuthor(interpretation: PlayableInfo?): String {

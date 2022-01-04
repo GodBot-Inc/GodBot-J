@@ -145,7 +145,7 @@ public class Play implements Command {
                 interactionHook
                         .sendMessageEmbeds(
                                 ErrorsKt.standardError(
-                                        ErrorMessages.INVALID_URL
+                                        ErrorMessages.PLAY_INVALID_URL
                                 )
                         ).queue();
                 return;
@@ -204,7 +204,7 @@ public class Play implements Command {
                                 member,
                                 youTubePlaylist,
                                 positionInQueue,
-                                positionInQueue
+                                positionInQueue + youTubePlaylist.getVideoIds().size()
                         )
                 ).queue();
     }
