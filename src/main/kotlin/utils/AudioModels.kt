@@ -104,6 +104,20 @@ class AudioPlayerExtender(
     }
 
     @Throws(IndexOutOfBoundsException::class)
+    fun skipTo(index: Int) {
+        if (index < queue.size) {
+            lastTrack = currentTrack
+            currentTrack = queue[index]
+            for (i in 0 until index + 1) {
+                queue.removeAt(0)
+            }
+            audioPlayer.playTrack(queue[0].audioTrack)
+        } else {
+            throw IndexOutOfBoundsException()
+        }
+    }
+
+    @Throws(IndexOutOfBoundsException::class)
     fun removeTrackAt(index: Int): AudioTrackExtender {
         return queue.removeAt(index)
     }

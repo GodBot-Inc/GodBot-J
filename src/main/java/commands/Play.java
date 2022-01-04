@@ -41,8 +41,6 @@ public class Play implements Command {
                 .getInstance()
                 .getManager();
 
-        videoIds.remove(0);
-
         if (!shuffle) {
             for (String videoId : videoIds) {
                 AudioResultHandler audioResultHandler = new AudioResultHandler(
