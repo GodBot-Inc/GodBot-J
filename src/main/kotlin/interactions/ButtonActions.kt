@@ -163,5 +163,5 @@ fun onQueueLast(event: ButtonClickEvent) {
         )
     ).queue()
 
-    mongo.setCurrentQueuePage(event.messageId, pages)
+    mongo.setCurrentQueuePage(event.messageId, pages - 1)
 }
