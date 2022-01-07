@@ -120,7 +120,7 @@ public class Queue implements Command {
             AudioTrackExtender currentTrack = queue.get(i);
             stringBuilder.append(
                     String.format(
-                            "**%s** __[%s](%s)__ (%s) ~ %s\n\n",
+                            "**%s** [%s](%s) [%s] ~ %s\n\n",
                             i+1,
                             currentTrack.getAudioTrack().getInfo().title,
                             currentTrack.getAudioTrack().getInfo().uri,
