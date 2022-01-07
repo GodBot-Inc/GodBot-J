@@ -1,5 +1,6 @@
 package snippets;
 
+import net.dv8tion.jda.api.entities.Emoji;
 import net.dv8tion.jda.api.interactions.components.ActionRow;
 import net.dv8tion.jda.api.interactions.components.Button;
 
@@ -64,18 +65,18 @@ public class Buttons {
         public QueueBuilder setLastDisabled(boolean lastDisabled) {
             this.lastDisabled = lastDisabled;
             return this;
-            //◀◀ ▶▶
+            //:arrow_backward::arrow_backward: U+25B6U+25B6
         }
 
         public Button[] buildDefault() {
             return new Button[] {
                     Button.secondary(
                             "queue_first_disabled",
-                            "◀◀"
+                            ":arrow_backward::arrow_backward:"
                     ),
                     Button.secondary(
                             "queue_left_disabled",
-                            "◀"
+                            ":arrow_backward:"
                     ),
                     Button.secondary(
                             "queue_refresh",
@@ -83,11 +84,11 @@ public class Buttons {
                     ).asDisabled(),
                     Button.primary(
                             "queue_right",
-                            "▶"
+                            Emoji.fromUnicode("U+25B6")
                     ),
                     Button.primary(
                             "queue_last",
-                            "▶▶"
+                            Emoji.fromUnicode("U+25B6")
                     )
             };
         }
@@ -96,12 +97,12 @@ public class Buttons {
             if (firstDisabled) {
                 return Button.primary(
                         "queue_first_disabled",
-                        "◀◀"
+                        Emoji.fromUnicode("U+23EA")
                 ).asDisabled();
             }
             return Button.primary(
                     "queue_first",
-                    "◀◀"
+                    Emoji.fromUnicode("U+23EA")
             );
         }
 
@@ -109,12 +110,12 @@ public class Buttons {
             if (leftDisabled) {
                 return Button.primary(
                         "queue_left_disabled",
-                        "◀"
+                        Emoji.fromUnicode("U+25C0")
                 ).asDisabled();
             }
             return Button.primary(
                     "queue_left",
-                    "◀"
+                    Emoji.fromUnicode("U+25C0")
             );
         }
 
@@ -135,12 +136,12 @@ public class Buttons {
             if (rightDisabled) {
                 return Button.primary(
                         "queue_right_disabled",
-                        "▶"
+                        Emoji.fromUnicode("U+25B6")
                 ).asDisabled();
             }
             return Button.primary(
                     "queue_right",
-                    "▶"
+                    Emoji.fromUnicode("U+25B6")
             );
         }
 
@@ -148,12 +149,12 @@ public class Buttons {
             if (lastDisabled) {
                 return Button.primary(
                         "queue_last_disabled",
-                        "▶▶"
+                        Emoji.fromUnicode("U+23E9")
                 ).asDisabled();
             }
             return Button.primary(
                     "queue_last",
-                    "▶▶"
+                    Emoji.fromUnicode("U+23E9")
             );
         }
 
@@ -167,24 +168,24 @@ public class Buttons {
             if (firstDisabled) {
                 first = Button.secondary(
                         "queue_first_disabled",
-                        "◀◀"
+                        Emoji.fromUnicode("U+23EA")
                 ).asDisabled();
             } else {
                 first = Button.secondary(
                         "queue_first",
-                        "◀◀"
+                        Emoji.fromUnicode("U+23EA")
                 );
             }
 
             if (leftDisabled) {
                 left = Button.secondary(
                         "queue_left_disabled",
-                        "◀"
+                        Emoji.fromUnicode("U+25C0")
                 ).asDisabled();
             } else {
                 left = Button.secondary(
                         "queue_left",
-                        "◀"
+                        Emoji.fromUnicode("U+25C0")
                 );
             }
 
@@ -203,24 +204,24 @@ public class Buttons {
             if (rightDisabled) {
                 right = Button.secondary(
                         "queue_right_disabled",
-                        "▶"
+                        Emoji.fromUnicode("U+25B6")
                 ).asDisabled();
             } else {
                 right = Button.secondary(
                         "queue_right",
-                        "▶"
+                        Emoji.fromUnicode("U+25B6")
                 );
             }
 
             if (lastDisabled) {
                 last = Button.secondary(
                         "queue_last_disabled",
-                        "▶▶"
+                        Emoji.fromUnicode("U+23E9")
                 ).asDisabled();
             } else {
                 last = Button.secondary(
                         "queue_last",
-                        "▶▶"
+                        Emoji.fromUnicode("U+23E9")
                 );
             }
 

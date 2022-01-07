@@ -36,9 +36,6 @@ public class TrackEventListener extends AudioEventAdapter {
     @Override
     public void onTrackEnd(AudioPlayer player, AudioTrack track, AudioTrackEndReason endReason) {
         System.out.println(endReason.name());
-        if (endReason.name().equals("LOAD_FAILED")) {
-            audioPlayer.playNow(Objects.requireNonNull(audioPlayer.getLastTrack()));
-        }
         if (endReason.mayStartNext) {
             audioPlayer.playNext();
         }
