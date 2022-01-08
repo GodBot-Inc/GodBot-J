@@ -1,5 +1,6 @@
 package singeltons;
 
+import com.sedmelluq.discord.lavaplayer.player.AudioConfiguration;
 import utils.AudioPlayerExtender;
 import utils.GuildNotFoundException;
 import utils.JDANotFound;
@@ -19,6 +20,8 @@ public class AudioPlayerManagerWrapper {
 
     private AudioPlayerManagerWrapper() {
         playerManager = new DefaultAudioPlayerManager();
+        playerManager.getConfiguration().setResamplingQuality(AudioConfiguration.ResamplingQuality.HIGH);
+        playerManager.getConfiguration().setOpusEncodingQuality(AudioConfiguration.OPUS_QUALITY_MAX);
         AudioSourceManagers.registerRemoteSources(playerManager);
     }
 

@@ -155,9 +155,6 @@ public class YoutubeApi {
                 .setId(id)
                 .build();
 
-        System.out.println(id);
-        System.out.println(url);
-
         JSONObject playlistItems = LinkHelper.sendRequest(url);
 
         return String.format(

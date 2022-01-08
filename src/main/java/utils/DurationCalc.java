@@ -1,7 +1,5 @@
 package utils;
 
-import java.util.Arrays;
-
 public final class DurationCalc {
 
     /**
@@ -12,35 +10,25 @@ public final class DurationCalc {
     public static long ytStringToLong(String duration) {
         long time = 0;
         if (duration.contains("PT") || duration.contains("PM")) {
-            System.out.println(duration);
             duration = duration.substring(2);
         }
         if (duration.contains("H")) {
             // multiply hours with 3600000 to get milliseconds
-            System.out.println(Arrays.toString(duration.split("H")));
             time += Long.parseLong(duration.split("H")[0]) * 3600000;
         }
         if (duration.contains("M")) {
             if (duration.contains("H")) {
-                System.out.println(Arrays.toString(duration.split("M")));
                 time += Long.parseLong(duration.split("H")[1].split("M")[0]) * 60000;
-//                System.out.println(Arrays.toString(duration.split("M")));
-//                System.out.println(duration.split("M")[0].substring(1));
-//                time += Long.parseLong(duration.split("M")[0].substring(1)) * 60000;
             } else {
-                System.out.println(Arrays.toString(duration.split("M")));
                 time += Long.parseLong(duration.split("M")[0]) * 60000;
             }
         }
         if (duration.contains("S")) {
             if (duration.contains("M")) {
-                System.out.println(Arrays.toString(duration.split("M")[1].split("S")));
                 time += Long.parseLong(duration.split("M")[1].split("S")[0]) * 1000;
             } else if (duration.contains("H")) {
-                System.out.println(Arrays.toString(duration.split("H")[1].split("S")));
                 time += Long.parseLong(duration.split("H")[1].split("S")[0]) * 1000;
             } else {
-                System.out.println(Arrays.toString(duration.split("S")));
                 time += Long.parseLong(duration.split("S")[0]) * 1000;
             }
         }

@@ -9,6 +9,7 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
 
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 public class TrackEventListener extends AudioEventAdapter {
 
@@ -35,11 +36,29 @@ public class TrackEventListener extends AudioEventAdapter {
 
     @Override
     public void onTrackEnd(AudioPlayer player, AudioTrack track, AudioTrackEndReason endReason) {
-        System.out.println(endReason.name());
+        System.out.println("Track Ended: " + track.getInfo().title + " Reason: " + endReason);
+        try {
+            TimeUnit.MILLISECONDS.sleep(10);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        System.out.println("Last Track: " + audioPlayer.getLastTrack());
+        System.out.println("Current Track:" + audioPlayer.getCurrentTrack());
+        if (endReason == AudioTrackEndReason.LOAD_FAILED) {
+            // Play the last track again
+            if (audioPlayer.getLastTrack() != null) {
+                audioPlayer.playNow(audioPlayer.getLastTrack());
+            }
+            return;
+        }
+        if (audioPlayer.getLoop() && audioPlayer.getLastTrack() != null) {
+            System.out.println("Looping");
+            audioPlayer.playNow(audioPlayer.getLastTrack());
+            return;
+        }
         if (endReason.mayStartNext) {
             audioPlayer.playNext();
         }
-        System.out.println("Track Ended " + track.getInfo().title);
 
         // endReason == FINISHED: A track finished or died by an exception (mayStartNext = true).
         // endReason == LOAD_FAILED: Loading of a track failed (mayStartNext = true).
