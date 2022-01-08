@@ -84,15 +84,10 @@ class AudioPlayerExtender(
 
     fun playNow(audioTrack: AudioTrackExtender) {
         currentTrack = audioTrack
-        println("Playing: ${audioTrack.audioTrack}")
         audioPlayer.stopTrack()
-        println("Stopped Track")
-        try {
-            audioPlayer.playTrack(audioTrack.audioTrack.makeClone())
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-        println("Started playing Track")
+        // playing a clone of the track, to be sure that the same instance of a track is not played twice, since
+        // this would throw an IllegalStateException
+        audioPlayer.playTrack(audioTrack.audioTrack.makeClone())
     }
 
     fun play(audioTrack: AudioTrackExtender): Int {

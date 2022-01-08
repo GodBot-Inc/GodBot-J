@@ -83,7 +83,6 @@ public class InteractionListener extends ListenerAdapter {
             switch (event.getButton().getId()) {
                 case "queue_first" -> ButtonActionsKt.onQueueFirst(event);
                 case "queue_left" -> ButtonActionsKt.onQueueLeft(event);
-                case "queue_refresh" -> ButtonActionsKt.onQueueRefresh(event);
                 case "queue_right" -> ButtonActionsKt.onQueueRight(event);
                 case "queue_last" -> ButtonActionsKt.onQueueLast(event);
             }

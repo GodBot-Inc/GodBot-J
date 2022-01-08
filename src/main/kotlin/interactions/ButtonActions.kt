@@ -101,11 +101,6 @@ fun onQueueLeft(event: ButtonClickEvent) {
 }
 
 @Throws(ButtonException::class)
-fun onQueueRefresh(event: ButtonClickEvent) {
-    // TODO yet to be implemented
-}
-
-@Throws(ButtonException::class)
 fun onQueueRight(event: ButtonClickEvent) {
     val mongo: MongoCommunication = MongoCommunication.getInstance()
     val queue: Document = mongo.getQueue(event.messageId) ?: throw ButtonException()

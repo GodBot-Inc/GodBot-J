@@ -51,7 +51,7 @@ public class TrackEventListener extends AudioEventAdapter {
             }
             return;
         }
-        if (audioPlayer.getLoop() && audioPlayer.getLastTrack() != null) {
+        if (audioPlayer.getLoop() && audioPlayer.getLastTrack() != null && AudioTrackEndReason.STOPPED != endReason) {
             System.out.println("Looping");
             audioPlayer.playNow(audioPlayer.getLastTrack());
             return;
