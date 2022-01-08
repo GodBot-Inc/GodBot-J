@@ -1,0 +1,26 @@
+{
+  "configuration": {
+    "status": "error",
+    "name": "log4j",
+    "packages": "main",
+    "ThresholdFilter": {
+      "level": ["debug", "info", "warn"]
+    },
+    "appenders": {
+      "Console": {
+        "name": "Console",
+        "PatternLayout": {
+          "pattern": "%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"
+        }
+      }
+    },
+    "loggers": {
+      "root": {
+        "level": "debug",
+        "AppenderRef": {
+          "ref": "Console"
+        }
+      }
+    }
+  }
+}
