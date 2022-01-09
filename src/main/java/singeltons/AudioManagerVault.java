@@ -122,9 +122,7 @@ public class AudioManagerVault {
         }
         audioManager = getAudioManager(botJDA, guildId);
 
-        if (audioManager.getSendingHandler() == null) {
-            audioManager.setSendingHandler(new AudioPlayerSendHandler(player));
-        }
+        audioManager.setSendingHandler(new AudioPlayerSendHandler(player));
     }
 
     public static AudioManagerVault getInstance() { return managerObj; }

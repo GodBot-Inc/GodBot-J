@@ -1,4 +1,3 @@
-import com.sedmelluq.discord.lavaplayer.jdaudp.NativeAudioSendFactory;
 import io.github.cdimascio.dotenv.Dotenv;
 import jdaListeners.BotStateListener;
 import jdaListeners.GeneralListener;
@@ -88,7 +87,7 @@ public class GodBotSystem {
         }
 
         // get jda default audio send factory
-        builder.setAudioSendFactory(new NativeAudioSendFactory());
+        builder.setAudioSendFactory(new com.sedmelluq.discord.lavaplayer.jdaudp.NativeAudioSendFactory());
 
         // Create a bot instance
         JDA botInstance = builder.build();
@@ -101,14 +100,6 @@ public class GodBotSystem {
 
         // Return bot Instance
         return botInstance;
-    }
-
-    private static void registerListeners(JDABuilder builder) {
-        builder.addEventListeners(
-                new BotStateListener(),
-                new InteractionListener(),
-                new GeneralListener()
-        );
     }
 
     private static void configureMemoryUsage(JDABuilder builder) {

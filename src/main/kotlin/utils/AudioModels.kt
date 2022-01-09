@@ -1,9 +1,7 @@
 package utils
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer
-import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayer
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack
-import commands.clearQueue
 import lavaplayerHandlers.AudioPlayerSendHandler
 import lavaplayerHandlers.TrackEventListener
 import net.dv8tion.jda.api.entities.Member
@@ -11,7 +9,6 @@ import net.dv8tion.jda.api.entities.VoiceChannel
 import net.dv8tion.jda.api.managers.AudioManager
 import playableInfo.PlayableInfo
 import java.util.concurrent.Executors
-import java.util.concurrent.TimeUnit
 
 class AudioPlayerExtender(
     val audioPlayer: AudioPlayer,
@@ -32,9 +29,7 @@ class AudioPlayerExtender(
         audioPlayer.volume = 50
         audioPlayer.setFrameBufferDuration(349568)
         this.audioManager = audioManager
-        if (this.audioManager.sendingHandler == null) {
-            this.audioManager.sendingHandler = AudioPlayerSendHandler(audioPlayer)
-        }
+        this.audioManager.sendingHandler = AudioPlayerSendHandler(audioPlayer)
         audioPlayer.addListener(TrackEventListener(this))
         Executors.newCachedThreadPool().submit {
             lifecycle()
