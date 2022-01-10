@@ -12,16 +12,14 @@ import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import org.jetbrains.annotations.NotNull;
 import playableInfo.PlayableInfo;
-import playableInfo.YouTubePlaylist;
+import playableInfo.PlaylistPlayableInfo;
 import singeltons.AudioPlayerManagerWrapper;
 import singeltons.JDAManager;
 import snippets.ErrorMessages;
 import snippets.ErrorsKt;
-import snippets.InterpretationKeys;
 import snippets.TrackInfoKt;
 import utils.*;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
@@ -90,8 +88,8 @@ public class Play implements Command {
         return shuffle != null && shuffle.getAsBoolean();
     }
 
-    public static Future<HashMap<String, PlayableInfo>> startInterpretation(String url) {
-        return Executors.newCachedThreadPool().submit(() -> LinkInterpreter.interpret(url));
+    public static Future<PlayableInfo> startInfoGathering(String url) {
+        return Executors.newCachedThreadPool().submit(() -> DataGatherer.gatherPlayableInfo(url));
     }
 
     public static AudioResultHandler playVideo(
@@ -116,20 +114,18 @@ public class Play implements Command {
     }
 
     private static void processPlaylist(
-            String url,
             AudioPlayerExtender player,
             Member member,
             boolean shuffle,
             InteractionHook interactionHook,
-            Future<HashMap<String, PlayableInfo>> playableFuture,
+            Future<PlayableInfo> playableFuture,
             JDA bot,
             Guild guild,
             VoiceChannel voiceChannel
     ) {
-        HashMap<String, PlayableInfo> playlistInformation;
+        PlaylistPlayableInfo playlistInformation;
         try{
-            playlistInformation =
-                    playableFuture.get();
+            playlistInformation = (PlaylistPlayableInfo) playableFuture.get();
         } catch (InterruptedException e) {
             interactionHook
                     .sendMessageEmbeds(
@@ -150,9 +146,7 @@ public class Play implements Command {
             } else if (e.getCause() instanceof PlatformNotFoundException) {
                 interactionHook
                         .sendMessageEmbeds(
-                                ErrorsKt.standardError(
-                                        ErrorMessages.PLATFORM_NOT_FOUND
-                                )
+                                ErrorsKt.standardError(ErrorMessages.PLATFORM_NOT_FOUND)
                         ).queue();
                 return;
             }
@@ -166,20 +160,6 @@ public class Play implements Command {
             return;
         }
 
-        YouTubePlaylist youTubePlaylist;
-
-        if (!playlistInformation.containsKey(InterpretationKeys.YTPLAYLIST)) {
-            interactionHook
-                    .sendMessageEmbeds(
-                            ErrorsKt.standardError(
-                                    ErrorMessages.INFO_GATHERING_PLAYLIST_FAILED
-                            )
-                    ).queue();
-            return;
-        } else {
-            youTubePlaylist = (YouTubePlaylist) playlistInformation.get(InterpretationKeys.YTPLAYLIST);
-        }
-
         int positionInQueue = player.getQueue().size() + 1;
         AudioPlayerExtender audioPlayer = AudioPlayerManagerWrapper
                 .getInstance()
@@ -191,7 +171,7 @@ public class Play implements Command {
 
         Executors.newCachedThreadPool().submit(() -> playPlaylist(
                 audioPlayer,
-                youTubePlaylist.getVideoIds(),
+                playlistInformation.getVideoIds(),
                 member,
                 shuffle
         ));
@@ -200,9 +180,9 @@ public class Play implements Command {
                 .sendMessageEmbeds(
                         TrackInfoKt.playPlaylist(
                                 member,
-                                youTubePlaylist,
+                                playlistInformation,
                                 positionInQueue,
-                                positionInQueue + youTubePlaylist.getVideoIds().size()
+                                positionInQueue + playlistInformation.getVideoIds().size()
                         )
                 ).queue();
     }
@@ -212,13 +192,14 @@ public class Play implements Command {
             AudioPlayerExtender player,
             Member member,
             InteractionHook interactionHook,
-            Future<HashMap<String, PlayableInfo>> playableFuture
+            Future<PlayableInfo> playableFuture
     ) {
         AudioResultHandler audioResultHandler = playVideo(
                 player,
                 url,
                 member
         );
+        System.out.println("playing video");
 
         while (audioResultHandler.actionType == 0) {
             try {
@@ -250,7 +231,8 @@ public class Play implements Command {
             }
         }
 
-        HashMap<String, PlayableInfo> playableInfo;
+        System.out.println("gathering playable Future");
+        PlayableInfo playableInfo;
         try {
             playableInfo = playableFuture.get();
         } catch (InterruptedException e) {
@@ -271,9 +253,7 @@ public class Play implements Command {
             } else if (e.getCause() instanceof PlatformNotFoundException) {
                 interactionHook
                         .sendMessageEmbeds(
-                                ErrorsKt.standardError(
-                                        ErrorMessages.PLATFORM_NOT_FOUND
-                                )
+                                ErrorsKt.standardError(ErrorMessages.PLATFORM_NOT_FOUND)
                         ).queue();
                 return;
             }
@@ -286,14 +266,16 @@ public class Play implements Command {
             return;
         }
 
+        System.out.println("About to play");
         interactionHook.sendMessageEmbeds(
                 TrackInfoKt.playVideo(
                         member,
                         audioResultHandler.position == 0,
                         playableInfo,
-                        player.getQueue().size() + 1,
+                        audioResultHandler.position,
                         player.getQueue().size() + 1
-                )).queue();
+                )
+        ).queue();
     }
 
     public static void trigger(@NotNull SlashCommandEvent scEvent) {
@@ -374,7 +356,7 @@ public class Play implements Command {
         InteractionHook interactionHook = scEvent.getHook();
         scEvent.deferReply().queue();
 
-        Future<HashMap<String, PlayableInfo>> interpretationFuture = startInterpretation(url);
+        Future<PlayableInfo> infoGatheringFuture = startInfoGathering(url);
 
         boolean isVideo;
         try {
@@ -395,12 +377,11 @@ public class Play implements Command {
 
         if (!isVideo) {
             processPlaylist(
-                    url,
                     player,
                     member,
                     getShuffle(event),
                     interactionHook,
-                    interpretationFuture,
+                    infoGatheringFuture,
                     bot,
                     guild,
                     voiceChannel
@@ -411,7 +392,7 @@ public class Play implements Command {
                     player,
                     member,
                     interactionHook,
-                    interpretationFuture
+                    infoGatheringFuture
             );
         }
     }

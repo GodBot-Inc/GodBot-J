@@ -21,7 +21,13 @@ public class LinkHelper {
     public static String getPlatform(String url) throws PlatformNotFoundException {
         if (url.contains("https://open.spotify.com/")) {
             return "spotify";
-        } else if (url.contains("https://www.youtube.com/") || url.contains("https://music.youtube.com/")) {
+        } else if (
+                url.contains("https://www.youtube.com/") ||
+                url.contains("https://music.youtube.com/") ||
+                url.contains("https://youtube.com/") ||
+                url.contains("https://youtu.be/") ||
+                url.contains("https://www.youtu.be/")
+        ) {
             return "youtube";
         } else {
             throw new PlatformNotFoundException();
@@ -38,10 +44,8 @@ public class LinkHelper {
     public static boolean isVideo(String url)
             throws PlatformNotFoundException, InvalidURLException {
         String platform = getPlatform(url);
-        System.out.println("we got the platform!");
         if (platform.equals("youtube")) {
-            System.out.println("platform is YT");
-            return LinkInterpreter.ytGetTypeAndId(url).type.equals("video");
+            return DataGatherer.ytGetTypeAndId(url).type.equals("video");
         }
         throw new PlatformNotFoundException();
     }
@@ -77,7 +81,6 @@ public class LinkHelper {
             response.append(inputLine);
         }
         bufferedReader.close();
-        System.out.println(response);
         return new JSONObject(response.toString());
     }
 
