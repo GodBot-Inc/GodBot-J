@@ -1,5 +1,7 @@
 package playableInfo
 
+import net.dv8tion.jda.api.entities.Member
+
 class YouTubeSong private constructor (
     override val duration: Long,
     override val creator: String,
@@ -7,6 +9,7 @@ class YouTubeSong private constructor (
     override val title: String,
     override val uri: String?,
     override val thumbnailUri: String?,
+    override val requester: Member,
     val songId: String?,
     val likes: Long,
     val views: Long,
@@ -19,6 +22,7 @@ class YouTubeSong private constructor (
             var title: String = "Song",
             var uri: String? = null,
             var thumbnailUri: String? = null,
+            var requester: Member,
             var songId: String? = null,
             var likes: Long = 0,
             var views: Long = 0,
@@ -30,12 +34,13 @@ class YouTubeSong private constructor (
             fun title(title: String) = apply { this.title = title }
             fun uri(uri: String) = apply { this.uri = uri }
             fun thumbnailUri(thumbnailUri: String) = apply { this.thumbnailUri = thumbnailUri }
+            fun requester(requester: Member) = apply { this.requester = requester }
             fun songId(songId: String) = apply { this.songId = songId }
             fun likes(likes: Long) = apply { this.likes = likes }
             fun views(views: Long) = apply { this.views = views }
             fun comments(comments: Long) = apply { this.comments = comments }
             fun build() = YouTubeSong(
-                duration, creator, creatorLink, title, uri, thumbnailUri, songId, likes, views, comments
+                duration, creator, creatorLink, title, uri, thumbnailUri, requester, songId, likes, views, comments
             )
         }
 }
