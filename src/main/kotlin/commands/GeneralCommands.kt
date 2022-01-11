@@ -10,7 +10,7 @@ import singeltons.JDAManager
 import singeltons.PlayerVault
 import snippets.Colours
 import snippets.ErrorMessages
-import snippets.standardError
+import ktSnippets.standardError
 import utils.*
 
 fun clearQueue(event: EventExtender) {

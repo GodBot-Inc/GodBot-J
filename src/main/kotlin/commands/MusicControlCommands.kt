@@ -14,7 +14,7 @@ import singeltons.PlayerVault
 import snippets.Colours
 import snippets.EmojiIds
 import snippets.ErrorMessages
-import snippets.standardError
+import ktSnippets.standardError
 import utils.*
 
 fun remove(event: EventExtender) {

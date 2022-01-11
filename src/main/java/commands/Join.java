@@ -1,6 +1,7 @@
 package commands;
 
 import io.github.cdimascio.dotenv.Dotenv;
+import ktSnippets.ErrorsKt;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
@@ -12,7 +13,6 @@ import singeltons.AudioManagerVault;
 import singeltons.JDAManager;
 import snippets.Colours;
 import snippets.ErrorMessages;
-import snippets.ErrorsKt;
 import utils.CheckFailedException;
 import utils.Checks;
 import utils.EventExtender;

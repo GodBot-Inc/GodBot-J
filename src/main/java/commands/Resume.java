@@ -1,5 +1,6 @@
 package commands;
 
+import ktSnippets.ErrorsKt;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
@@ -10,7 +11,6 @@ import singeltons.PlayerVault;
 import snippets.Colours;
 import snippets.EmojiIds;
 import snippets.ErrorMessages;
-import snippets.ErrorsKt;
 import utils.*;
 
 public class Resume implements Command {

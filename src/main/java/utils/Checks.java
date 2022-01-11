@@ -1,11 +1,11 @@
 package utils;
 
+import ktSnippets.ErrorsKt;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.VoiceChannel;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import snippets.ErrorMessages;
-import snippets.ErrorsKt;
 
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;

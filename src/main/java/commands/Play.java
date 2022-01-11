@@ -2,10 +2,13 @@ package commands;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import io.github.cdimascio.dotenv.Dotenv;
+import ktSnippets.ErrorsKt;
+import ktSnippets.TrackInfoKt;
 import lavaplayerHandlers.AudioResultHandler;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.VoiceChannel;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.InteractionHook;
@@ -16,8 +19,6 @@ import playableInfo.PlaylistPlayableInfo;
 import singeltons.AudioPlayerManagerWrapper;
 import singeltons.JDAManager;
 import snippets.ErrorMessages;
-import snippets.ErrorsKt;
-import snippets.TrackInfoKt;
 import utils.*;
 
 import java.util.List;
@@ -266,16 +267,15 @@ public class Play implements Command {
             return;
         }
 
+        MessageEmbed embed = TrackInfoKt.playVideo(
+                member,
+                audioResultHandler.position == 0,
+                playableInfo,
+                audioResultHandler.position,
+                player.getQueue().size() + 1
+        );
         System.out.println("About to play");
-        interactionHook.sendMessageEmbeds(
-                TrackInfoKt.playVideo(
-                        member,
-                        audioResultHandler.position == 0,
-                        playableInfo,
-                        audioResultHandler.position,
-                        player.getQueue().size() + 1
-                )
-        ).queue();
+        interactionHook.sendMessageEmbeds(embed).queue();
     }
 
     public static void trigger(@NotNull SlashCommandEvent scEvent) {

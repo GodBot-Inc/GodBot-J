@@ -1,14 +1,11 @@
-package snippets
+package ktSnippets
 
 import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.entities.Member
 import net.dv8tion.jda.api.entities.MessageEmbed
-import playableInfo.PlayableInfo
-import playableInfo.PlaylistPlayableInfo
-import playableInfo.SpotifySong
-import playableInfo.YouTubeSong
-import playableInfo.YouTubePlaylist
-import playableInfo.SpotifyPlaylist
+import playableInfo.*
+import snippets.Colours
+import snippets.EmojiIds
 import utils.DurationCalc
 import javax.annotation.CheckReturnValue
 
@@ -108,6 +105,7 @@ private fun formatSongSource(playableInfo: PlayableInfo): String {
     return builder.toString()
 }
 
+@CheckReturnValue
 fun playVideo(
     requester: Member,
     nowPlaying: Boolean,

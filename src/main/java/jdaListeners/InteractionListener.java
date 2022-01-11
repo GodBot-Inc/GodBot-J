@@ -2,6 +2,7 @@ package jdaListeners;
 
 import commands.*;
 import interactions.ButtonActionsKt;
+import ktSnippets.ErrorsKt;
 import logging.ListenerLogger;
 import logging.LoggerContent;
 import net.dv8tion.jda.api.entities.Guild;
@@ -11,7 +12,6 @@ import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
 import snippets.ErrorMessages;
-import snippets.ErrorsKt;
 import utils.ButtonException;
 import utils.EventExtender;
 
