@@ -1,14 +1,14 @@
 package lavaplayerHandlers;
 
-import utils.AudioPlayerExtender;
-import utils.AudioTrackExtender;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.event.AudioEventAdapter;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
+import ktUtils.AudioPlayerExtender;
+import ktUtils.GodBotException;
+import ktUtils.QueueEmptyException;
 
-import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 public class TrackEventListener extends AudioEventAdapter {
@@ -34,30 +34,36 @@ public class TrackEventListener extends AudioEventAdapter {
         // A track started playing
     }
 
+    public void playLast() {
+        if (audioPlayer.getLastTrack() != null) {
+            try {
+                audioPlayer.playNow(audioPlayer.getLastTrack().getPlayableInfo());
+            } catch (GodBotException e) {
+                try {
+                    audioPlayer.playNext();
+                } catch (QueueEmptyException ignore) {}
+            }
+        }
+    }
+
     @Override
     public void onTrackEnd(AudioPlayer player, AudioTrack track, AudioTrackEndReason endReason) {
         System.out.println("Track Ended: " + track.getInfo().title + " Reason: " + endReason);
         try {
-            TimeUnit.MILLISECONDS.sleep(10);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        System.out.println("Last Track: " + audioPlayer.getLastTrack());
-        System.out.println("Current Track:" + audioPlayer.getCurrentTrack());
+            TimeUnit.MILLISECONDS.sleep(50);
+        } catch (InterruptedException ignore) {}
         if (endReason == AudioTrackEndReason.LOAD_FAILED) {
-            // Play the last track again
-            if (audioPlayer.getLastTrack() != null) {
-                audioPlayer.playNow(audioPlayer.getLastTrack());
-            }
+            playLast();
             return;
         }
         if (audioPlayer.getLoop() && audioPlayer.getLastTrack() != null && AudioTrackEndReason.STOPPED != endReason) {
-            System.out.println("Looping");
-            audioPlayer.playNow(audioPlayer.getLastTrack());
+            playLast();
             return;
         }
         if (endReason.mayStartNext) {
-            audioPlayer.playNext();
+            try {
+                audioPlayer.playNext();
+            } catch (QueueEmptyException ignore) {}
         }
 
         // endReason == FINISHED: A track finished or died by an exception (mayStartNext = true).
@@ -75,9 +81,6 @@ public class TrackEventListener extends AudioEventAdapter {
 
     @Override
     public void onTrackStuck(AudioPlayer player, AudioTrack track, long thresholdMs) {
-        AudioTrackExtender currentSong;
-        if (Objects.requireNonNull(audioPlayer.getCurrentTrack()).getAudioTrack() == track) {
 
-        }
     }
 }

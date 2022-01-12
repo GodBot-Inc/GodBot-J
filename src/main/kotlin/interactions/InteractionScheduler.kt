@@ -1,7 +1,7 @@
 package interactions
 
-import utils.ButtonException
-import utils.MessageNotFoundException
+import ktUtils.ButtonException
+import ktUtils.MessageNotFoundException
 import io.github.cdimascio.dotenv.Dotenv
 import net.dv8tion.jda.api.JDA
 import net.dv8tion.jda.api.entities.Message

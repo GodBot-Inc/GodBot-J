@@ -13,7 +13,7 @@ import singeltons.AudioManagerVault;
 import singeltons.JDAManager;
 import snippets.Colours;
 import snippets.ErrorMessages;
-import utils.CheckFailedException;
+import ktUtils.CheckFailedException;
 import utils.Checks;
 import utils.EventExtender;
 

@@ -54,24 +54,6 @@ public class GodBotSystem {
 
     private static JDA initializeBotFromToken(String TOKEN, String applicationId, boolean listeners)
             throws LoginException {
-        // Get a builder for the bot, so it can be customized / configured
-//        DefaultShardManagerBuilder builder = DefaultShardManagerBuilder.createDefault(
-//                TOKEN,
-//                GatewayIntent.GUILD_VOICE_STATES,
-//                GatewayIntent.GUILD_PRESENCES,
-//                GatewayIntent.GUILD_MEMBERS,
-//                GatewayIntent.GUILD_MESSAGES,
-//                GatewayIntent.GUILD_WEBHOOKS)
-//                .setMemberCachePolicy(MemberCachePolicy.VOICE)
-//                .disableCache(
-//                        CacheFlag.ACTIVITY,
-//                        CacheFlag.CLIENT_STATUS,
-//                        CacheFlag.EMOTE,
-//                        CacheFlag.ROLE_TAGS,
-//                        CacheFlag.ONLINE_STATUS
-//                )
-//                .setBulkDeleteSplittingEnabled(false);
-
         JDABuilder builder = JDABuilder.createDefault(TOKEN);
 
         // Run a configuration so the bot does not use up too much memory

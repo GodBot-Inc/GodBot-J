@@ -67,7 +67,6 @@ private fun getAuthor(interpretation: PlayableInfo?): String {
 }
 
 private fun formatSongSource(playableInfo: PlayableInfo): String {
-    println("FormatSongSource")
     val builder = StringBuilder()
     if (playableInfo is YouTubeSong) {
         builder.append(
@@ -101,19 +100,16 @@ private fun formatSongSource(playableInfo: PlayableInfo): String {
             )
         )
     }
-    println("returning")
     return builder.toString()
 }
 
 @CheckReturnValue
 fun playVideo(
     requester: Member,
-    nowPlaying: Boolean,
     playableInfo: PlayableInfo,
     positionInQueue: Int,
     queueSize: Int
 ): MessageEmbed {
-    println("Hello world")
     val duration: String = if(playableInfo.duration == 0L) String.format(
         "%s -",
         trackLinesDefault()
@@ -124,7 +120,7 @@ fun playVideo(
     )
 
     return EmbedBuilder()
-        .setTitle(playableInfo.title + if (nowPlaying) " Loaded" else " Queued")
+        .setTitle(playableInfo.title)
         .setThumbnail(playableInfo.thumbnailUri ?: defaultThumbnail)
         .addField("Creator", getAuthor(playableInfo), true)
         .addField("Sources", formatSongSource(playableInfo), true)

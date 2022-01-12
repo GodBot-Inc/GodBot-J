@@ -64,16 +64,21 @@ class AudioPlayerExtender(
         voiceChannel = newVoiceChannel
     }
 
-    @Throws(TrackNotFoundException::class, GodBotException::class)
+    @Throws(QueueEmptyException::class)
     fun playNext(): PlayableInfo {
         if (queue.isEmpty()) {
-            throw TrackNotFoundException()
+            throw QueueEmptyException()
         }
-        val playableInfo = queue[0]
-        playNow(playableInfo)
+        val playableInfo = queue.removeAt(0)
+        try {
+            playNow(playableInfo)
+        } catch (e: GodBotException) {
+            return playNext()
+        }
         return playableInfo
     }
 
+    @Throws(TrackNotFoundException::class, GodBotException::class)
     fun playNow(playableInfo: PlayableInfo) {
         val audioTrack =
             AudioPlayerManagerWrapper
@@ -88,10 +93,14 @@ class AudioPlayerExtender(
 
     @Throws(TrackNotFoundException::class, GodBotException::class)
     fun play(playableInfo: PlayableInfo): Int {
+        if (!audioManager.isConnected) {
+            audioManager.openAudioConnection(voiceChannel);
+        }
         if (audioPlayer.playingTrack == null) {
             playNow(playableInfo)
             return 0
         }
+        println("Added to Queue: " + playableInfo.title)
         queue.add(playableInfo)
         return queue.size - 1
     }

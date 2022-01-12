@@ -2,12 +2,14 @@ package commands;
 
 import io.github.cdimascio.dotenv.Dotenv;
 import ktSnippets.ErrorsKt;
+import ktUtils.*;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.VoiceChannel;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import org.jetbrains.annotations.NotNull;
+import playableInfo.PlayableInfo;
 import singeltons.JDAManager;
 import singeltons.PlayerVault;
 import snippets.Colours;
@@ -80,19 +82,14 @@ public class Skip implements Command {
             return;
         }
 
-        AudioTrackExtender audioTrackExtender = player.playNext();
-
-        if (audioTrackExtender == null) {
-            event.reply(
-                    new EmbedBuilder()
-                            .setDescription(
-                                    String.format(
-                                            "%s **Player stopped**",
-                                            EmojiIds.stop
-                                    )
-                            )
-                            .setColor(Colours.godbotYellow)
-                            .build()
+        PlayableInfo playableInfo;
+        try {
+            playableInfo = player.playNext();
+        } catch (QueueEmptyException e) {
+            event.replyEphemeral(
+                    ErrorsKt.emptyError(
+                            ErrorMessages.QUEUE_EMPTY
+                    )
             );
             return;
         }
@@ -103,8 +100,8 @@ public class Skip implements Command {
                                 String.format(
                                         "%s **Skipped Song, Now Playing: [%s](%s)**",
                                         EmojiIds.nextTrack,
-                                        audioTrackExtender.getAudioTrack().getInfo().title,
-                                        audioTrackExtender.getAudioTrack().getInfo().uri
+                                        playableInfo.getTitle(),
+                                        playableInfo.getUri()
                                 )
                         )
                         .setColor(Colours.godbotYellow)

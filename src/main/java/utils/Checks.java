@@ -1,6 +1,8 @@
 package utils;
 
 import ktSnippets.ErrorsKt;
+import ktUtils.CheckFailedException;
+import ktUtils.VoiceCheckFailedException;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.VoiceChannel;

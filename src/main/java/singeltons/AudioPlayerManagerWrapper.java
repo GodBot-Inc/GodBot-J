@@ -1,14 +1,16 @@
 package singeltons;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioConfiguration;
-import utils.AudioPlayerExtender;
-import utils.GuildNotFoundException;
-import utils.JDANotFound;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
+import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
+import ktUtils.*;
+import lavaplayerHandlers.AudioResultHandler;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.VoiceChannel;
+
+import java.util.concurrent.TimeUnit;
 
 /**
  * A little confusing but essentially a collection of useful functions related to players
@@ -25,8 +27,7 @@ public class AudioPlayerManagerWrapper {
         AudioSourceManagers.registerRemoteSources(playerManager);
     }
 
-    private AudioPlayerExtender createPlayer(
-            JDA bot, String guildId, VoiceChannel voiceChannel) {
+    private AudioPlayerExtender createPlayer(JDA bot, String guildId, VoiceChannel voiceChannel) {
         PlayerVault vault = PlayerVault.getInstance();
         AudioPlayerExtender player =
                 new AudioPlayerExtender(
@@ -43,8 +44,7 @@ public class AudioPlayerManagerWrapper {
         return player;
     }
 
-    public AudioPlayerExtender getPlayer(
-            JDA bot, String guildId, VoiceChannel voiceChannel) {
+    public AudioPlayerExtender getPlayer(JDA bot, String guildId, VoiceChannel voiceChannel) {
         AudioPlayerExtender player;
         try {
             player = PlayerVault
@@ -61,6 +61,25 @@ public class AudioPlayerManagerWrapper {
             );
         }
         return player;
+    }
+
+    public AudioTrack loadItem(String url)
+            throws GodBotException {
+        AudioResultHandler audioResultHandler = new AudioResultHandler();
+        playerManager.loadItem(
+                url,
+                audioResultHandler
+        );
+        while (audioResultHandler.actionType == 0) {
+            try {
+                TimeUnit.MILLISECONDS.sleep(20);
+            } catch (InterruptedException ignore) {}
+        }
+        switch (audioResultHandler.actionType) {
+            case 3, 4 -> throw new TrackNotFoundException();
+            case 10 -> throw new GodBotException();
+        }
+        return audioResultHandler.audioTrack;
     }
 
     public AudioPlayerManager getManager() {

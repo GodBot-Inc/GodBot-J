@@ -2,6 +2,7 @@ package commands;
 
 import interactions.InteractionScheduler;
 import ktSnippets.ErrorsKt;
+import ktUtils.*;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
@@ -10,12 +11,17 @@ import net.dv8tion.jda.api.entities.VoiceChannel;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import org.bson.Document;
 import org.jetbrains.annotations.NotNull;
+import playableInfo.PlayableInfo;
 import singeltons.JDAManager;
 import singeltons.PlayerVault;
-import snippets.*;
+import snippets.Buttons;
+import snippets.Colours;
+import snippets.EmojiIds;
+import snippets.ErrorMessages;
 import utils.*;
 
 import java.util.List;
+import java.util.Objects;
 
 public class Queue implements Command {
 
@@ -97,7 +103,7 @@ public class Queue implements Command {
             return;
         }
 
-        List<AudioTrackExtender> queue = audioPlayer.getQueue();
+        List<PlayableInfo> queue = audioPlayer.getQueue();
         if (queue.isEmpty()) {
             event.replyEphemeral(
                     ErrorsKt.standardError(
@@ -118,15 +124,15 @@ public class Queue implements Command {
         StringBuilder stringBuilder = new StringBuilder();
 
         for (int i = 0; i < audioPlayer.getQueue().size(); i++) {
-            AudioTrackExtender currentTrack = queue.get(i);
+            PlayableInfo currentTrack = queue.get(i);
             stringBuilder.append(
                     String.format(
                             "**%s** [%s](%s) [%s] ~ %s\n\n",
                             i+1,
-                            currentTrack.getAudioTrack().getInfo().title,
-                            currentTrack.getAudioTrack().getInfo().uri,
-                            DurationCalc.longToString(currentTrack.getAudioTrack().getInfo().length),
-                            currentTrack.getRequester().getAsMention()
+                            currentTrack.getTitle(),
+                            currentTrack.getUri(),
+                            DurationCalc.longToString(currentTrack.getDuration()),
+                            Objects.requireNonNull(currentTrack.getRequester()).getAsMention()
                     )
             );
 

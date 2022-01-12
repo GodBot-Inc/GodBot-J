@@ -6,9 +6,9 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
 import singeltons.JDAManager;
 import singeltons.PlayerVault;
-import utils.AudioPlayerExtender;
-import utils.GuildNotFoundException;
-import utils.JDANotFound;
+import ktUtils.AudioPlayerExtender;
+import ktUtils.GuildNotFoundException;
+import ktUtils.JDANotFound;
 
 public class GeneralListener extends ListenerAdapter {
 

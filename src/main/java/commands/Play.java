@@ -1,10 +1,9 @@
 package commands;
 
-import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import io.github.cdimascio.dotenv.Dotenv;
 import ktSnippets.ErrorsKt;
 import ktSnippets.TrackInfoKt;
-import lavaplayerHandlers.AudioResultHandler;
+import ktUtils.*;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
@@ -19,58 +18,31 @@ import playableInfo.PlaylistPlayableInfo;
 import singeltons.AudioPlayerManagerWrapper;
 import singeltons.JDAManager;
 import snippets.ErrorMessages;
-import utils.*;
+import utils.Checks;
+import utils.DataGatherer;
+import utils.EventExtender;
+import utils.LinkHelper;
 
-import java.util.List;
+import java.util.Collections;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
 
 public class Play implements Command {
     // TODO Emphasize EventExtender.interpretations store interpretations in there
 
     public static void playPlaylist(
             AudioPlayerExtender audioPlayer,
-            List<String> videoIds,
-            Member member,
+            PlaylistPlayableInfo playlistInfo,
             boolean shuffle
     ) {
-        AudioPlayerManager audioPlayerManager = AudioPlayerManagerWrapper
-                .getInstance()
-                .getManager();
-
-        if (!shuffle) {
-            for (String videoId : videoIds) {
-                AudioResultHandler audioResultHandler = new AudioResultHandler(
-                        audioPlayer,
-                        member
-                );
-
-                audioPlayerManager.loadItem(
-                        String.format(
-                                "https://www.youtube.com/watch?v=%s",
-                                videoId
-                        ),
-                        audioResultHandler
-                );
-
-                while (audioResultHandler.actionType == 0) {
-                    try {
-                        TimeUnit.MILLISECONDS.sleep(20);
-                    } catch (InterruptedException ignore) {}
-                }
-            }
-        } else {
-            for (String videoId : videoIds) {
-                audioPlayerManager.loadItem(
-                        String.format(
-                                "https://www.youtube.com/watch?v=%s",
-                                videoId
-                        ),
-                        new AudioResultHandler(audioPlayer, member)
-                );
-            }
+        if (shuffle) {
+            Collections.shuffle(playlistInfo.getPlayableInformation());
+        }
+        for (PlayableInfo playableInfo : playlistInfo.getPlayableInformation()) {
+            try {
+                audioPlayer.play(playableInfo);
+            } catch (GodBotException ignore) {}
         }
     }
 
@@ -89,29 +61,8 @@ public class Play implements Command {
         return shuffle != null && shuffle.getAsBoolean();
     }
 
-    public static Future<PlayableInfo> startInfoGathering(String url) {
-        return Executors.newCachedThreadPool().submit(() -> DataGatherer.gatherPlayableInfo(url));
-    }
-
-    public static AudioResultHandler playVideo(
-            AudioPlayerExtender audioPlayer,
-            String url,
-            Member member
-    ) {
-        AudioResultHandler audioResultHandler = new AudioResultHandler(
-                audioPlayer,
-                member
-        );
-
-        AudioPlayerManagerWrapper
-                .getInstance()
-                .getManager()
-                .loadItem(
-                        url,
-                        audioResultHandler
-                );
-
-        return audioResultHandler;
+    public static Future<PlayableInfo> startInfoGathering(String url, Member requester) {
+        return Executors.newCachedThreadPool().submit(() -> DataGatherer.gatherPlayableInfo(url, requester));
     }
 
     private static void processPlaylist(
@@ -119,10 +70,7 @@ public class Play implements Command {
             Member member,
             boolean shuffle,
             InteractionHook interactionHook,
-            Future<PlayableInfo> playableFuture,
-            JDA bot,
-            Guild guild,
-            VoiceChannel voiceChannel
+            Future<PlayableInfo> playableFuture
     ) {
         PlaylistPlayableInfo playlistInformation;
         try{
@@ -162,18 +110,10 @@ public class Play implements Command {
         }
 
         int positionInQueue = player.getQueue().size() + 1;
-        AudioPlayerExtender audioPlayer = AudioPlayerManagerWrapper
-                .getInstance()
-                .getPlayer(
-                        bot,
-                        guild.getId(),
-                        voiceChannel
-                );
 
         Executors.newCachedThreadPool().submit(() -> playPlaylist(
-                audioPlayer,
-                playlistInformation.getVideoIds(),
-                member,
+                player,
+                playlistInformation,
                 shuffle
         ));
 
@@ -183,56 +123,17 @@ public class Play implements Command {
                                 member,
                                 playlistInformation,
                                 positionInQueue,
-                                positionInQueue + playlistInformation.getVideoIds().size()
+                                positionInQueue + playlistInformation.getVideoIds().size() - 1
                         )
                 ).queue();
     }
 
     private static void processVideo(
-            String url,
             AudioPlayerExtender player,
             Member member,
             InteractionHook interactionHook,
             Future<PlayableInfo> playableFuture
     ) {
-        AudioResultHandler audioResultHandler = playVideo(
-                player,
-                url,
-                member
-        );
-        System.out.println("playing video");
-
-        while (audioResultHandler.actionType == 0) {
-            try {
-                TimeUnit.MILLISECONDS.sleep(200);
-            } catch (InterruptedException ignore) {}
-        }
-
-        switch (audioResultHandler.actionType) {
-            case 10 -> {
-                interactionHook
-                        .sendMessageEmbeds(
-                                ErrorsKt.standardError(ErrorMessages.GENERAL_ERROR)
-                        ).queue();
-                return;
-            }
-            case 3 -> {
-                interactionHook
-                        .sendMessageEmbeds(
-                                ErrorsKt.standardError(ErrorMessages.VIDEO_NOT_FOUND)
-                        ).queue();
-                return;
-            }
-            case 4 -> {
-                interactionHook
-                        .sendMessageEmbeds(
-                                ErrorsKt.standardError(ErrorMessages.LOADING_FAILED)
-                        ).queue();
-                return;
-            }
-        }
-
-        System.out.println("gathering playable Future");
         PlayableInfo playableInfo;
         try {
             playableInfo = playableFuture.get();
@@ -267,14 +168,25 @@ public class Play implements Command {
             return;
         }
 
+        int position;
+        try {
+            position = player.play(playableInfo);
+        } catch (GodBotException e) {
+            interactionHook
+                    .sendMessageEmbeds(
+                            ErrorsKt.notFoundError(
+                                    ErrorMessages.TRACK_NOT_FOUND
+                            )
+                    ).queue();
+            return;
+        }
+
         MessageEmbed embed = TrackInfoKt.playVideo(
                 member,
-                audioResultHandler.position == 0,
                 playableInfo,
-                audioResultHandler.position,
+                position,
                 player.getQueue().size() + 1
         );
-        System.out.println("About to play");
         interactionHook.sendMessageEmbeds(embed).queue();
     }
 
@@ -356,7 +268,7 @@ public class Play implements Command {
         InteractionHook interactionHook = scEvent.getHook();
         scEvent.deferReply().queue();
 
-        Future<PlayableInfo> infoGatheringFuture = startInfoGathering(url);
+        Future<PlayableInfo> infoGatheringFuture = startInfoGathering(url, member);
 
         boolean isVideo;
         try {
@@ -381,14 +293,10 @@ public class Play implements Command {
                     member,
                     getShuffle(event),
                     interactionHook,
-                    infoGatheringFuture,
-                    bot,
-                    guild,
-                    voiceChannel
+                    infoGatheringFuture
             );
         } else {
             processVideo(
-                    url,
                     player,
                     member,
                     interactionHook,

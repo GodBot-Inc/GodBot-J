@@ -9,5 +9,5 @@ interface PlayableInfo {
     val title: String
     val uri: String?
     val thumbnailUri: String?
-    val requester: Member
+    val requester: Member?
 }

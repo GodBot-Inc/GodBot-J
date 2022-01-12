@@ -1,11 +1,16 @@
 package youtubeApi;
 
+import ktUtils.CouldNotExtractVideoInformation;
+import ktUtils.RequestException;
+import ktUtils.VideoNotFoundException;
+import net.dv8tion.jda.api.entities.Member;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import playableInfo.YouTubePlaylist;
 import playableInfo.YouTubeSong;
-import utils.*;
+import utils.DurationCalc;
+import utils.LinkHelper;
 
 import java.io.IOException;
 import java.net.URI;
@@ -14,6 +19,9 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.ArrayList;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 public class YoutubeApi {
 
@@ -28,7 +36,7 @@ public class YoutubeApi {
      * @throws VideoNotFoundException If the given id is not an id of a YouTube Video
      * @throws InternalError If YouTube has issues resolving the request
      */
-    public static YouTubeSong getVideoInformation(String id)
+    public static YouTubeSong getVideoInformation(String id, Member requester)
             throws IOException,
             RequestException,
             CouldNotExtractVideoInformation,
@@ -41,6 +49,7 @@ public class YoutubeApi {
         );
 
         YouTubeSong.Builder builder = new YouTubeSong.Builder();
+        builder.setRequester(requester);
 
         if (videoInfo.getJSONArray("items").isEmpty()) {
             throw new VideoNotFoundException();
@@ -122,33 +131,6 @@ public class YoutubeApi {
         return builder.build();
     }
 
-    /**
-     * The only purpose of the method is to return the converted duration from a video
-     * @param id The YouTube id of the song
-     * @return Only the duration of the song in milliseconds
-     * @throws InvalidURLException If the URL that he got from the id is not valid
-     * @throws IOException When the send command of the request failed
-     * @throws RequestException If the request returned an invalid return code
-     * @throws InternalError If YouTube has issues resolving the request
-     */
-    public static long getVideoDuration(String id)
-            throws InvalidURLException, IOException, RequestException, InternalError {
-        try {
-            return DurationCalc.ytStringToLong(LinkHelper.sendRequest(
-                                    UrlConstructor.getYTVideoDuration()
-                                            .setId(id)
-                                            .build()
-                            )
-                            .getJSONArray("items")
-                            .getJSONObject(0)
-                            .getJSONObject("contentDetails")
-                            .getString("duration")
-            );
-        } catch (JSONException e) {
-            return 0;
-        }
-    }
-
     public static String getFirst(String id)
             throws IOException, RequestException {
         String url = UrlConstructor.getPlaylistItems()
@@ -170,11 +152,12 @@ public class YoutubeApi {
     /**
      * Get Info about the yt video very fast
      * @param id of the playlist
+     * @param requester the user who requested the playlist
      * @return YoutubePlaylistInterpretation, containing all info about the playlist
      * @throws VideoNotFoundException If the video was simply not found
      * @throws CouldNotExtractVideoInformation if YouTube delivered something we can not work with
      */
-    public static YouTubePlaylist getPlaylistInfoAsync(String id)
+    public static YouTubePlaylist getPlaylistInfoAsync(String id, Member requester)
             throws VideoNotFoundException, CouldNotExtractVideoInformation {
         String playlistInfoUrl = UrlConstructor.getPlaylistInfo()
                 .setId(id)
@@ -208,6 +191,7 @@ public class YoutubeApi {
         JSONObject playlistInfo = new JSONObject(playlistInfoFuture.join().body());
 
         YouTubePlaylist.Builder playableInfoBuilder = new YouTubePlaylist.Builder();
+        playableInfoBuilder.requester(requester);
 
         playableInfoBuilder.uri("https://www.youtube.com/playlist?list=" + id);
 
@@ -268,7 +252,7 @@ public class YoutubeApi {
         JSONObject playlistItemsObject;
         playlistItemsObject = new JSONObject(playlistItems.join().body());
         JSONArray array;
-        ArrayList<CompletableFuture<Long>> responseList = new ArrayList<>();
+        ArrayList<Future<YouTubeSong>> ytSongList = new ArrayList<>();
 
         while (true) {
             array = playlistItemsObject.getJSONArray("items");
@@ -311,23 +295,7 @@ public class YoutubeApi {
 
                 playableInfoBuilder.addVideoId(videoId);
 
-                url = UrlConstructor.getYTVideoDuration()
-                        .setId(videoId)
-                        .build();
-
-                HttpRequest videoDurationRequest = httpRequestBuilder
-                        .uri(URI.create(url))
-                        .GET()
-                        .build();
-
-                CompletableFuture<Long> videoDuration = httpClient.sendAsync(
-                        videoDurationRequest,
-                        HttpResponse.BodyHandlers.ofString()
-                )
-                        .thenApply(YoutubeApi::extractDuration)
-                        .thenApply(DurationCalc::ytStringToLong);
-
-                responseList.add(videoDuration);
+                ytSongList.add(Executors.newCachedThreadPool().submit(() -> getVideoInformation(videoId, requester)));
             }
 
             if (nextPage == null) {
@@ -337,8 +305,12 @@ public class YoutubeApi {
             playlistItemsObject = nextPage.join();
         }
 
-        for (CompletableFuture<Long> singleDuration : responseList) {
-            playableInfoBuilder.addDuration(singleDuration.join());
+        for (Future<YouTubeSong> ytSong : ytSongList) {
+            try {
+                YouTubeSong cur = ytSong.get();
+                playableInfoBuilder.addDuration(cur.getDuration());
+                playableInfoBuilder.addPlayable(cur);
+            } catch (ExecutionException | InterruptedException ignore) {}
         }
 
         return playableInfoBuilder.build();
@@ -348,16 +320,4 @@ public class YoutubeApi {
         return new JSONObject(response.body());
     }
 
-    private static String extractDuration(HttpResponse<String> videoResponse) {
-        JSONObject toExtract = new JSONObject(videoResponse.body());
-        try {
-            return toExtract
-                    .getJSONArray("items")
-                    .getJSONObject(0)
-                    .getJSONObject("contentDetails")
-                    .getString("duration");
-        } catch (JSONException e) {
-            return "PT0H0M0S";
-        }
-    }
 }

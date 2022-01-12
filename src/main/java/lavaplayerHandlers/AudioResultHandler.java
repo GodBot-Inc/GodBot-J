@@ -6,16 +6,11 @@ import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import logging.AudioLogger;
 import logging.LoggerContent;
-import net.dv8tion.jda.api.entities.Member;
-import utils.AudioPlayerExtender;
-import utils.AudioTrackExtender;
 
 import java.util.HashMap;
 
 public class AudioResultHandler implements AudioLoadResultHandler {
 
-    private final AudioPlayerExtender audioPlayer;
-    private final Member requester;
     private final AudioLogger logger = new AudioLogger("AudioResultHandlerLogger");
 
     /*
@@ -26,27 +21,12 @@ public class AudioResultHandler implements AudioLoadResultHandler {
      10 -> error
      */
     public int actionType = 0;
-    public int position = 0;
-
-    public AudioResultHandler(
-            AudioPlayerExtender audioPlayer,
-            Member member
-    ) {
-        this.audioPlayer = audioPlayer;
-        this.requester = member;
-    }
+    public AudioTrack audioTrack;
     
     @Override
     public void trackLoaded(AudioTrack audioTrack) {
         this.actionType = 1;
-        audioPlayer.openConnection();
-        position = audioPlayer.play(
-                new AudioTrackExtender(
-                        audioTrack,
-                        new HashMap<>(),
-                        requester
-                )
-        );
+        this.audioTrack = audioTrack;
         logger.info(
                 new LoggerContent(
                         "info",
@@ -54,7 +34,6 @@ public class AudioResultHandler implements AudioLoadResultHandler {
                         "",
                         new HashMap<>() {{
                             put("Track", audioTrack.getInfo().title);
-                            put("Position", String.valueOf(position));
                         }}
                 )
         );
@@ -62,19 +41,12 @@ public class AudioResultHandler implements AudioLoadResultHandler {
     
     @Override
     public void playlistLoaded(AudioPlaylist audioPlaylist) {
-        this.actionType = 2;
         if (audioPlaylist.getTracks().isEmpty()) {
             this.actionType = 10;
             return;
         }
-        audioPlayer.openConnection();
-        position = audioPlayer.play(
-                new AudioTrackExtender(
-                        audioPlaylist.getTracks().get(0),
-                        new HashMap<>(),
-                        requester
-                )
-        );
+        this.actionType = 2;
+        this.audioTrack = audioPlaylist.getTracks().get(0);
     }
 
     @Override

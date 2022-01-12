@@ -1,7 +1,7 @@
 package interactions
 
 import commands.Queue
-import utils.ButtonException
+import ktUtils.ButtonException
 import net.dv8tion.jda.api.events.interaction.ButtonClickEvent
 import net.dv8tion.jda.api.interactions.components.Button
 import net.dv8tion.jda.api.requests.restaction.interactions.UpdateInteractionAction

@@ -1,8 +1,8 @@
 package singeltons;
 
-import utils.AudioPlayerExtender;
-import utils.GuildNotFoundException;
-import utils.JDANotFound;
+import ktUtils.AudioPlayerExtender;
+import ktUtils.GuildNotFoundException;
+import ktUtils.JDANotFound;
 import net.dv8tion.jda.api.JDA;
 
 import java.util.HashMap;
