@@ -77,7 +77,7 @@ public class Stop implements Command {
             return;
         }
 
-        if (player.getAudioPlayer().getPlayingTrack() == null) {
+        if (player.getCurrentTrack() == null) {
             event.replyEphemeral(
                     ErrorsKt.standardError(
                             ErrorMessages.NO_PLAYING_TRACK
@@ -85,8 +85,7 @@ public class Stop implements Command {
             );
         }
 
-        player.clearQueue();
-        player.getAudioPlayer().stopTrack();
+        player.stop();
 
         event.reply(
                 new EmbedBuilder()

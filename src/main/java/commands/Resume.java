@@ -79,7 +79,7 @@ public class Resume implements Command {
             return;
         }
 
-        if (player.getAudioPlayer().getPlayingTrack() == null) {
+        if (player.getCurrentTrack() == null) {
             event.replyEphemeral(
                     ErrorsKt.standardError(
                             ErrorMessages.NO_PLAYING_TRACK
@@ -87,7 +87,7 @@ public class Resume implements Command {
             );
             return;
         }
-        if (!player.getAudioPlayer().isPaused()) {
+        if (!player.isPaused()) {
             event.replyEphemeral(
                     ErrorsKt.standardError(
                     "Player is not paused"
@@ -96,7 +96,7 @@ public class Resume implements Command {
             return;
         }
 
-        player.getAudioPlayer().setPaused(false);
+        player.setPaused(false);
         event.reply(
                 new EmbedBuilder()
                         .setDescription(

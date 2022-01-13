@@ -36,6 +36,7 @@ public class Play implements Command {
             PlaylistPlayableInfo playlistInfo,
             boolean shuffle
     ) {
+        audioPlayer.openConnection();
         if (shuffle) {
             Collections.shuffle(playlistInfo.getPlayableInformation());
         }
@@ -167,6 +168,7 @@ public class Play implements Command {
                     ).queue();
             return;
         }
+        player.openConnection();
 
         int position;
         try {

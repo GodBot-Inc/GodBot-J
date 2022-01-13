@@ -79,7 +79,7 @@ public class Pause implements Command {
             return;
         }
 
-        if (player.getAudioPlayer().getPlayingTrack() == null) {
+        if (player.getCurrentTrack() == null) {
             event.replyEphemeral(
                     ErrorsKt.standardError(
                             ErrorMessages.NO_PLAYING_TRACK
@@ -87,7 +87,7 @@ public class Pause implements Command {
             );
             return;
         }
-        if (player.getAudioPlayer().isPaused()) {
+        if (player.isPaused()) {
             event.replyEphemeral(
                     ErrorsKt.standardError(
                             "Player is already paused"
@@ -96,7 +96,7 @@ public class Pause implements Command {
             return;
         }
 
-        player.getAudioPlayer().setPaused(true);
+        player.setPaused(true);
         event.reply(
                 new EmbedBuilder()
                         .setDescription(

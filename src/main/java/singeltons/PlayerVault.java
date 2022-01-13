@@ -6,6 +6,7 @@ import ktUtils.JDANotFound;
 import net.dv8tion.jda.api.JDA;
 
 import java.util.HashMap;
+import java.util.Map;
 
 
 public class PlayerVault {
@@ -37,6 +38,17 @@ public class PlayerVault {
             return;
         }
         playerStorage.get(jda).remove(guildId);
+    }
+
+    public void removePlayer(AudioPlayerExtender playerExtender) {
+        // Time Complexity: n^2
+        for (Map.Entry<JDA, HashMap<String, AudioPlayerExtender>> entry : playerStorage.entrySet()) {
+            for (Map.Entry<String, AudioPlayerExtender> entry2 : entry.getValue().entrySet()) {
+                if (entry2.getValue() == playerExtender) {
+                    playerStorage.get(entry.getKey()).remove(entry2.getKey());
+                }
+            }
+        }
     }
 
     public AudioPlayerExtender getPlayer(

@@ -73,7 +73,7 @@ public class Skip implements Command {
             return;
         }
 
-        if (player.getAudioPlayer().getPlayingTrack() == null) {
+        if (player.getCurrentTrack() == null) {
             event.replyEphemeral(
                     ErrorsKt.standardError(
                             ErrorMessages.NO_PLAYING_TRACK
