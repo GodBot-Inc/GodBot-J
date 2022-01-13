@@ -64,7 +64,7 @@ public class AudioPlayerManagerWrapper {
     }
 
     public AudioTrack loadItem(String url)
-            throws GodBotException {
+            throws TrackNotFoundException {
         AudioResultHandler audioResultHandler = new AudioResultHandler();
         playerManager.loadItem(
                 url,
@@ -75,9 +75,9 @@ public class AudioPlayerManagerWrapper {
                 TimeUnit.MILLISECONDS.sleep(20);
             } catch (InterruptedException ignore) {}
         }
-        switch (audioResultHandler.actionType) {
-            case 3, 4 -> throw new TrackNotFoundException();
-            case 10 -> throw new GodBotException();
+
+        if (audioResultHandler.actionType == 3 || audioResultHandler.actionType == 4) {
+            throw new TrackNotFoundException();
         }
         return audioResultHandler.audioTrack;
     }

@@ -24,7 +24,7 @@ public final class ErrorMessages {
     public static final String INFO_GATHERING_SONG_FAILED = "Gathering information about your song failed";
     public static final String INFO_GATHERING_PLAYLIST_FAILED = "Gathering information about your playlist failed";
 
-    public static final String LOADING_FAILED = "Loading of the give song failed :thinking:";
+    public static final String LOADING_FAILED = "Loading of the given song failed";
 
     public static final String QUEUE_EMPTY = "Queue of the player is empty";
 

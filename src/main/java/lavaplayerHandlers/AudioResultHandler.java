@@ -18,7 +18,6 @@ public class AudioResultHandler implements AudioLoadResultHandler {
      2 -> PlaylistLoaded
      3 -> NoMatches
      4 -> NotLoaded
-     10 -> error
      */
     public int actionType = 0;
     public AudioTrack audioTrack;
@@ -42,7 +41,7 @@ public class AudioResultHandler implements AudioLoadResultHandler {
     @Override
     public void playlistLoaded(AudioPlaylist audioPlaylist) {
         if (audioPlaylist.getTracks().isEmpty()) {
-            this.actionType = 10;
+            this.actionType = 3;
             return;
         }
         this.actionType = 2;

@@ -1,14 +1,17 @@
 package jdaListeners;
 
 import io.github.cdimascio.dotenv.Dotenv;
+import ktUtils.AudioPlayerExtender;
+import ktUtils.GuildNotFoundException;
+import ktUtils.JDANotFound;
+import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.events.guild.voice.GuildVoiceJoinEvent;
+import net.dv8tion.jda.api.events.guild.voice.GuildVoiceLeaveEvent;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceMoveEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
 import singeltons.JDAManager;
 import singeltons.PlayerVault;
-import ktUtils.AudioPlayerExtender;
-import ktUtils.GuildNotFoundException;
-import ktUtils.JDANotFound;
 
 public class GeneralListener extends ListenerAdapter {
 
@@ -17,15 +20,59 @@ public class GeneralListener extends ListenerAdapter {
 
     @Override
     public void onGuildVoiceMove(@NotNull GuildVoiceMoveEvent event) {
+        AudioPlayerExtender audioPlayerExtender;
+        try {
+            audioPlayerExtender = PlayerVault.getInstance().getPlayer(
+                    JDAManager.getInstance().getJDA(applicationId),
+                    event.getGuild().getId()
+            );
+        } catch (JDANotFound | GuildNotFoundException e) {
+            return;
+        }
         if (event.getMember().getId().equals(applicationId)) {
-            try {
-                AudioPlayerExtender audioPlayerExtender;
-                audioPlayerExtender = PlayerVault.getInstance().getPlayer(
-                        JDAManager.getInstance().getJDA(applicationId),
-                        event.getGuild().getId()
-                );
-                audioPlayerExtender.changeChannel(event.getChannelJoined());
-            } catch (JDANotFound | GuildNotFoundException ignore) {}
+            audioPlayerExtender.changeChannel(event.getChannelJoined());
+        }
+        if (event.getChannelLeft() == audioPlayerExtender.getVoiceChannel() &&
+                // if only the bot is connected to the channel
+            event.getChannelLeft().getMembers().size() == 1) {
+            audioPlayerExtender.setPaused(true);
+        }
+        if (event.getChannelJoined() == audioPlayerExtender.getVoiceChannel() &&
+            // if only the joined member and the bot are connected to the channel
+            event.getChannelJoined().getMembers().size() == 2) {
+            audioPlayerExtender.setPaused(false);
+        }
+    }
+
+    @Override
+    public void onGuildVoiceJoin(@NotNull GuildVoiceJoinEvent event) {
+        JDA godbotJDA = JDAManager.getInstance().getJDA(applicationId);
+        AudioPlayerExtender audioPlayer;
+        try {
+            audioPlayer = PlayerVault.getInstance().getPlayer(godbotJDA, event.getGuild().getId());
+        } catch (JDANotFound | GuildNotFoundException e) {
+            return;
+        }
+        if (event.getChannelJoined() == audioPlayer.getVoiceChannel() &&
+            // If only the joined member and the bot are connected to the channel
+            event.getChannelJoined().getMembers().size() == 2) {
+            audioPlayer.setPaused(false);
+        }
+    }
+
+    @Override
+    public void onGuildVoiceLeave(@NotNull GuildVoiceLeaveEvent event) {
+        JDA godbotJDA = JDAManager.getInstance().getJDA(applicationId);
+        AudioPlayerExtender audioPlayer;
+        try {
+            audioPlayer = PlayerVault.getInstance().getPlayer(godbotJDA, event.getGuild().getId());
+        } catch (JDANotFound | GuildNotFoundException e) {
+            return;
+        }
+        if (event.getChannelLeft() == audioPlayer.getVoiceChannel() &&
+            // if only the bot is connected to the channel
+            event.getChannelLeft().getMembers().size() == 1) {
+            audioPlayer.setPaused(true);
         }
     }
 }

@@ -2,18 +2,19 @@ package commands;
 
 import io.github.cdimascio.dotenv.Dotenv;
 import ktSnippets.ErrorsKt;
+import ktUtils.AudioPlayerExtender;
+import ktUtils.CheckFailedException;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.VoiceChannel;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
-import net.dv8tion.jda.api.managers.AudioManager;
 import org.jetbrains.annotations.NotNull;
-import singeltons.AudioManagerVault;
+import singeltons.AudioPlayerManagerWrapper;
 import singeltons.JDAManager;
 import snippets.Colours;
 import snippets.ErrorMessages;
-import ktUtils.CheckFailedException;
 import utils.Checks;
 import utils.EventExtender;
 
@@ -23,12 +24,13 @@ public class Join implements Command {
         Dotenv dotenv = Dotenv.load();
         Guild guild = scEvent.getGuild();
         Member member = scEvent.getMember();
+        VoiceChannel voiceChannel;
         String applicationId = dotenv.get("APPLICATIONID");
 
         EventExtender event = new EventExtender(scEvent);
 
         try {
-            Checks.slashCommandCheck(
+            voiceChannel = Checks.slashCommandCheck(
                     scEvent,
                     applicationId,
                     member,
@@ -46,16 +48,35 @@ public class Join implements Command {
             return;
         }
 
-        AudioManager audioManager = AudioManagerVault
-                .getInstance()
-                .getAudioManager(
-                        godbotJDA,
-                        guild.getId()
-                );
+        AudioPlayerExtender audioPlayer;
+        try {
+            audioPlayer = AudioPlayerManagerWrapper
+                    .getInstance()
+                    .getPlayer(godbotJDA, guild.getId(), voiceChannel);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return;
+        }
 
-        audioManager.openAudioConnection(
-                member.getVoiceState().getChannel()
-        );
+        if (!audioPlayer.getVoiceChannel().equals(voiceChannel)) {
+            event.replyEphemeral(
+                    ErrorsKt.standardError(
+                            ErrorMessages.NO_PLAYER_IN_VC
+                    )
+            );
+            return;
+        }
+
+        if (audioPlayer.isConnected()) {
+            event.replyEphemeral(
+                    ErrorsKt.standardError(
+                            "I'm already connected to your channel :thinking:"
+                    )
+            );
+            return;
+        }
+
+        audioPlayer.openConnection();
 
         event.reply(
                 new EmbedBuilder()

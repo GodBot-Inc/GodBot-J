@@ -23,7 +23,7 @@ public class DataGatherer {
                 } catch(IOException | RequestException ignore) {}
             }
         }
-        throw new IllegalStateException("Unexpected value: " + platform);
+        throw new IllegalStateException("Data Gatherer Unexpected value: " + platform);
     }
 
     public static TypeAndId ytGetTypeAndId(String url) throws InvalidURLException {

@@ -19,8 +19,7 @@ class AudioPlayerExtender(
 
     var loop: Boolean = false
     val queue = ArrayList<PlayableInfo>()
-    var lastTrack: AudioTrackExtender? = null
-    var currentTrack: AudioTrackExtender? = null
+    var currentTrack: PlayableInfo? = null
     private val audioManager: AudioManager
 
     private var lifecycle = true
@@ -41,17 +40,16 @@ class AudioPlayerExtender(
     private fun currentTrackUpdate() {
         while (lifecycle) {
             // update current Track if new Track is playing
-            if (ownCurrentTrack != null && ownCurrentTrack != currentTrack) {
-                lastAction = System.currentTimeMillis()
-                lastTrack = ownCurrentTrack
-            }
-            // Update current Track, if no song is playing
-            if (audioPlayer.playingTrack == null && currentTrack != null) {
-                lastAction = System.currentTimeMillis()
-                lastTrack = currentTrack
-                currentTrack = null
-            }
-            ownCurrentTrack = currentTrack
+//            if (ownCurrentTrack?.audioTrack != audioPlayer.playingTrack) {
+//                lastAction = System.currentTimeMillis()
+//                lastTrack = ownCurrentTrack
+//            }
+//            // Update current Track, if no song is playing
+//            if (audioPlayer.playingTrack == null && currentTrack != null) {
+//                lastAction = System.currentTimeMillis()
+//                lastTrack = currentTrack
+//                currentTrack = null
+//            }
         }
     }
 
@@ -84,7 +82,6 @@ class AudioPlayerExtender(
         queue.clear()
         currentTrack = null
         ownCurrentTrack = null
-        lastTrack = null
         lastAction = 0
         lifecycle = false
         // only stops the player
@@ -98,42 +95,68 @@ class AudioPlayerExtender(
 
     fun changeChannel(newVoiceChannel: VoiceChannel) = apply { updateUsage(); voiceChannel = newVoiceChannel }
 
+    fun playNowOrNext(playableInfo: PlayableInfo) {
+        updateUsage()
+        try {
+            // Play Now already sets current Track
+            playNow(playableInfo)
+        } catch (e: TrackNotFoundException) {
+            try {
+                // Play next already sets currentTrack
+                playNext()
+            } catch (e: QueueEmptyException) {
+                currentTrack = null
+            }
+        }
+    }
+
     @Throws(QueueEmptyException::class)
     fun playNext(): PlayableInfo {
         updateUsage()
         if (queue.isEmpty()) {
+            currentTrack = null
             throw QueueEmptyException()
         }
         val playableInfo = queue.removeAt(0)
         try {
+            // Play now already sets currentTrack
             playNow(playableInfo)
         } catch (e: GodBotException) {
+            // Recursion, so eventually the method will end
             return playNext()
         }
+        // In case of expected method process
+        currentTrack = playableInfo
         return playableInfo
     }
 
-    @Throws(TrackNotFoundException::class, GodBotException::class)
+    @Throws(TrackNotFoundException::class)
     fun playNow(playableInfo: PlayableInfo) {
         updateUsage()
         val audioTrack =
             AudioPlayerManagerWrapper
                 .getInstance()
                 .loadItem(playableInfo.uri)
-        currentTrack = AudioTrackExtender(audioTrack, playableInfo)
+
         audioPlayer.stopTrack()
-        // playing a clone of the track, to be sure that the same instance of a track is not played twice, since
-        // this would throw an IllegalStateException
-        audioPlayer.playTrack(audioTrack)
+        currentTrack = try {
+            audioPlayer.playTrack(audioTrack)
+            playableInfo
+        } catch (e: Exception) {
+            // This should never happen
+            e.printStackTrace()
+            null
+        }
     }
 
-    @Throws(TrackNotFoundException::class, GodBotException::class)
+    @Throws(TrackNotFoundException::class)
     fun play(playableInfo: PlayableInfo): Int {
         updateUsage()
         if (!audioManager.isConnected) {
             audioManager.openAudioConnection(voiceChannel)
         }
-        if (audioPlayer.playingTrack == null) {
+        if (audioPlayer.playingTrack == null && queue.size == 0) {
+            // playNow sets currentTrack
             playNow(playableInfo)
             return 0
         }
@@ -150,7 +173,8 @@ class AudioPlayerExtender(
             for (i in 0 until index + 1) {
                 queue.removeAt(0)
             }
-            playNow(playableInfo)
+            // playNowOrNext sets currentTrack
+            playNowOrNext(playableInfo)
         } else {
             throw IndexOutOfBoundsException()
         }
@@ -162,10 +186,9 @@ class AudioPlayerExtender(
         return queue.removeAt(index)
     }
 
-    fun setPaused(paused: Boolean): PlayableInfo {
+    fun setPaused(paused: Boolean) {
         updateUsage()
         audioPlayer.isPaused = paused
-        return currentTrack!!.playableInfo
     }
 
     fun isPaused() = audioPlayer.isPaused
@@ -173,6 +196,8 @@ class AudioPlayerExtender(
     fun setVolume(volume: Int) = apply { updateUsage(); audioPlayer.volume = volume }
 
     fun getVolume() = audioPlayer.volume
+
+    fun isConnected() = audioManager.isConnected
 
     fun clearQueue() = apply { updateUsage();queue.clear() }
 

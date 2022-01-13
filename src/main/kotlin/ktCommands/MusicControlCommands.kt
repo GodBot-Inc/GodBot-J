@@ -268,10 +268,18 @@ fun skipTo(event: EventExtender) {
         return
     }
 
+    if (player.currentTrack == null) {
+        event.replyEphemeral(
+            standardError(
+                ErrorMessages.LOADING_FAILED
+            )
+        )
+    }
+
     event.reply(
         EmbedBuilder()
             .setDescription("Skipped to `$position`, now playing " +
-                    "[${player.currentTrack!!.audioTrack.info.title}](${player.currentTrack!!.audioTrack.info.uri})")
+                    "[${player.currentTrack!!.title}](${player.currentTrack!!.uri})")
             .setColor(Colours.godbotYellow)
             .build()
     )

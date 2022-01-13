@@ -6,9 +6,9 @@ import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
 import ktUtils.AudioPlayerExtender;
-import ktUtils.GodBotException;
 import ktUtils.QueueEmptyException;
 
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 public class TrackEventListener extends AudioEventAdapter {
@@ -34,18 +34,6 @@ public class TrackEventListener extends AudioEventAdapter {
         // A track started playing
     }
 
-    public void playLast() {
-        if (audioPlayer.getLastTrack() != null) {
-            try {
-                audioPlayer.playNow(audioPlayer.getLastTrack().getPlayableInfo());
-            } catch (GodBotException e) {
-                try {
-                    audioPlayer.playNext();
-                } catch (QueueEmptyException ignore) {}
-            }
-        }
-    }
-
     @Override
     public void onTrackEnd(AudioPlayer player, AudioTrack track, AudioTrackEndReason endReason) {
         System.out.println("Track Ended: " + track.getInfo().title + " Reason: " + endReason);
@@ -53,11 +41,11 @@ public class TrackEventListener extends AudioEventAdapter {
             TimeUnit.MILLISECONDS.sleep(50);
         } catch (InterruptedException ignore) {}
         if (endReason == AudioTrackEndReason.LOAD_FAILED) {
-            playLast();
+            audioPlayer.playNowOrNext(Objects.requireNonNull(audioPlayer.getCurrentTrack()));
             return;
         }
-        if (audioPlayer.getLoop() && audioPlayer.getLastTrack() != null && AudioTrackEndReason.STOPPED != endReason) {
-            playLast();
+        if (audioPlayer.getLoop() && AudioTrackEndReason.STOPPED != endReason) {
+            audioPlayer.playNowOrNext(Objects.requireNonNull(audioPlayer.getCurrentTrack()));
             return;
         }
         if (endReason.mayStartNext) {
