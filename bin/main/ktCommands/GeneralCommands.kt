@@ -1,4 +1,4 @@
-package commands
+package ktCommands
 
 import io.github.cdimascio.dotenv.Dotenv
 import net.dv8tion.jda.api.EmbedBuilder
@@ -10,7 +10,8 @@ import singeltons.JDAManager
 import singeltons.PlayerVault
 import snippets.Colours
 import snippets.ErrorMessages
-import snippets.standardError
+import ktSnippets.standardError
+import ktUtils.*
 import utils.*
 
 fun clearQueue(event: EventExtender) {

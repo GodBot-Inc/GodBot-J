@@ -1,5 +1,7 @@
 package playableInfo
 
+import net.dv8tion.jda.api.entities.Member
+
 class SpotifySong private constructor(
     override val duration: Long,
     override val creator: String,
@@ -7,6 +9,7 @@ class SpotifySong private constructor(
     override val title: String,
     override val uri: String?,
     override val thumbnailUri: String?,
+    override val requester: Member,
     val songId: String?) : PlayableInfo {
 
     data class Builder(
@@ -16,6 +19,7 @@ class SpotifySong private constructor(
         var title: String = "Song",
         var uri: String? = null,
         var thumbnailUri: String? = null,
+        var requester: Member,
         var songId: String? = null) {
 
         fun duration(duration: Long) = apply { this.duration = duration }
@@ -25,6 +29,7 @@ class SpotifySong private constructor(
         fun uri(uri: String) = apply { this.uri = uri }
         fun thumbnailUri(thumbnailUri: String) = apply { this.thumbnailUri = thumbnailUri }
         fun songId(songId: String) = apply { this.songId = songId }
-        fun build() = SpotifySong(duration, creator, creatorLink, title, uri, thumbnailUri, songId)
+        fun requester(requester: Member) = apply { this.requester = requester }
+        fun build() = SpotifySong(duration, creator, creatorLink, title, uri, thumbnailUri, requester, songId)
     }
 }

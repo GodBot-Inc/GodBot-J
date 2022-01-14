@@ -1,12 +1,11 @@
-package snippets
+package ktSnippets
 
 import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.entities.Member
 import net.dv8tion.jda.api.entities.MessageEmbed
-import playableInfo.PlayableInfo
-import playableInfo.PlaylistPlayableInfo
-import playableInfo.SpotifyPlaylist
-import playableInfo.YouTubePlaylist
+import playableInfo.*
+import snippets.Colours
+import snippets.EmojiIds
 import utils.DurationCalc
 import javax.annotation.CheckReturnValue
 
@@ -34,7 +33,18 @@ private fun getPositionInQueue(position: Int, queueSize: Int): String {
     if (position == 0 && queueSize == 0) {
         return String.format("%s -", EmojiIds.queueEmoji)
     } else if (position == 0) {
-        return String.format("%s -/%s", EmojiIds.queueEmoji, queueSize)
+        return String.format("%s 1 - %s", EmojiIds.queueEmoji, queueSize)
+    } else if (queueSize == 0) {
+        return String.format("%s %s", EmojiIds.queueEmoji, position)
+    }
+    return String.format("%s %s - %s", EmojiIds.queueEmoji, position, queueSize)
+}
+
+private fun getPositionInQueueVideo(position: Int, queueSize: Int): String {
+    if (position == 0 && queueSize == 0) {
+        return String.format("%s -", EmojiIds.queueEmoji)
+    } else if (position == 0) {
+        return String.format("%s 1/%s", EmojiIds.queueEmoji, queueSize)
     } else if (queueSize == 0) {
         return String.format("%s %s", EmojiIds.queueEmoji, position)
     }
@@ -56,16 +66,14 @@ private fun getAuthor(interpretation: PlayableInfo?): String {
     )
 }
 
-private fun formatSongSources(playableInfo: HashMap<String, PlayableInfo>): String {
+private fun formatSongSource(playableInfo: PlayableInfo): String {
     val builder = StringBuilder()
-    val ytInfo = playableInfo[InterpretationKeys.YTVIDEO]
-    val spotifyInfo = playableInfo[InterpretationKeys.SPOTSONG]
-    if (ytInfo?.uri != null) {
+    if (playableInfo is YouTubeSong) {
         builder.append(
             String.format(
                 "%s [YouTube](%s)\n",
                 EmojiIds.youtubeEmoji,
-                ytInfo.uri
+                playableInfo.uri
             )
         )
     } else {
@@ -76,12 +84,12 @@ private fun formatSongSources(playableInfo: HashMap<String, PlayableInfo>): Stri
             )
         )
     }
-    if (spotifyInfo?.uri != null) {
+    if (playableInfo is SpotifySong) {
         builder.append(
             String.format(
                 "%s [Spotify](%s)\n",
                 EmojiIds.spotifyEmoji,
-                spotifyInfo.uri
+                playableInfo.uri
             )
         )
     } else {
@@ -95,32 +103,28 @@ private fun formatSongSources(playableInfo: HashMap<String, PlayableInfo>): Stri
     return builder.toString()
 }
 
+@CheckReturnValue
 fun playVideo(
     requester: Member,
-    nowPlaying: Boolean,
-    playableInfo: HashMap<String, PlayableInfo>,
+    playableInfo: PlayableInfo,
     positionInQueue: Int,
     queueSize: Int
 ): MessageEmbed {
-    val firstVideoInterpretation: PlayableInfo? =
-            playableInfo[InterpretationKeys.YTVIDEO] ?: playableInfo[InterpretationKeys.SPOTSONG]
-
-    val duration: String = if(firstVideoInterpretation?.duration == 0L) String.format(
+    val duration: String = if(playableInfo.duration == 0L) String.format(
         "%s -",
         trackLinesDefault()
     ) else String.format(
         "%s %s",
         trackLinesDefault(),
-        DurationCalc.longToStringPlus(firstVideoInterpretation?.duration ?: 0)
+        DurationCalc.longToStringPlus(playableInfo.duration)
     )
 
-    // TODO Loaded and Queued wrong (look from where it's passed)
     return EmbedBuilder()
-        .setTitle((firstVideoInterpretation?.title ?: "Song") + if (nowPlaying) " Loaded" else " Queued")
-        .setThumbnail(firstVideoInterpretation?.thumbnailUri ?: defaultThumbnail)
-        .addField("Author", getAuthor(firstVideoInterpretation), true)
-        .addField("Sources", formatSongSources(playableInfo), true)
-        .addField("Position", getPositionInQueue(positionInQueue, queueSize), true)
+        .setTitle(playableInfo.title)
+        .setThumbnail(playableInfo.thumbnailUri ?: defaultThumbnail)
+        .addField("Creator", getAuthor(playableInfo), true)
+        .addField("Sources", formatSongSource(playableInfo), true)
+        .addField("Position", getPositionInQueueVideo(positionInQueue, queueSize), true)
         .addField("Duration", duration, false)
         .setColor(Colours.godbotHeavenYellow)
         .setFooter(

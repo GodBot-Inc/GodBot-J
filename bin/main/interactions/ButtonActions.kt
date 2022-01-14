@@ -1,7 +1,7 @@
 package interactions
 
 import commands.Queue
-import utils.ButtonException
+import ktUtils.ButtonException
 import net.dv8tion.jda.api.events.interaction.ButtonClickEvent
 import net.dv8tion.jda.api.interactions.components.Button
 import net.dv8tion.jda.api.requests.restaction.interactions.UpdateInteractionAction
@@ -101,11 +101,6 @@ fun onQueueLeft(event: ButtonClickEvent) {
 }
 
 @Throws(ButtonException::class)
-fun onQueueRefresh(event: ButtonClickEvent) {
-    // TODO yet to be implemented
-}
-
-@Throws(ButtonException::class)
 fun onQueueRight(event: ButtonClickEvent) {
     val mongo: MongoCommunication = MongoCommunication.getInstance()
     val queue: Document = mongo.getQueue(event.messageId) ?: throw ButtonException()
@@ -163,5 +158,5 @@ fun onQueueLast(event: ButtonClickEvent) {
         )
     ).queue()
 
-    mongo.setCurrentQueuePage(event.messageId, pages)
+    mongo.setCurrentQueuePage(event.messageId, pages - 1)
 }

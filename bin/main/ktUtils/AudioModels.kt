@@ -28,7 +28,7 @@ class AudioPlayerExtender(
 
     init {
         audioPlayer.volume = 50
-        audioPlayer.setFrameBufferDuration(200)
+        audioPlayer.setFrameBufferDuration(5)
         this.audioManager = audioManager
         this.audioManager.sendingHandler = AudioPlayerSendHandler(audioPlayer)
         audioPlayer.addListener(TrackEventListener(this))

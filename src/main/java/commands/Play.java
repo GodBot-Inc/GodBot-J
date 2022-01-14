@@ -285,7 +285,9 @@ public class Play implements Command {
             interactionHook
                     .sendMessageEmbeds(
                             ErrorsKt.standardError(ErrorMessages.PLATFORM_NOT_FOUND)
-                    ).queue();
+                    )
+                    .addActionRow()
+                    .queue();
             return;
         }
 

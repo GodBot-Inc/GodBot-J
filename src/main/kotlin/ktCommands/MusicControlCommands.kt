@@ -284,3 +284,69 @@ fun skipTo(event: EventExtender) {
             .build()
     )
 }
+
+fun volume(event: EventExtender) {
+    fun volumeCheckParameters(event: SlashCommandEvent): Long {
+        val level: OptionMapping = event.getOption("level") ?: throw ArgumentNotFoundException()
+        return level.asLong
+    }
+
+    val applicationid: String? = Dotenv.load()["APPLICATIONID"]
+    val guild: Guild? = event.event.guild
+
+    val level: Int
+
+    try {
+        level = volumeCheckParameters(event.event).toInt()
+    } catch (e: CheckFailedException) {
+        event.replyEphemeral(
+            standardError(
+                ErrorMessages.NOT_RECEIVED_PARAMETER
+            )
+        )
+        return
+    }
+
+    val audioPlayer: AudioPlayerExtender
+
+    try {
+        audioPlayer = PlayerVault
+            .getInstance()
+            .getPlayer(
+                JDAManager.getInstance().getJDA(applicationid),
+                guild!!.id
+            )
+    } catch (e: PlayerNotFoundException) {
+        event.replyEphemeral(
+            standardError(ErrorMessages.NO_PLAYER_IN_VC)
+        )
+        return
+    }
+
+    val playerVolume: Int = audioPlayer.getVolume()
+    var emojiId: String = EmojiIds.noAudioChange
+
+    if (playerVolume > level*10) {
+        emojiId = EmojiIds.quieter
+    } else if (playerVolume < level*10) {
+        emojiId = EmojiIds.louder
+    }
+    if (level == 0) {
+        emojiId = EmojiIds.mute
+    }
+
+    audioPlayer.setVolume(level*10)
+
+    event.reply(
+        EmbedBuilder()
+            .setDescription(
+                String.format(
+                    "%s **Set Volume to level to %s**",
+                    emojiId,
+                    level
+                )
+            )
+            .setColor(Colours.godbotYellow)
+            .build()
+    )
+}

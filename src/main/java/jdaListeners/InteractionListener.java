@@ -5,6 +5,7 @@ import interactions.ButtonActionsKt;
 import ktCommands.GeneralCommandsKt;
 import ktCommands.MusicControlCommandsKt;
 import ktSnippets.ErrorsKt;
+import ktUtils.ButtonException;
 import logging.ListenerLogger;
 import logging.LoggerContent;
 import net.dv8tion.jda.api.entities.Guild;
@@ -14,7 +15,6 @@ import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
 import snippets.ErrorMessages;
-import ktUtils.ButtonException;
 import utils.EventExtender;
 
 import javax.annotation.Nonnull;
@@ -57,6 +57,7 @@ public class InteractionListener extends ListenerAdapter {
                         getLogArgs(event)
                 )
         );
+        // TODO: Put check block here, and always pass the VoiceChannel, if given
         switch (event.getName()) {
             case "join" -> Join.trigger(event);
             case "play" -> Play.trigger(event);
@@ -70,6 +71,7 @@ public class InteractionListener extends ListenerAdapter {
             case "leave" -> GeneralCommandsKt.leave(new EventExtender(event));
             case "loop" -> MusicControlCommandsKt.loop(new EventExtender(event));
             case "skipto" -> MusicControlCommandsKt.skipTo(new EventExtender(event));
+            case "volume" -> MusicControlCommandsKt.volume(new EventExtender(event));
         }
     }
 

@@ -1,6 +1,9 @@
-package utils
+package ktUtils
 
 open class GodBotException : Exception()
+
+
+class QueueEmptyException: GodBotException()
 
 
 open class InteractionException : GodBotException()
@@ -25,6 +28,8 @@ class ChannelNotFoundException: NotFoundException()
 class GuildNotFoundException: NotFoundException()
 
 class ArgumentNotFoundException: NotFoundException()
+
+class TrackNotFoundException: NotFoundException()
 
 
 open class CheckFailedException: GodBotException()

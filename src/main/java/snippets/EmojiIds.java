@@ -26,4 +26,8 @@ public class EmojiIds {
     public static final String lastTrack = "<:last_track:919800506770145340>";
     public static final String noLoop = "<:no_loop:927499145588146186>";
     public static final String loop = "<:gb_loop:927499133915373568>";
+    public static final String noAudioChange = "<:no_audio_change:931226390806822913>";
+    public static final String louder = "<:louder:931226365460623391>";
+    public static final String quieter = "<:quieter:931226382908936192>";
+    public static final String mute = "<:mute_player:931235380429197382>";
 }

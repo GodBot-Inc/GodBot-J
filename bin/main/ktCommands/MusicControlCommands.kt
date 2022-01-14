@@ -1,21 +1,23 @@
-package commands
+package ktCommands
 
-import com.sedmelluq.discord.lavaplayer.track.AudioTrack
 import io.github.cdimascio.dotenv.Dotenv
+import ktSnippets.standardError
+import ktUtils.*
 import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.entities.Guild
 import net.dv8tion.jda.api.entities.Member
 import net.dv8tion.jda.api.entities.VoiceChannel
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent
 import net.dv8tion.jda.api.interactions.commands.OptionMapping
+import playableInfo.PlayableInfo
 import singeltons.AudioPlayerManagerWrapper
 import singeltons.JDAManager
 import singeltons.PlayerVault
 import snippets.Colours
 import snippets.EmojiIds
 import snippets.ErrorMessages
-import snippets.standardError
-import utils.*
+import utils.Checks
+import utils.EventExtender
 
 fun remove(event: EventExtender) {
     fun removeCheckParameters(event: SlashCommandEvent): Long {
@@ -57,10 +59,10 @@ fun remove(event: EventExtender) {
         return
     }
 
-    val audioTrack: AudioTrack
+    val playableInfo: PlayableInfo
 
     try {
-        audioTrack = audioPlayer.removeTrackAt(position - 1).audioTrack
+        playableInfo = audioPlayer.removeTrackAt(position - 1)
     } catch (e: IndexOutOfBoundsException) {
         event.replyEphemeral(
             standardError(
@@ -80,8 +82,8 @@ fun remove(event: EventExtender) {
             .setDescription(
                 String.format(
                     "**Removed [%s](%s)**",
-                    audioTrack.info.title,
-                    audioTrack.info.uri
+                    playableInfo.title,
+                    playableInfo.uri
                 )
             )
             .setColor(Colours.godbotYellow)
@@ -178,4 +180,111 @@ fun loop(event: EventExtender) {
             .setColor(Colours.godbotYellow)
             .build()
     )
+}
+
+fun skipTo(event: EventExtender) {
+    fun skipCheckParameter(event: SlashCommandEvent): Long {
+        val position: OptionMapping = event.getOption("position") ?: throw ArgumentNotFoundException()
+        return position.asLong
+    }
+
+    val applicationId: String? = Dotenv.load()["APPLICATIONID"]
+    val guild: Guild? = event.event.guild
+    val member: Member? = event.event.member
+    val voiceChannel: VoiceChannel
+    val position: Long
+    try {
+        position = skipCheckParameter(event.event)
+    } catch (e: ArgumentNotFoundException) {
+        event.replyEphemeral(
+            standardError(
+                ErrorMessages.NOT_RECEIVED_PARAMETER
+            )
+        )
+        return
+    }
+
+    try {
+        voiceChannel = Checks.slashCommandCheck(
+            event,
+            applicationId,
+            member,
+            guild
+        )
+    } catch (e: CheckFailedException) {
+        return
+    }
+
+    val player: AudioPlayerExtender
+    try {
+        player = AudioPlayerManagerWrapper
+            .getInstance()
+            .getPlayer(
+                JDAManager.getInstance().getJDA(applicationId),
+                guild!!.id,
+                voiceChannel
+            )
+    } catch (e: JDANotFound) {
+        event.replyEphemeral(
+            standardError(
+                ErrorMessages.PLAYER_NOT_FOUND
+            )
+        )
+        return
+    } catch (e: GuildNotFoundException) {
+        event.replyEphemeral(
+            standardError(
+                ErrorMessages.NO_PLAYER_IN_GUILD
+            )
+        )
+        return
+    }
+
+    if (player.voiceChannel.id != voiceChannel.id) {
+        event.replyEphemeral(
+            standardError(
+                ErrorMessages.NO_PLAYER_IN_VC
+            )
+        )
+        return
+    }
+    if (player.queue.isEmpty()) {
+        event.replyEphemeral(
+            standardError(
+                ErrorMessages.QUEUE_EMPTY
+            )
+        )
+        return
+    }
+
+    try {
+        player.skipTo((position - 1).toInt())
+    } catch (e: IndexOutOfBoundsException) {
+        event.replyEphemeral(
+            standardError(
+                "The Queue is `${player.queue.size}` big and the position is `$position`"
+            )
+        )
+        return
+    }
+
+    if (player.currentTrack == null) {
+        event.replyEphemeral(
+            standardError(
+                ErrorMessages.LOADING_FAILED
+            )
+        )
+    }
+
+    event.reply(
+        EmbedBuilder()
+            .setDescription("Skipped to `$position`, now playing " +
+                    "[${player.currentTrack!!.title}](${player.currentTrack!!.uri})")
+            .setColor(Colours.godbotYellow)
+            .build()
+    )
+}
+
+fun volume(event: EventExtender) {
+
 }
