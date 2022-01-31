@@ -4,7 +4,6 @@ import jdaListeners.GeneralListener;
 import jdaListeners.InteractionListener;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
-import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.ChunkingFilter;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
@@ -30,26 +29,30 @@ public class GodBotSystem {
         assert israAPPLICATIONID != null;
 
         JDA godbotJDA;
-        JDA israJDA;
+//        JDA israJDA;
         try {
             godbotJDA = initializeBotFromToken(TOKEN, APPLICATIONID, true);
-            israJDA = initializeBotFromToken(israTOKEN, israAPPLICATIONID, false);
+//            israJDA = initializeBotFromToken(israTOKEN, israAPPLICATIONID, false);
         } catch (LoginException e) {
             e.printStackTrace();
             return;
         }
 
-        israJDA.getPresence().setActivity(Activity.listening("the GodBot System"));
+//        israJDA.getPresence().setActivity(Activity.listening("the GodBot System"));
 
         // Wait until JDA is ready and loaded
         try {
             godbotJDA.awaitReady();
-            israJDA.awaitReady();
+//            israJDA.awaitReady();
         } catch (InterruptedException e) {
             e.printStackTrace();
             godbotJDA.shutdown();
-            israJDA.shutdown();
+//            israJDA.shutdown();
         }
+    }
+
+    private static void checkENV() {
+
     }
 
     private static JDA initializeBotFromToken(String TOKEN, String applicationId, boolean listeners)
