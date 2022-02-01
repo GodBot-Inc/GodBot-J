@@ -13,6 +13,8 @@ class ButtonException : InteractionException()
 
 open class NotFoundException: GodBotException()
 
+class CredentialsNotFound: NotFoundException()
+
 class MessageNotFoundException: NotFoundException()
 
 class ApplicationNotFoundException: NotFoundException()
@@ -30,6 +32,8 @@ class GuildNotFoundException: NotFoundException()
 class ArgumentNotFoundException: NotFoundException()
 
 class TrackNotFoundException: NotFoundException()
+
+class PlaylistNotFoundException: NotFoundException()
 
 
 open class CheckFailedException: GodBotException()

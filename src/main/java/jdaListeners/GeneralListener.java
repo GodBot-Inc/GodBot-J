@@ -64,14 +64,23 @@ public class GeneralListener extends ListenerAdapter {
     public void onGuildVoiceLeave(@NotNull GuildVoiceLeaveEvent event) {
         JDA godbotJDA = JDAManager.getInstance().getJDA(applicationId);
         AudioPlayerExtender audioPlayer;
+        if (godbotJDA == null) {
+            return;
+        }
         try {
             audioPlayer = PlayerVault.getInstance().getPlayer(godbotJDA, event.getGuild().getId());
         } catch (JDANotFound | GuildNotFoundException e) {
             return;
         }
+        if (event.getMember().getId().equals(godbotJDA.getSelfUser().getId())) {
+            audioPlayer.cleanup();
+            return;
+        }
         if (event.getChannelLeft() == audioPlayer.getVoiceChannel() &&
             // if only the bot is connected to the channel
-            event.getChannelLeft().getMembers().size() == 1) {
+            event.getChannelLeft().getMembers().size() == 1 &&
+            // If the godbot is not the one who left the channel
+            !event.getMember().getId().equals(godbotJDA.getSelfUser().getId())) {
             audioPlayer.setPaused(true);
         }
     }

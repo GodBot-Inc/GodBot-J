@@ -23,7 +23,6 @@ class AudioPlayerExtender(
     private val audioManager: AudioManager
 
     private var lifecycle = true
-    private var ownCurrentTrack: AudioTrackExtender? = null
     private var lastAction: Long = System.currentTimeMillis()
 
     init {
@@ -32,25 +31,8 @@ class AudioPlayerExtender(
         this.audioManager = audioManager
         this.audioManager.sendingHandler = AudioPlayerSendHandler(audioPlayer)
         audioPlayer.addListener(TrackEventListener(this))
-        // Execute both tasks async
-        thread { currentTrackUpdate() }
+        // Execute lifecycle async
         thread { lifecycle() }
-    }
-
-    private fun currentTrackUpdate() {
-        while (lifecycle) {
-            // update current Track if new Track is playing
-//            if (ownCurrentTrack?.audioTrack != audioPlayer.playingTrack) {
-//                lastAction = System.currentTimeMillis()
-//                lastTrack = ownCurrentTrack
-//            }
-//            // Update current Track, if no song is playing
-//            if (audioPlayer.playingTrack == null && currentTrack != null) {
-//                lastAction = System.currentTimeMillis()
-//                lastTrack = currentTrack
-//                currentTrack = null
-//            }
-        }
     }
 
     private fun lifecycle() {
@@ -77,11 +59,10 @@ class AudioPlayerExtender(
 
     private fun updateUsage() = apply { lastAction = System.currentTimeMillis() }
 
-    private fun cleanup() {
+    fun cleanup() {
         audioManager.closeAudioConnection()
         queue.clear()
         currentTrack = null
-        ownCurrentTrack = null
         lastAction = 0
         lifecycle = false
         // only stops the player
