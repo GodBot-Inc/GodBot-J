@@ -1,7 +1,6 @@
 package ktUtils
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer
-import com.sedmelluq.discord.lavaplayer.track.AudioTrack
 import lavaplayerHandlers.AudioPlayerSendHandler
 import lavaplayerHandlers.TrackEventListener
 import net.dv8tion.jda.api.entities.VoiceChannel
@@ -184,8 +183,3 @@ class AudioPlayerExtender(
 
     fun stop() = apply { updateUsage();clearQueue(); audioPlayer.stopTrack() }
 }
-
-data class AudioTrackExtender(
-    val audioTrack: AudioTrack,
-    val playableInfo: PlayableInfo
-)
