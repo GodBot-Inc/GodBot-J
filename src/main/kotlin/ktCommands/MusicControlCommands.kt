@@ -162,7 +162,7 @@ fun loop(event: EventExtender) {
         event.replyEphemeral(standardError("The Player is already in Loop Mode"))
         return
     } else if (player.loop == mode) {
-        event.replyEphemeral(standardError("Loop mode is not activated for the Player"))
+        event.replyEphemeral(standardError("Loop mode is already disabled"))
         return
     }
 

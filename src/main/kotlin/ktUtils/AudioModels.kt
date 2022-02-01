@@ -23,7 +23,6 @@ class AudioPlayerExtender(
     private val audioManager: AudioManager
 
     private var lifecycle = true
-    private var ownCurrentTrack: AudioTrackExtender? = null
     private var lastAction: Long = System.currentTimeMillis()
 
     init {
@@ -64,7 +63,6 @@ class AudioPlayerExtender(
         audioManager.closeAudioConnection()
         queue.clear()
         currentTrack = null
-        ownCurrentTrack = null
         lastAction = 0
         lifecycle = false
         // only stops the player
