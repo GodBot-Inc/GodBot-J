@@ -2,6 +2,7 @@ import io.github.cdimascio.dotenv.Dotenv;
 import jdaListeners.BotStateListener;
 import jdaListeners.GeneralListener;
 import jdaListeners.InteractionListener;
+import ktUtils.ENVCheckFailedException;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
@@ -11,6 +12,7 @@ import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import singeltons.AudioManagerVault;
 import singeltons.JDAManager;
+import utils.Checks;
 
 import javax.security.auth.login.LoginException;
 
@@ -18,16 +20,19 @@ public class GodBotSystem {
     public static void main(String[] args) {
         Dotenv dotenv = Dotenv.load();
 
+        try {
+            Checks.checkENV();
+        } catch (ENVCheckFailedException e) {
+            e.printStackTrace();
+            System.exit(0);
+            return;
+        }
+
         // Load Bot-Token into the program
         String TOKEN = dotenv.get("TOKEN");
         String israTOKEN = dotenv.get("IsrafilTOKEN");
         String APPLICATIONID = dotenv.get("APPLICATIONID");
         String israAPPLICATIONID = dotenv.get("IsrafilAPPLICATIONID");
-
-        assert TOKEN != null;
-        assert israTOKEN != null;
-        assert APPLICATIONID != null;
-        assert israAPPLICATIONID != null;
 
         JDA godbotJDA;
         JDA israJDA;
@@ -36,6 +41,7 @@ public class GodBotSystem {
             israJDA = initializeBotFromToken(israTOKEN, israAPPLICATIONID, false);
         } catch (LoginException e) {
             e.printStackTrace();
+            System.exit(0);
             return;
         }
 

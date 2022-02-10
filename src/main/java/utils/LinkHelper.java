@@ -10,6 +10,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.http.HttpResponse;
+import java.util.logging.Logger;
 
 public class LinkHelper {
 
@@ -68,7 +69,11 @@ public class LinkHelper {
         int responseCode = con.getResponseCode();
 
         switch (responseCode) {
-            case 400, 401, 403 -> throw new RequestException();
+            case 403 -> {
+                Logger.getLogger("TestLogger").info("Fuck Fuck Fuck");
+                throw new RequestException();
+            }
+            case 400, 401 -> throw new RequestException();
             case 404 -> throw new EndpointNotFoundException();
             case 500, 501, 502, 503, 504 -> throw new InternalServerException();
         }

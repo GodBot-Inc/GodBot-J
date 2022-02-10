@@ -9,7 +9,6 @@ import net.dv8tion.jda.api.entities.Member
 import net.dv8tion.jda.api.entities.VoiceChannel
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent
 import net.dv8tion.jda.api.interactions.commands.OptionMapping
-import playableInfo.PlayableInfo
 import singeltons.AudioPlayerManagerWrapper
 import singeltons.JDAManager
 import singeltons.PlayerVault
@@ -59,10 +58,10 @@ fun remove(event: EventExtender) {
         return
     }
 
-    val playableInfo: PlayableInfo
+    val audioTrack: AudioTrackExtender
 
     try {
-        playableInfo = audioPlayer.removeTrackAt(position - 1)
+        audioTrack = audioPlayer.removeTrackAt(position - 1)
     } catch (e: IndexOutOfBoundsException) {
         event.replyEphemeral(
             standardError(
@@ -82,8 +81,8 @@ fun remove(event: EventExtender) {
             .setDescription(
                 String.format(
                     "**Removed [%s](%s)**",
-                    playableInfo.title,
-                    playableInfo.uri
+                    audioTrack.songInfo.title,
+                    audioTrack.songInfo.uri
                 )
             )
             .setColor(Colours.godbotYellow)
@@ -279,7 +278,7 @@ fun skipTo(event: EventExtender) {
     event.reply(
         EmbedBuilder()
             .setDescription("Skipped to `$position`, now playing " +
-                    "[${player.currentTrack!!.title}](${player.currentTrack!!.uri})")
+                    "[${player.currentTrack!!.songInfo.title}](${player.currentTrack!!.songInfo.uri})")
             .setColor(Colours.godbotYellow)
             .build()
     )

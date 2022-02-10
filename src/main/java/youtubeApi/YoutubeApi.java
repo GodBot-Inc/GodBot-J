@@ -3,7 +3,6 @@ package youtubeApi;
 import ktUtils.CouldNotExtractVideoInformation;
 import ktUtils.RequestException;
 import ktUtils.VideoNotFoundException;
-import net.dv8tion.jda.api.entities.Member;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -25,6 +24,21 @@ import java.util.concurrent.Future;
 
 public class YoutubeApi {
 
+    public static void searchLogic(String url)
+            throws IOException, RequestException {
+        JSONObject searchResult = LinkHelper.sendRequest(url);
+        System.out.println(searchResult.toString(4));
+    }
+
+    public static void search(String title)
+            throws IOException, RequestException {
+        searchLogic(
+                UrlBuilder.UrlConstructor.getSearch()
+                        .setSearch(title)
+                        .build()
+        );
+    }
+
     /**
      * This function gathers information about the video with the given id
      * @param id The YouTube id of the video that should be gathered information about
@@ -36,20 +50,19 @@ public class YoutubeApi {
      * @throws VideoNotFoundException If the given id is not an id of a YouTube Video
      * @throws InternalError If YouTube has issues resolving the request
      */
-    public static YouTubeSong getVideoInformation(String id, Member requester)
+    public static YouTubeSong getVideoInformation(String id)
             throws IOException,
             RequestException,
             CouldNotExtractVideoInformation,
             VideoNotFoundException {
 
         JSONObject videoInfo = LinkHelper.sendRequest(
-                UrlConstructor.getYTVideo()
+                UrlBuilder.UrlConstructor.getYTVideo()
                         .setId(id)
                         .build()
         );
 
         YouTubeSong.Builder builder = new YouTubeSong.Builder();
-        builder.setRequester(requester);
 
         if (videoInfo.getJSONArray("items").isEmpty()) {
             throw new VideoNotFoundException();
@@ -131,38 +144,19 @@ public class YoutubeApi {
         return builder.build();
     }
 
-    public static String getFirst(String id)
-            throws IOException, RequestException {
-        String url = UrlConstructor.getPlaylistItems()
-                .setId(id)
-                .build();
-
-        JSONObject playlistItems = LinkHelper.sendRequest(url);
-
-        return String.format(
-                UrlConstructor.getWatch().build(),
-                playlistItems
-                        .getJSONArray("items")
-                        .getJSONObject(0)
-                        .getJSONObject("contentDetails")
-                        .getString("videoId")
-        );
-    }
-
     /**
      * Get Info about the yt video very fast
      * @param id of the playlist
-     * @param requester the user who requested the playlist
      * @return YoutubePlaylistInterpretation, containing all info about the playlist
      * @throws VideoNotFoundException If the video was simply not found
      * @throws CouldNotExtractVideoInformation if YouTube delivered something we can not work with
      */
-    public static YouTubePlaylist getPlaylistInfoAsync(String id, Member requester)
+    public static YouTubePlaylist getPlaylistInfoAsync(String id)
             throws VideoNotFoundException, CouldNotExtractVideoInformation {
-        String playlistInfoUrl = UrlConstructor.getPlaylistInfo()
+        String playlistInfoUrl = UrlBuilder.UrlConstructor.getPlaylistInfo()
                 .setId(id)
                 .build();
-        String playlistItemsUrl = UrlConstructor.getPlaylistItems()
+        String playlistItemsUrl = UrlBuilder.UrlConstructor.getPlaylistItems()
                 .setId(id)
                 .build();
 
@@ -191,7 +185,6 @@ public class YoutubeApi {
         JSONObject playlistInfo = new JSONObject(playlistInfoFuture.join().body());
 
         YouTubePlaylist.Builder playableInfoBuilder = new YouTubePlaylist.Builder();
-        playableInfoBuilder.requester(requester);
 
         playableInfoBuilder.uri("https://www.youtube.com/playlist?list=" + id);
 
@@ -260,7 +253,7 @@ public class YoutubeApi {
 
             boolean sendRequest;
             try {
-                url = UrlConstructor.getPlaylistItemsToken()
+                url = UrlBuilder.UrlConstructor.getPlaylistItemsToken()
                         .setId(id)
                         .setPageToken(playlistItemsObject.getString("nextPageToken"))
                         .build();
@@ -295,7 +288,7 @@ public class YoutubeApi {
 
                 playableInfoBuilder.addVideoId(videoId);
 
-                ytSongList.add(Executors.newCachedThreadPool().submit(() -> getVideoInformation(videoId, requester)));
+                ytSongList.add(Executors.newCachedThreadPool().submit(() -> getVideoInformation(videoId)));
             }
 
             if (nextPage == null) {

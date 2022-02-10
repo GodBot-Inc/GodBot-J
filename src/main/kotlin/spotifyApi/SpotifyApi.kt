@@ -7,66 +7,35 @@ import com.adamratzman.spotify.models.Track
 import com.adamratzman.spotify.spotifyAppApi
 import com.adamratzman.spotify.utils.runBlockingOnJvmAndNative
 import io.github.cdimascio.dotenv.Dotenv
-import ktUtils.CredentialsNotFound
 import ktUtils.PlaylistNotFoundException
 import ktUtils.TrackNotFoundException
 import ktUtils.VideoNotFoundException
-import net.dv8tion.jda.api.entities.Member
 import playableInfo.PlayableInfo
 import playableInfo.SpotifyPlaylist
 import playableInfo.SpotifySong
+import java.util.logging.Logger
 
 private val dotenv: Dotenv = Dotenv.load()
-private val clientId: String? = dotenv["SPOT_CLIENT_ID"]
-private val clientSecret: String? = dotenv["SPOT_CLIENT_SECRET"]
-private var api: SpotifyAppApi? = null
-
-
-@Throws(CredentialsNotFound::class)
-fun initialize() {
-    if (clientId == null) {
-        throw CredentialsNotFound()
-    } else if (clientSecret == null) {
-        throw CredentialsNotFound()
-    }
-    runBlockingOnJvmAndNative {
-        api = spotifyAppApi(clientId, clientSecret).build()
-    }
+private val clientId: String = dotenv["SPOT_CLIENT_ID"]
+private val clientSecret: String = dotenv["SPOT_CLIENT_SECRET"]
+val logger: Logger = Logger.getLogger("SpotifyApiLogger")
+private var api: SpotifyAppApi = runBlockingOnJvmAndNative {
+    spotifyAppApi(clientId, clientSecret).build()
 }
 
 @Throws(TrackNotFoundException::class)
-fun getSongInfo(id: String, requester: Member): SpotifySong {
-    if (api == null) {
-        initialize()
-    }
-
+fun getSongInfo(id: String): SpotifySong {
     val track: Track = runBlockingOnJvmAndNative {
-        api!!.tracks.getTrack(id) ?: throw VideoNotFoundException()
+        api.tracks.getTrack(id) ?: throw VideoNotFoundException()
     }
 
-    return trackToPlayableInfo(track, requester)
-}
-
-private fun trackToPlayableInfo(track: Track, requester: Member): SpotifySong {
-    return SpotifySong.Builder()
-        .duration(track.length.toLong())
-        .creator(track.artists[0].name)
-        .creatorLink(track.artists[0].href)
-        .title(track.name)
-        .uri(track.href)
-        .songId(track.id)
-        .requester(requester)
-        .build()
+    return trackToPlayableInfo(track)
 }
 
 @Throws(PlaylistNotFoundException::class)
-fun getPlaylistInfo(id: String, requester: Member): SpotifyPlaylist {
-    if (api == null) {
-        initialize()
-    }
-
+fun getPlaylistInfo(id: String): SpotifyPlaylist {
     val playlist: Playlist = runBlockingOnJvmAndNative {
-        api!!.playlists.getPlaylist(id) ?: throw PlaylistNotFoundException()
+        api.playlists.getPlaylist(id) ?: throw PlaylistNotFoundException()
     }
 
     var duration: Long = 0
@@ -78,7 +47,7 @@ fun getPlaylistInfo(id: String, requester: Member): SpotifyPlaylist {
             videoIds.add(trackId)
         }
         duration += track.track?.asTrack?.length ?: 0
-        playableInformation.add(trackToPlayableInfo(track.track?.asTrack ?: continue, requester))
+        playableInformation.add(trackToPlayableInfo(track.track?.asTrack ?: continue))
     }
 
     val builder = SpotifyPlaylist.Builder()
@@ -97,4 +66,15 @@ fun getPlaylistInfo(id: String, requester: Member): SpotifyPlaylist {
     }
 
     return builder.build()
+}
+
+private fun trackToPlayableInfo(track: Track): SpotifySong {
+    return SpotifySong.Builder()
+        .duration(track.length.toLong())
+        .creator(track.artists[0].name)
+        .creatorLink(track.artists[0].href)
+        .title(track.name)
+        .uri(track.href)
+        .songId(track.id)
+        .build()
 }

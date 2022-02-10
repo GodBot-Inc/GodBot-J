@@ -1,9 +1,9 @@
 package ktUtils
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer
-import com.sedmelluq.discord.lavaplayer.track.AudioTrack
 import lavaplayerHandlers.AudioPlayerSendHandler
 import lavaplayerHandlers.TrackEventListener
+import net.dv8tion.jda.api.entities.Member
 import net.dv8tion.jda.api.entities.VoiceChannel
 import net.dv8tion.jda.api.managers.AudioManager
 import playableInfo.PlayableInfo
@@ -17,14 +17,13 @@ class AudioPlayerExtender(
     var voiceChannel: VoiceChannel,
     audioManager: AudioManager) {
 
-    var loop: Boolean = false
-    val queue = ArrayList<PlayableInfo>()
-    var currentTrack: PlayableInfo? = null
+    var loop = false
+    val queue = ArrayList<AudioTrackExtender>()
+    var currentTrack: AudioTrackExtender? = null
     private val audioManager: AudioManager
 
     private var lifecycle = true
-    private var ownCurrentTrack: AudioTrackExtender? = null
-    private var lastAction: Long = System.currentTimeMillis()
+    private var lastAction = System.currentTimeMillis()
 
     init {
         audioPlayer.volume = 50
@@ -33,24 +32,7 @@ class AudioPlayerExtender(
         this.audioManager.sendingHandler = AudioPlayerSendHandler(audioPlayer)
         audioPlayer.addListener(TrackEventListener(this))
         // Execute both tasks async
-        thread { currentTrackUpdate() }
         thread { lifecycle() }
-    }
-
-    private fun currentTrackUpdate() {
-        while (lifecycle) {
-            // update current Track if new Track is playing
-//            if (ownCurrentTrack?.audioTrack != audioPlayer.playingTrack) {
-//                lastAction = System.currentTimeMillis()
-//                lastTrack = ownCurrentTrack
-//            }
-//            // Update current Track, if no song is playing
-//            if (audioPlayer.playingTrack == null && currentTrack != null) {
-//                lastAction = System.currentTimeMillis()
-//                lastTrack = currentTrack
-//                currentTrack = null
-//            }
-        }
     }
 
     private fun lifecycle() {
@@ -81,7 +63,6 @@ class AudioPlayerExtender(
         audioManager.closeAudioConnection()
         queue.clear()
         currentTrack = null
-        ownCurrentTrack = null
         lastAction = 0
         lifecycle = false
         // only stops the player
@@ -95,11 +76,11 @@ class AudioPlayerExtender(
 
     fun changeChannel(newVoiceChannel: VoiceChannel) = apply { updateUsage(); voiceChannel = newVoiceChannel }
 
-    fun playNowOrNext(playableInfo: PlayableInfo) {
+    fun playNowOrNext(audioTrackExtender: AudioTrackExtender) {
         updateUsage()
         try {
             // Play Now already sets current Track
-            playNow(playableInfo)
+            playNow(audioTrackExtender)
         } catch (e: TrackNotFoundException) {
             try {
                 // Play next already sets currentTrack
@@ -111,57 +92,51 @@ class AudioPlayerExtender(
     }
 
     @Throws(QueueEmptyException::class)
-    fun playNext(): PlayableInfo {
+    fun playNext(): AudioTrackExtender {
         updateUsage()
         if (queue.isEmpty()) {
             currentTrack = null
             throw QueueEmptyException()
         }
-        val playableInfo = queue.removeAt(0)
+        val audioTrack = queue.removeAt(0)
         try {
             // Play now already sets currentTrack
-            playNow(playableInfo)
+            playNow(audioTrack)
         } catch (e: GodBotException) {
             // Recursion, so eventually the method will end
             return playNext()
         }
         // In case of expected method process
-        currentTrack = playableInfo
-        return playableInfo
+        currentTrack = audioTrack
+        return audioTrack
     }
 
     @Throws(TrackNotFoundException::class)
-    fun playNow(playableInfo: PlayableInfo) {
+    fun playNow(audioTrackExtender: AudioTrackExtender) {
         updateUsage()
-        val audioTrack =
+        val playableTrack =
             AudioPlayerManagerWrapper
                 .getInstance()
-                .loadItem(playableInfo.uri)
+                .loadItem(audioTrackExtender.songInfo.uri)
 
         audioPlayer.stopTrack()
-        currentTrack = try {
-            audioPlayer.playTrack(audioTrack)
-            playableInfo
-        } catch (e: Exception) {
-            // This should never happen
-            e.printStackTrace()
-            null
-        }
+        currentTrack = audioTrackExtender
+        audioPlayer.playTrack(playableTrack)
     }
 
     @Throws(TrackNotFoundException::class)
-    fun play(playableInfo: PlayableInfo): Int {
+    fun play(audioTrackExtender: AudioTrackExtender): Int {
         updateUsage()
-        if (!audioManager.isConnected) {
+        if (!audioManager.isConnected)
             audioManager.openAudioConnection(voiceChannel)
-        }
+
         if (audioPlayer.playingTrack == null && queue.size == 0) {
             // playNow sets currentTrack
-            playNow(playableInfo)
+            playNow(audioTrackExtender)
             return 0
         }
-        println("Added to Queue: " + playableInfo.title)
-        queue.add(playableInfo)
+        println("Added to Queue: " + audioTrackExtender.songInfo.title)
+        queue.add(audioTrackExtender)
         return queue.size - 1
     }
 
@@ -170,18 +145,16 @@ class AudioPlayerExtender(
         updateUsage()
         if (index < queue.size) {
             val playableInfo = queue[index]
-            for (i in 0 until index + 1) {
+            for (i in 0 until index + 1)
                 queue.removeAt(0)
-            }
             // playNowOrNext sets currentTrack
             playNowOrNext(playableInfo)
-        } else {
+        } else
             throw IndexOutOfBoundsException()
-        }
     }
 
     @Throws(IndexOutOfBoundsException::class)
-    fun removeTrackAt(index: Int): PlayableInfo {
+    fun removeTrackAt(index: Int): AudioTrackExtender {
         updateUsage()
         return queue.removeAt(index)
     }
@@ -199,12 +172,9 @@ class AudioPlayerExtender(
 
     fun isConnected() = audioManager.isConnected
 
-    fun clearQueue() = apply { updateUsage();queue.clear() }
+    fun clearQueue() = apply { updateUsage(); queue.clear() }
 
-    fun stop() = apply { updateUsage();clearQueue(); audioPlayer.stopTrack() }
+    fun stop() = apply { updateUsage(); clearQueue(); audioPlayer.stopTrack() }
 }
 
-data class AudioTrackExtender(
-    val audioTrack: AudioTrack,
-    val playableInfo: PlayableInfo
-)
+data class AudioTrackExtender(val songInfo: PlayableInfo, val requester: Member)

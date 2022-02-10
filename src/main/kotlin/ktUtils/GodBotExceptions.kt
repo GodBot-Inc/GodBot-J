@@ -1,6 +1,6 @@
 package ktUtils
 
-open class GodBotException : Exception()
+open class GodBotException(message: String? = null) : Exception(message)
 
 
 class QueueEmptyException: GodBotException()
@@ -12,8 +12,6 @@ class ButtonException : InteractionException()
 
 
 open class NotFoundException: GodBotException()
-
-class CredentialsNotFound: NotFoundException()
 
 class MessageNotFoundException: NotFoundException()
 
@@ -36,9 +34,11 @@ class TrackNotFoundException: NotFoundException()
 class PlaylistNotFoundException: NotFoundException()
 
 
-open class CheckFailedException: GodBotException()
+open class CheckFailedException(message: String? = null): GodBotException(message)
 
 class VoiceCheckFailedException: CheckFailedException()
+
+class ENVCheckFailedException(message: String? = null): CheckFailedException(message)
 
 
 open class InvalidException: GodBotException()
