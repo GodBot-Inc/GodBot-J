@@ -34,6 +34,7 @@ public class Play implements Command {
     public static void playPlaylist(
             AudioPlayerExtender audioPlayer,
             PlaylistPlayableInfo playlistInfo,
+            Member requester,
             boolean shuffle
     ) {
         audioPlayer.openConnection();
@@ -42,7 +43,7 @@ public class Play implements Command {
         }
         for (PlayableInfo playableInfo : playlistInfo.getPlayableInformation()) {
             try {
-                audioPlayer.play(playableInfo);
+                audioPlayer.play(new AudioTrackExtender(playableInfo, requester));
             } catch (GodBotException ignore) {}
         }
     }
@@ -53,7 +54,6 @@ public class Play implements Command {
         if (url == null) {
             throw new CheckFailedException();
         }
-
         return url.getAsString();
     }
 
@@ -62,8 +62,8 @@ public class Play implements Command {
         return shuffle != null && shuffle.getAsBoolean();
     }
 
-    public static Future<PlayableInfo> startInfoGathering(String url, Member requester) {
-        return Executors.newCachedThreadPool().submit(() -> DataGatherer.gatherPlayableInfo(url, requester));
+    public static Future<PlayableInfo> startInfoGathering(String url) {
+        return Executors.newCachedThreadPool().submit(() -> DataGatherer.gatherPlayableInfo(url));
     }
 
     private static void processPlaylist(
@@ -115,6 +115,7 @@ public class Play implements Command {
         Executors.newCachedThreadPool().submit(() -> playPlaylist(
                 player,
                 playlistInformation,
+                member,
                 shuffle
         ));
 
@@ -172,7 +173,7 @@ public class Play implements Command {
 
         int position;
         try {
-            position = player.play(playableInfo);
+            position = player.play(new AudioTrackExtender(playableInfo, member));
         } catch (GodBotException e) {
             interactionHook
                     .sendMessageEmbeds(
@@ -248,6 +249,7 @@ public class Play implements Command {
             return;
         }
 
+
         JDA bot = JDAManager.getInstance().getJDA(applicationId);
 
         AudioPlayerExtender player = AudioPlayerManagerWrapper
@@ -270,7 +272,7 @@ public class Play implements Command {
         InteractionHook interactionHook = scEvent.getHook();
         scEvent.deferReply().queue();
 
-        Future<PlayableInfo> infoGatheringFuture = startInfoGathering(url, member);
+        Future<PlayableInfo> infoGatheringFuture = startInfoGathering(url);
 
         boolean isVideo;
         try {

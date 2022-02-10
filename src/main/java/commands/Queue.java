@@ -11,7 +11,6 @@ import net.dv8tion.jda.api.entities.VoiceChannel;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import org.bson.Document;
 import org.jetbrains.annotations.NotNull;
-import playableInfo.PlayableInfo;
 import singeltons.JDAManager;
 import singeltons.PlayerVault;
 import snippets.Buttons;
@@ -103,7 +102,7 @@ public class Queue implements Command {
             return;
         }
 
-        List<PlayableInfo> queue = audioPlayer.getQueue();
+        List<AudioTrackExtender> queue = audioPlayer.getQueue();
         if (queue.isEmpty()) {
             event.replyEphemeral(
                     ErrorsKt.standardError(
@@ -124,14 +123,14 @@ public class Queue implements Command {
         StringBuilder stringBuilder = new StringBuilder();
 
         for (int i = 0; i < audioPlayer.getQueue().size(); i++) {
-            PlayableInfo currentTrack = queue.get(i);
+            AudioTrackExtender currentTrack = queue.get(i);
             stringBuilder.append(
                     String.format(
                             "**%s** [%s](%s) [%s] ~ %s\n\n",
                             i+1,
-                            currentTrack.getTitle(),
-                            currentTrack.getUri(),
-                            DurationCalc.longToString(currentTrack.getDuration()),
+                            currentTrack.getSongInfo().getTitle(),
+                            currentTrack.getSongInfo().getUri(),
+                            DurationCalc.longToString(currentTrack.getSongInfo().getDuration()),
                             Objects.requireNonNull(currentTrack.getRequester()).getAsMention()
                     )
             );

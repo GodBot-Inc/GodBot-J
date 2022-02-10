@@ -3,14 +3,13 @@ package utils;
 import ktUtils.InvalidURLException;
 import ktUtils.PlatformNotFoundException;
 import ktUtils.RequestException;
-import net.dv8tion.jda.api.entities.Member;
 import playableInfo.PlayableInfo;
 import youtubeApi.YoutubeApi;
 
 import java.io.IOException;
 
 public class DataGatherer {
-    public static PlayableInfo gatherPlayableInfo(String url, Member requester)
+    public static PlayableInfo gatherPlayableInfo(String url)
             throws InvalidURLException, PlatformNotFoundException, InternalError {
         if (Checks.linkIsValid(url)) {
             throw new InvalidURLException();
@@ -19,7 +18,7 @@ public class DataGatherer {
         switch (platform) {
             case "youtube" -> {
                 try {
-                    return gatherYTData(url, requester);
+                    return gatherYTData(url);
                 } catch(IOException | RequestException ignore) {}
             }
         }
@@ -43,16 +42,16 @@ public class DataGatherer {
         throw new InvalidURLException();
     }
 
-    private static PlayableInfo gatherYTData(String url, Member requester)
+    private static PlayableInfo gatherYTData(String url)
             throws InvalidURLException,
             IOException,
             RequestException,
             InternalError {
         TypeAndId typeAndId = ytGetTypeAndId(url);
         if (typeAndId.type.equals("playlist")) {
-            return YoutubeApi.getPlaylistInfoAsync(typeAndId.Id, requester);
+            return YoutubeApi.getPlaylistInfoAsync(typeAndId.Id);
         } else if (typeAndId.type.equals("video")) {
-            return YoutubeApi.getVideoInformation(typeAndId.Id, requester);
+            return YoutubeApi.getVideoInformation(typeAndId.Id);
         }
         throw new IllegalStateException("Unexpected value: " + typeAndId.type);
     }
