@@ -24,6 +24,10 @@ public class AudioPlayerManagerWrapper {
         playerManager = new DefaultAudioPlayerManager();
         playerManager.getConfiguration().setResamplingQuality(AudioConfiguration.ResamplingQuality.HIGH);
         playerManager.getConfiguration().setOpusEncodingQuality(AudioConfiguration.OPUS_QUALITY_MAX);
+        // set to 1000 if bad (ms not s)
+        playerManager.setFrameBufferDuration((int) TimeUnit.SECONDS.toMillis(20));
+        // set to 500 if bad
+        playerManager.setItemLoaderThreadPoolSize(1000);
         AudioSourceManagers.registerRemoteSources(playerManager);
     }
 
