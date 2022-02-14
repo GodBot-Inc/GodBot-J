@@ -247,12 +247,15 @@ public class YoutubeApi {
             }
         }
 
-        playableInfoBuilder.setSize(contentDetails.getInt("itemCount"));
+        int itemCount = contentDetails.getInt("itemCount");
+        playableInfoBuilder.setSize(itemCount);
 
         JSONObject playlistItemsObject;
         playlistItemsObject = new JSONObject(playlistItems.join().body());
         JSONArray array;
         ArrayList<Future<YouTubeSong>> ytSongList = new ArrayList<>();
+
+        int iterations = 0;
 
         while (true) {
             array = playlistItemsObject.getJSONArray("items");
@@ -293,14 +296,15 @@ public class YoutubeApi {
                     continue;
                 }
 
+                iterations++;
                 playableInfoBuilder.addVideoId(videoId);
-
                 ytSongList.add(Executors.newCachedThreadPool().submit(() -> getVideoInformation(videoId, requester)));
             }
 
-            if (nextPage == null) {
+            if (nextPage == null)
                 break;
-            }
+            if (iterations >= itemCount)
+                break;
 
             playlistItemsObject = nextPage.join();
         }
