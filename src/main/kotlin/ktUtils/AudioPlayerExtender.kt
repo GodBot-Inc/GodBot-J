@@ -59,7 +59,7 @@ class AudioPlayerExtender(
 
     private fun updateUsage() = apply { lastAction = System.currentTimeMillis() }
 
-    private fun cleanup() {
+    fun cleanup() {
         audioManager.closeAudioConnection()
         queue.clear()
         currentTrack = null
