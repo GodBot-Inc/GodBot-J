@@ -9,13 +9,13 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.VoiceChannel;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import org.jetbrains.annotations.NotNull;
-import playableInfo.PlayableInfo;
 import singeltons.JDAManager;
 import singeltons.PlayerVault;
 import snippets.Colours;
 import snippets.EmojiIds;
 import snippets.ErrorMessages;
-import utils.*;
+import utils.Checks;
+import utils.EventExtender;
 
 public class Skip implements Command {
 
@@ -82,9 +82,9 @@ public class Skip implements Command {
             return;
         }
 
-        PlayableInfo playableInfo;
+        AudioTrackExtender audioTrack;
         try {
-            playableInfo = player.playNext();
+            audioTrack = player.playNext();
         } catch (QueueEmptyException e) {
             event.replyEphemeral(
                     ErrorsKt.emptyError(
@@ -100,8 +100,8 @@ public class Skip implements Command {
                                 String.format(
                                         "%s **Skipped Song, Now Playing: [%s](%s)**",
                                         EmojiIds.nextTrack,
-                                        playableInfo.getTitle(),
-                                        playableInfo.getUri()
+                                        audioTrack.getSongInfo().getTitle(),
+                                        audioTrack.getSongInfo().getUri()
                                 )
                         )
                         .setColor(Colours.godbotYellow)
