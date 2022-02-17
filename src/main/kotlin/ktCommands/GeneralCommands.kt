@@ -1,6 +1,8 @@
 package ktCommands
 
 import io.github.cdimascio.dotenv.Dotenv
+import ktSnippets.standardError
+import ktUtils.*
 import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.entities.Guild
 import net.dv8tion.jda.api.entities.Member
@@ -9,10 +11,10 @@ import singeltons.AudioPlayerManagerWrapper
 import singeltons.JDAManager
 import singeltons.PlayerVault
 import snippets.Colours
+import snippets.EmojiIds
 import snippets.ErrorMessages
-import ktSnippets.standardError
-import ktUtils.*
-import utils.*
+import utils.Checks
+import utils.EventExtender
 
 fun clearQueue(event: EventExtender) {
     val applicationId: String? = Dotenv.load()["APPLICATIONID"]
@@ -140,7 +142,8 @@ fun leave(event: EventExtender) {
         EmbedBuilder()
             .setTitle(
                 String.format(
-                    "Left Channel `%s`",
+                    "%s Left Channel %s",
+                    EmojiIds.leave,
                     voiceChannel.name
                 )
             )

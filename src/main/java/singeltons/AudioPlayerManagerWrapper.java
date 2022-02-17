@@ -25,7 +25,8 @@ public class AudioPlayerManagerWrapper {
         playerManager.getConfiguration().setResamplingQuality(AudioConfiguration.ResamplingQuality.HIGH);
         playerManager.getConfiguration().setOpusEncodingQuality(AudioConfiguration.OPUS_QUALITY_MAX);
         // set to 1000 if bad (ms not s)
-        playerManager.setFrameBufferDuration((int) TimeUnit.SECONDS.toMillis(20));
+        // Should preload 1 Minute and 20 Seconds of audio (incredibly memory intensive, but reduces shattering)
+        playerManager.setFrameBufferDuration((int) TimeUnit.SECONDS.toMillis(80));
         // set to 500 if bad
         playerManager.setItemLoaderThreadPoolSize(1000);
         AudioSourceManagers.registerRemoteSources(playerManager);

@@ -4,6 +4,7 @@ import jdaListeners.GeneralListener;
 import jdaListeners.InteractionListener;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
+import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.ChunkingFilter;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
@@ -38,6 +39,7 @@ public class GodBotSystem {
             return;
         }
 
+        godbotJDA.getPresence().setActivity(Activity.playing("music | /help"));
 //        israJDA.getPresence().setActivity(Activity.listening("the GodBot System"));
 
         // Wait until JDA is ready and loaded
