@@ -3,8 +3,6 @@ package youtubeApi;
 import io.github.cdimascio.dotenv.Dotenv;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.logging.Logger;
-
 /**
  * Link Builder is used to construct a link using . notation
  */
@@ -132,26 +130,20 @@ public class UrlBuilder {
     public String build() {
         // TODO: You have to set all %s parameters at one String.format call
         try {
-            Logger logger = Logger.getLogger("TestLogger");
             String finalString = url;
             if (url.contains("q=searchHere")) {
-                logger.info(finalString);
                 finalString = finalString.replace("searchHere", search);
             }
             if (url.contains("channelId=channelHere")) {
-                logger.info(finalString);
                 finalString = finalString.replace("channelHere", channelId);
             }
             if (url.contains("pageToken=pageTokenHere")) {
-                logger.info(finalString);
                 finalString = finalString.replace("pageTokenHere", pageToken);
             }
             if (url.contains("id=idHere")) {
-                logger.info(finalString);
                 finalString = finalString.replace("idHere", id);
             }
             if (url.contains("playlistId=playlistIdHere")) {
-                logger.info(finalString);
                 finalString = finalString.replace("playlistIdHere", id);
             }
             return finalString.replace("apiKeyHere", getApiKey());

@@ -17,10 +17,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.ArrayList;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
+import java.util.concurrent.*;
 
 public class YoutubeApi {
 
@@ -240,12 +237,14 @@ public class YoutubeApi {
             }
         }
 
-        playableInfoBuilder.setSize(contentDetails.getInt("itemCount"));
+        int size = contentDetails.getInt("itemCount");
+        playableInfoBuilder.setSize(size);
 
         JSONObject playlistItemsObject;
         playlistItemsObject = new JSONObject(playlistItems.join().body());
         JSONArray array;
         ArrayList<Future<YouTubeSong>> ytSongList = new ArrayList<>();
+        int count = 0;
 
         while (true) {
             array = playlistItemsObject.getJSONArray("items");
@@ -276,6 +275,7 @@ public class YoutubeApi {
             }
 
             for (int i = 0; i < array.length(); i++) {
+                count++;
                 String videoId;
                 try {
                     videoId = array
@@ -292,6 +292,9 @@ public class YoutubeApi {
             }
 
             if (nextPage == null) {
+                break;
+            }
+            if (count >= size) {
                 break;
             }
 

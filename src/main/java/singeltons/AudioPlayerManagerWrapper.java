@@ -26,6 +26,7 @@ public class AudioPlayerManagerWrapper {
         playerManager.getConfiguration().setOpusEncodingQuality(AudioConfiguration.OPUS_QUALITY_MAX);
         // set to 1000 if bad (ms not s)
         // Should preload 1 Minute and 20 Seconds of audio (incredibly memory intensive, but reduces shattering)
+        // TODO The bot only takes 200 milliseconds of preloading max (implement your own DefaultAudioPlayerManager)
         playerManager.setFrameBufferDuration((int) TimeUnit.SECONDS.toMillis(80));
         // set to 500 if bad
         playerManager.setItemLoaderThreadPoolSize(1000);
