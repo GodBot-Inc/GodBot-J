@@ -1,6 +1,6 @@
 package ktUtils
 
-import com.sedmelluq.discord.lavaplayer.player.AudioPlayer
+import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import lavaplayerHandlers.AudioPlayerSendHandler
 import lavaplayerHandlers.TrackEventListener
 import net.dv8tion.jda.api.entities.Member
@@ -37,6 +37,7 @@ class AudioPlayerExtender(
 
     private fun lifecycle() {
         while (lifecycle) {
+            println("LIFECYCLE HUII")
             // 600000 = 10 min
             // 1800000 = 30 min
             if (System.currentTimeMillis() - lastAction >= 1800000 && checkTrack()) {
