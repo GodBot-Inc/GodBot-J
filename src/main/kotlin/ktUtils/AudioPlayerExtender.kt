@@ -1,6 +1,6 @@
 package ktUtils
 
-import com.sedmelluq.discord.lavaplayer.player.AudioPlayer
+import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import lavaplayerHandlers.AudioPlayerSendHandler
 import lavaplayerHandlers.TrackEventListener
 import net.dv8tion.jda.api.entities.Member
