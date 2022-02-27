@@ -37,7 +37,6 @@ class AudioPlayerExtender(
 
     private fun lifecycle() {
         while (lifecycle) {
-            println("LIFECYCLE HUII")
             // 600000 = 10 min
             // 1800000 = 30 min
             if (System.currentTimeMillis() - lastAction >= 1800000 && checkTrack()) {
