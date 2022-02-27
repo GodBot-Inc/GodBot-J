@@ -1,12 +1,9 @@
 package ktCommands
 
-import io.github.cdimascio.dotenv.Dotenv
+import commands.Command.applicationId
 import ktSnippets.standardError
 import ktUtils.*
 import net.dv8tion.jda.api.EmbedBuilder
-import net.dv8tion.jda.api.entities.Guild
-import net.dv8tion.jda.api.entities.Member
-import net.dv8tion.jda.api.entities.VoiceChannel
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent
 import net.dv8tion.jda.api.interactions.commands.OptionMapping
 import singeltons.AudioPlayerManagerWrapper
@@ -15,17 +12,13 @@ import singeltons.PlayerVault
 import snippets.Colours
 import snippets.EmojiIds
 import snippets.ErrorMessages
-import utils.Checks
 import utils.EventExtender
 
-fun remove(event: EventExtender) {
+fun remove(event: EventExtender, payload: SlashCommandPayload) {
     fun removeCheckParameters(event: SlashCommandEvent): Long {
         val position: OptionMapping = event.getOption("position") ?: throw ArgumentNotFoundException()
         return position.asLong
     }
-
-    val applicationId: String? = Dotenv.load()["APPLICATIONID"]
-    val guild: Guild? = event.event.guild
 
     val position: Int
 
@@ -47,7 +40,7 @@ fun remove(event: EventExtender) {
             .getInstance()
             .getPlayer(
                 JDAManager.getInstance().getJDA(applicationId),
-                guild!!.id
+                payload.guild.id
             )
     } catch (e: PlayerNotFoundException) {
         event.replyEphemeral(
@@ -90,16 +83,12 @@ fun remove(event: EventExtender) {
     )
 }
 
-fun loop(event: EventExtender) {
+fun loop(event: EventExtender, payload: SlashCommandPayload) {
     fun loopCheckParameter(event: SlashCommandEvent): Boolean {
         val mode: OptionMapping = event.getOption("mode") ?: throw ArgumentNotFoundException()
         return mode.asBoolean
     }
 
-    val applicationId: String? = Dotenv.load()["APPLICATIONID"]
-    val guild: Guild? = event.event.guild
-    val member: Member? = event.event.member
-    val voiceChannel: VoiceChannel
     val mode: Boolean
     try {
         mode = loopCheckParameter(event.event)
@@ -112,25 +101,14 @@ fun loop(event: EventExtender) {
         return
     }
 
-    try {
-        voiceChannel = Checks.slashCommandCheck(
-            event,
-            applicationId,
-            member,
-            guild
-        )
-    } catch (e: CheckFailedException) {
-        return
-    }
-
     val player: AudioPlayerExtender
     try {
         player = AudioPlayerManagerWrapper
             .getInstance()
             .getPlayer(
                 JDAManager.getInstance().getJDA(applicationId),
-                guild!!.id,
-                voiceChannel
+                payload.guild.id,
+                payload.voiceChannel
             )
     } catch (e: JDANotFound) {
         event.replyEphemeral(
@@ -148,7 +126,7 @@ fun loop(event: EventExtender) {
         return
     }
 
-    if (player.voiceChannel.id != voiceChannel.id) {
+    if (player.voiceChannel.id != payload.voiceChannel.id) {
         event.replyEphemeral(
             standardError(
                 ErrorMessages.NO_PLAYER_IN_VC
@@ -181,16 +159,12 @@ fun loop(event: EventExtender) {
     )
 }
 
-fun skipTo(event: EventExtender) {
+fun skipTo(event: EventExtender, payload: SlashCommandPayload) {
     fun skipCheckParameter(event: SlashCommandEvent): Long {
         val position: OptionMapping = event.getOption("position") ?: throw ArgumentNotFoundException()
         return position.asLong
     }
 
-    val applicationId: String? = Dotenv.load()["APPLICATIONID"]
-    val guild: Guild? = event.event.guild
-    val member: Member? = event.event.member
-    val voiceChannel: VoiceChannel
     val position: Long
     try {
         position = skipCheckParameter(event.event)
@@ -203,25 +177,14 @@ fun skipTo(event: EventExtender) {
         return
     }
 
-    try {
-        voiceChannel = Checks.slashCommandCheck(
-            event,
-            applicationId,
-            member,
-            guild
-        )
-    } catch (e: CheckFailedException) {
-        return
-    }
-
     val player: AudioPlayerExtender
     try {
         player = AudioPlayerManagerWrapper
             .getInstance()
             .getPlayer(
                 JDAManager.getInstance().getJDA(applicationId),
-                guild!!.id,
-                voiceChannel
+                payload.guild.id,
+                payload.voiceChannel
             )
     } catch (e: JDANotFound) {
         event.replyEphemeral(
@@ -239,7 +202,7 @@ fun skipTo(event: EventExtender) {
         return
     }
 
-    if (player.voiceChannel.id != voiceChannel.id) {
+    if (player.voiceChannel.id != payload.voiceChannel.id) {
         event.replyEphemeral(
             standardError(
                 ErrorMessages.NO_PLAYER_IN_VC
@@ -284,14 +247,11 @@ fun skipTo(event: EventExtender) {
     )
 }
 
-fun volume(event: EventExtender) {
+fun volume(event: EventExtender, payload: SlashCommandPayload) {
     fun volumeCheckParameters(event: SlashCommandEvent): Long {
         val level: OptionMapping = event.getOption("level") ?: throw ArgumentNotFoundException()
         return level.asLong
     }
-
-    val applicationid: String? = Dotenv.load()["APPLICATIONID"]
-    val guild: Guild? = event.event.guild
 
     val level: Int
 
@@ -312,8 +272,8 @@ fun volume(event: EventExtender) {
         audioPlayer = PlayerVault
             .getInstance()
             .getPlayer(
-                JDAManager.getInstance().getJDA(applicationid),
-                guild!!.id
+                JDAManager.getInstance().getJDA(payload.applicationId),
+                payload.guild.id
             )
     } catch (e: PlayerNotFoundException) {
         event.replyEphemeral(

@@ -1,45 +1,20 @@
 package commands;
 
-import io.github.cdimascio.dotenv.Dotenv;
 import ktSnippets.ErrorsKt;
 import ktUtils.AudioPlayerExtender;
-import ktUtils.CheckFailedException;
+import ktUtils.SlashCommandPayload;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
-import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.VoiceChannel;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import org.jetbrains.annotations.NotNull;
 import singeltons.AudioPlayerManagerWrapper;
 import singeltons.JDAManager;
 import snippets.Colours;
 import snippets.ErrorMessages;
-import utils.Checks;
 import utils.EventExtender;
 
 public class Join implements Command {
 
-    public static void trigger(@NotNull SlashCommandEvent scEvent) {
-        Dotenv dotenv = Dotenv.load();
-        Guild guild = scEvent.getGuild();
-        Member member = scEvent.getMember();
-        VoiceChannel voiceChannel;
-        String applicationId = dotenv.get("APPLICATIONID");
-
-        EventExtender event = new EventExtender(scEvent);
-
-        try {
-            voiceChannel = Checks.slashCommandCheck(
-                    scEvent,
-                    applicationId,
-                    member,
-                    guild
-            );
-        } catch (CheckFailedException e) {
-            return;
-        }
-
+    public static void trigger(@NotNull EventExtender event, SlashCommandPayload payload) {
         JDA godbotJDA = JDAManager.getInstance().getJDA(applicationId);
         if (godbotJDA == null) {
             event.replyEphemeral(
@@ -52,13 +27,13 @@ public class Join implements Command {
         try {
             audioPlayer = AudioPlayerManagerWrapper
                     .getInstance()
-                    .getPlayer(godbotJDA, guild.getId(), voiceChannel);
+                    .getPlayer(godbotJDA, payload.getGuild().getId(), payload.getVoiceChannel());
         } catch (Exception e) {
             e.printStackTrace();
             return;
         }
 
-        if (!audioPlayer.getVoiceChannel().equals(voiceChannel)) {
+        if (!audioPlayer.getVoiceChannel().equals(payload.getVoiceChannel())) {
             event.replyEphemeral(
                     ErrorsKt.standardError(
                             ErrorMessages.NO_PLAYER_IN_VC
@@ -82,8 +57,8 @@ public class Join implements Command {
                 new EmbedBuilder()
                         .setTitle(
                                 String.format(
-                                        "Joined the Channel `%s`",
-                                        member.getVoiceState().getChannel().getName()
+                                        "Joined the Channel %s",
+                                        payload.getVoiceChannel().getName()
                                 )
                         )
                         .setColor(Colours.godbotYellow)

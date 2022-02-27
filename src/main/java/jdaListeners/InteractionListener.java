@@ -2,19 +2,25 @@ package jdaListeners;
 
 import commands.*;
 import interactions.ButtonActionsKt;
+import io.github.cdimascio.dotenv.Dotenv;
 import ktCommands.GeneralCommandsKt;
 import ktCommands.MusicControlCommandsKt;
 import ktSnippets.ErrorsKt;
 import ktUtils.ButtonException;
+import ktUtils.CheckFailedException;
+import ktUtils.SlashCommandPayload;
 import logging.ListenerLogger;
 import logging.LoggerContent;
 import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.VoiceChannel;
 import net.dv8tion.jda.api.events.interaction.ButtonClickEvent;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
 import snippets.ErrorMessages;
+import utils.Checks;
 import utils.EventExtender;
 
 import javax.annotation.Nonnull;
@@ -58,20 +64,46 @@ public class InteractionListener extends ListenerAdapter {
                 )
         );
         // TODO: Put check block here, and always pass the VoiceChannel, if given
+        Dotenv dotenv = Dotenv.load();
+        String applicationId = dotenv.get("APPLICATIONID");
+        Guild guild = event.getGuild();
+        Member member = event.getMember();
+        VoiceChannel vc;
+
+        try {
+            vc = Checks.slashCommandCheck(
+                    event,
+                    applicationId,
+                    member,
+                    guild
+            );
+        } catch (CheckFailedException e) {
+            return;
+        }
+
+        SlashCommandPayload payload = new SlashCommandPayload(
+                vc,
+                guild,
+                member,
+                applicationId
+        );
+
+        EventExtender eventExtender = new EventExtender(event);
+
         switch (event.getName()) {
-            case "join" -> Join.trigger(event);
-            case "play" -> Play.trigger(event);
-            case "pause" -> Pause.trigger(event);
-            case "resume" -> Resume.trigger(event);
-            case "stop" -> Stop.trigger(event);
-            case "skip" -> Skip.trigger(event);
-            case "queue" -> Queue.trigger(event);
-            case "clear-queue" -> GeneralCommandsKt.clearQueue(new EventExtender(event));
-            case "remove" -> MusicControlCommandsKt.remove(new EventExtender(event));
-            case "leave" -> GeneralCommandsKt.leave(new EventExtender(event));
-            case "loop" -> MusicControlCommandsKt.loop(new EventExtender(event));
-            case "skipto" -> MusicControlCommandsKt.skipTo(new EventExtender(event));
-            case "volume" -> MusicControlCommandsKt.volume(new EventExtender(event));
+            case "join" -> Join.trigger(eventExtender, payload);
+            case "play" -> Play.trigger(eventExtender, payload);
+            case "pause" -> Pause.trigger(eventExtender, payload);
+            case "resume" -> Resume.trigger(eventExtender, payload);
+            case "stop" -> Stop.trigger(eventExtender, payload);
+            case "skip" -> Skip.trigger(eventExtender, payload);
+            case "queue" -> Queue.trigger(eventExtender, payload);
+            case "clear-queue" -> GeneralCommandsKt.clearQueue(eventExtender, payload);
+            case "remove" -> MusicControlCommandsKt.remove(eventExtender, payload);
+            case "leave" -> GeneralCommandsKt.leave(eventExtender, payload);
+            case "loop" -> MusicControlCommandsKt.loop(eventExtender, payload);
+            case "skipto" -> MusicControlCommandsKt.skipTo(eventExtender, payload);
+            case "volume" -> MusicControlCommandsKt.volume(eventExtender, payload);
         }
     }
 

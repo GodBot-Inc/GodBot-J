@@ -1,50 +1,21 @@
 package commands;
 
 import ktSnippets.ErrorsKt;
-import ktUtils.*;
+import ktUtils.AudioPlayerExtender;
+import ktUtils.GuildNotFoundException;
+import ktUtils.JDANotFound;
+import ktUtils.SlashCommandPayload;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.VoiceChannel;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import singeltons.JDAManager;
 import singeltons.PlayerVault;
 import snippets.Colours;
 import snippets.EmojiIds;
 import snippets.ErrorMessages;
-import utils.*;
+import utils.EventExtender;
 
 public class Resume implements Command {
 
-    public static void trigger(SlashCommandEvent scEvent) {
-        Guild guild = scEvent.getGuild();
-        Member member = scEvent.getMember();
-        VoiceChannel voiceChannel;
-
-        EventExtender event = new EventExtender(scEvent);
-
-        try {
-            voiceChannel = Checks.slashCommandCheck(
-                    applicationId,
-                    member,
-                    guild
-            );
-        } catch (VoiceCheckFailedException e) {
-            event.replyEphemeral(
-                    ErrorsKt.standardError(
-                            ErrorMessages.NOT_CONNECTED_TO_VC
-                    )
-            );
-            return;
-        } catch (CheckFailedException e) {
-            event.replyEphemeral(
-                    ErrorsKt.standardError(
-                            ErrorMessages.GENERAL_ERROR
-                    )
-            );
-            return;
-        }
-
+    public static void trigger(EventExtender event, SlashCommandPayload payload) {
         AudioPlayerExtender player;
 
         try {
@@ -52,7 +23,7 @@ public class Resume implements Command {
                     .getInstance()
                     .getPlayer(
                             JDAManager.getInstance().getJDA(applicationId),
-                            guild.getId()
+                            payload.getGuild().getId()
                     );
         } catch (JDANotFound e) {
             event.replyEphemeral(
@@ -70,7 +41,7 @@ public class Resume implements Command {
             return;
         }
 
-        if (!player.getVoiceChannel().getId().equals(voiceChannel.getId())) {
+        if (!player.getVoiceChannel().getId().equals(payload.getVoiceChannel().getId())) {
             event.replyEphemeral(
                     ErrorsKt.standardError(
                             ErrorMessages.NO_PLAYER_IN_VC

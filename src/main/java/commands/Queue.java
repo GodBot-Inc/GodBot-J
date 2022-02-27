@@ -4,11 +4,7 @@ import interactions.InteractionScheduler;
 import ktSnippets.ErrorsKt;
 import ktUtils.*;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
-import net.dv8tion.jda.api.entities.VoiceChannel;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import org.bson.Document;
 import org.jetbrains.annotations.NotNull;
 import singeltons.JDAManager;
@@ -17,7 +13,10 @@ import snippets.Buttons;
 import snippets.Colours;
 import snippets.EmojiIds;
 import snippets.ErrorMessages;
-import utils.*;
+import utils.DurationCalc;
+import utils.EventExtender;
+import utils.MongoCommunication;
+import utils.QueueWrapper;
 
 import java.util.List;
 import java.util.Objects;
@@ -50,32 +49,14 @@ public class Queue implements Command {
                 .build();
     }
 
-    public static void trigger(@NotNull SlashCommandEvent scEvent) {
-        Guild guild = scEvent.getGuild();
-        Member member = scEvent.getMember();
-        MongoCommunication mongoCommunication = MongoCommunication.getInstance();
-        VoiceChannel voiceChannel;
-
-        EventExtender event = new EventExtender(scEvent);
-
-        try {
-            voiceChannel = Checks.slashCommandCheck(
-                    scEvent,
-                    applicationId,
-                    member,
-                    guild
-            );
-        } catch (CheckFailedException e) {
-            return;
-        }
-
+    public static void trigger(@NotNull EventExtender event, SlashCommandPayload payload) {
         AudioPlayerExtender audioPlayer;
         try {
             audioPlayer = PlayerVault
                     .getInstance()
                     .getPlayer(
                             JDAManager.getInstance().getJDA(applicationId),
-                            guild.getId()
+                            payload.getGuild().getId()
                     );
         } catch (JDANotFound e) {
             event.replyEphemeral(
@@ -93,7 +74,7 @@ public class Queue implements Command {
             return;
         }
 
-        if (!audioPlayer.getVoiceChannel().getId().equals(voiceChannel.getId())) {
+        if (!audioPlayer.getVoiceChannel().getId().equals(payload.getVoiceChannel().getId())) {
             event.replyEphemeral(
                     ErrorsKt.standardError(
                             ErrorMessages.NO_PLAYER_IN_VC
@@ -114,8 +95,8 @@ public class Queue implements Command {
 
         QueueWrapper.QueueBuilder builder = new QueueWrapper.QueueBuilder();
 
-        builder.setServerId(guild.getId());
-        builder.setAuthorId(member.getId());
+        builder.setServerId(payload.getGuild().getId());
+        builder.setAuthorId(payload.getMember().getId());
         builder.setApplicationId(applicationId);
         builder.setPages((int) Math.ceil((float) audioPlayer.getQueue().size() / 10));
 
@@ -153,10 +134,10 @@ public class Queue implements Command {
         builder.setLastChanged(System.currentTimeMillis());
 
         if ((int) Math.ceil((float) queue.size() / 10) == 1) {
-            scEvent.replyEmbeds(
+            event.event.replyEmbeds(
                     getQueueEmbed(
                             (String) pagesDoc.get("0"),
-                            member.getUser().getAvatarUrl(),
+                            payload.getMember().getUser().getAvatarUrl(),
                             0,
                             (int) Math.ceil((float) queue.size() / 10)
                     )
@@ -164,10 +145,10 @@ public class Queue implements Command {
             return;
         }
 
-        scEvent.replyEmbeds(
+        event.event.replyEmbeds(
                     getQueueEmbed(
                             (String) pagesDoc.get("0"),
-                            member.getUser().getAvatarUrl(),
+                            payload.getMember().getUser().getAvatarUrl(),
                             0,
                             (int) Math.ceil((float) queue.size() / 10)
                     )
@@ -181,9 +162,9 @@ public class Queue implements Command {
                 .queue(interactionHook -> {
                     String messageId = interactionHook.retrieveOriginal().submit().join().getId();
                     builder.setMessageId(messageId);
-                    mongoCommunication.addQueue(builder.build().toBson());
+                    MongoCommunication.getInstance().addQueue(builder.build().toBson());
                     InteractionScheduler interactionScheduler = new InteractionScheduler(
-                            scEvent.getTextChannel().getId(),
+                            event.event.getTextChannel().getId(),
                             messageId,
                             5,
                             new Buttons.QueueBuilder()

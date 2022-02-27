@@ -13,7 +13,7 @@ public final class ErrorMessages {
     public static final String GENERAL_ERROR = "Mmmmhhh... An error occurred :thinking:";
     public static final String INVALID_PLATFORM = "The platform that you got your link from is not supported yet";
 
-    public static final String NOT_CONNECTED_TO_VC = "You are not connected to a Voicechannel";
+    public static final String NOT_CONNECTED_TO_VC = "You have to be connected to a Voicechannel to use this command";
     public static final String NO_PLAYING_TRACK = "There is no track playing";
     public static final String NO_PLAYER_IN_GUILD = "There is no player registered for this guild";
     public static final String NO_PLAYER_IN_VC = "There is no player registered for this VoiceChannel";
