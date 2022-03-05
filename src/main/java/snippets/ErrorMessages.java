@@ -8,7 +8,8 @@ public final class ErrorMessages {
     public static final String PLAY_INVALID_URL = "The given url is invalid\n " +
             "If you want to search for a song use the /searchplay command";
     public static final String TRACK_NOT_FOUND = "The Track associated with your url could not be found";
-    public static final String INTERNAL_ERROR = "The requested Api has some issues resolving my request";
+    public static final String INTERNAL_API_ERROR = "The requested Api has some issues resolving my request";
+    public static final String INTERNAL_ERROR = "An Internal Error occurred. Please contact the developers about this";
     public static final String COULD_NOT_SEND_REQUEST = "I have some issues getting the song information";
     public static final String GENERAL_ERROR = "Mmmmhhh... An error occurred :thinking:";
     public static final String INVALID_PLATFORM = "The platform that you got your link from is not supported yet";

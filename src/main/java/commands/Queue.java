@@ -58,7 +58,7 @@ public class Queue implements Command {
                             JDAManager.getInstance().getJDA(applicationId),
                             payload.getGuild().getId()
                     );
-        } catch (JDANotFound e) {
+        } catch (JDANotFoundException e) {
             event.replyEphemeral(
                     ErrorsKt.standardError(
                             ErrorMessages.PLAYER_NOT_FOUND

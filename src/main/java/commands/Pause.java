@@ -3,7 +3,7 @@ package commands;
 import ktSnippets.ErrorsKt;
 import ktUtils.AudioPlayerExtender;
 import ktUtils.GuildNotFoundException;
-import ktUtils.JDANotFound;
+import ktUtils.JDANotFoundException;
 import ktUtils.SlashCommandPayload;
 import net.dv8tion.jda.api.EmbedBuilder;
 import singeltons.JDAManager;
@@ -25,7 +25,7 @@ public class Pause implements Command {
                             JDAManager.getInstance().getJDA(applicationId),
                             payload.getGuild().getId()
                     );
-        } catch (JDANotFound e) {
+        } catch (JDANotFoundException e) {
             event.replyEphemeral(
                     ErrorsKt.standardError(
                             ErrorMessages.PLAYER_NOT_FOUND

@@ -104,6 +104,7 @@ public class InteractionListener extends ListenerAdapter {
             case "loop" -> MusicControlCommandsKt.loop(eventExtender, payload);
             case "skipto" -> MusicControlCommandsKt.skipTo(eventExtender, payload);
             case "volume" -> MusicControlCommandsKt.volume(eventExtender, payload);
+            case "seek" -> MusicControlCommandsKt.seek(eventExtender, payload);
         }
     }
 

@@ -73,7 +73,7 @@ fun leave(event: EventExtender, payload: SlashCommandPayload) {
                 payload.guild.id,
                 payload.voiceChannel
             )
-    } catch (e: JDANotFound) {
+    } catch (e: JDANotFoundException) {
         event.replyEphemeral(
             standardError(
                 ErrorMessages.PLAYER_NOT_FOUND

@@ -3,7 +3,7 @@ package jdaListeners;
 import io.github.cdimascio.dotenv.Dotenv;
 import ktUtils.AudioPlayerExtender;
 import ktUtils.GuildNotFoundException;
-import ktUtils.JDANotFound;
+import ktUtils.JDANotFoundException;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceJoinEvent;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceLeaveEvent;
@@ -26,7 +26,7 @@ public class GeneralListener extends ListenerAdapter {
                     JDAManager.getInstance().getJDA(applicationId),
                     event.getGuild().getId()
             );
-        } catch (JDANotFound | GuildNotFoundException e) {
+        } catch (JDANotFoundException | GuildNotFoundException e) {
             return;
         }
         if (event.getMember().getId().equals(applicationId)) {
@@ -50,7 +50,7 @@ public class GeneralListener extends ListenerAdapter {
         AudioPlayerExtender audioPlayer;
         try {
             audioPlayer = PlayerVault.getInstance().getPlayer(godbotJDA, event.getGuild().getId());
-        } catch (JDANotFound | GuildNotFoundException e) {
+        } catch (JDANotFoundException | GuildNotFoundException e) {
             return;
         }
         if (event.getChannelJoined() == audioPlayer.getVoiceChannel() &&
@@ -69,7 +69,7 @@ public class GeneralListener extends ListenerAdapter {
         }
         try {
             audioPlayer = PlayerVault.getInstance().getPlayer(godbotJDA, event.getGuild().getId());
-        } catch (JDANotFound | GuildNotFoundException e) {
+        } catch (JDANotFoundException | GuildNotFoundException e) {
             return;
         }
         if (event.getMember().getId().equals(godbotJDA.getSelfUser().getId())) {

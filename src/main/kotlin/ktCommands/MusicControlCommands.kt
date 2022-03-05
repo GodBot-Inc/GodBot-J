@@ -2,6 +2,7 @@ package ktCommands
 
 import commands.Command.applicationId
 import ktSnippets.standardError
+import ktSnippets.trackLines
 import ktUtils.*
 import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent
@@ -12,7 +13,9 @@ import singeltons.PlayerVault
 import snippets.Colours
 import snippets.EmojiIds
 import snippets.ErrorMessages
+import utils.DurationCalc
 import utils.EventExtender
+import java.util.concurrent.TimeUnit
 
 fun remove(event: EventExtender, payload: SlashCommandPayload) {
     fun removeCheckParameters(event: SlashCommandEvent): Long {
@@ -110,7 +113,7 @@ fun loop(event: EventExtender, payload: SlashCommandPayload) {
                 payload.guild.id,
                 payload.voiceChannel
             )
-    } catch (e: JDANotFound) {
+    } catch (e: JDANotFoundException) {
         event.replyEphemeral(
             standardError(
                 ErrorMessages.PLAYER_NOT_FOUND
@@ -186,7 +189,7 @@ fun skipTo(event: EventExtender, payload: SlashCommandPayload) {
                 payload.guild.id,
                 payload.voiceChannel
             )
-    } catch (e: JDANotFound) {
+    } catch (e: JDANotFoundException) {
         event.replyEphemeral(
             standardError(
                 ErrorMessages.PLAYER_NOT_FOUND
@@ -306,6 +309,83 @@ fun volume(event: EventExtender, payload: SlashCommandPayload) {
                 )
             )
             .setColor(Colours.godbotYellow)
+            .build()
+    )
+}
+
+fun seek(event: EventExtender, payload: SlashCommandPayload) {
+    fun getSeekParameters(): List<Long> {
+        val arr = ArrayList<Long>()
+        val hours = event.getOption("hours")
+        val minutes = event.getOption("minutes")
+        val seconds = event.getOption("seconds")
+        arr.add(hours?.asLong ?: 0)
+        arr.add(minutes?.asLong ?: 0)
+        arr.add(seconds?.asLong ?: 0)
+        return arr
+    }
+
+    fun getSeekPoint(): Long {
+        val hours = event.getOption("hours")
+        val minutes = event.getOption("minutes")
+        val seconds = event.getOption("seconds")
+        return TimeUnit.HOURS.toMillis(hours?.asLong ?: 0)+
+                TimeUnit.MINUTES.toMillis(minutes?.asLong ?: 0) +
+                TimeUnit.SECONDS.toMillis(seconds?.asLong ?: 0)
+    }
+
+    val audioPlayer: AudioPlayerExtender
+
+    try {
+        audioPlayer = PlayerVault
+            .getInstance()
+            .getPlayer(
+                JDAManager.getInstance().getJDA(payload.applicationId),
+                payload.guild.id
+            )
+    } catch (e: GuildNotFoundException) {
+        event.replyEphemeral(
+            standardError(ErrorMessages.NO_PLAYER_IN_VC)
+        )
+        return
+    } catch (e: JDANotFoundException) {
+        event.replyEphemeral(
+            standardError(ErrorMessages.NO_PLAYER_IN_VC)
+        )
+        return
+    }
+
+    if (audioPlayer.currentTrack == null) {
+        event.replyEphemeral(
+            standardError(ErrorMessages.NO_PLAYING_TRACK)
+        )
+        return
+    }
+
+    val seekPoint: Long = getSeekPoint()
+    val duration: Long = audioPlayer.currentTrack?.songInfo?.duration ?: 0
+    println(duration)
+    println(seekPoint)
+
+    if (seekPoint > duration) {
+        event.replyEphemeral(
+            standardError("I can't skip to ${DurationCalc.longToString(seekPoint)}" +
+                    ", because the song is only ${DurationCalc.longToString(duration)} long")
+        )
+        return
+    }
+
+    audioPlayer.seek(seekPoint)
+
+    event.reply(
+        EmbedBuilder()
+            .setTitle(audioPlayer.currentTrack?.songInfo?.title)
+            .setThumbnail(audioPlayer.currentTrack?.songInfo?.thumbnailUri)
+            .setDescription(
+                trackLines(seekPoint, audioPlayer.getCurrentSongDuration()) + " "
+                        + "**${DurationCalc.longToString(seekPoint)} - ${DurationCalc.longToString(duration)}**"
+            )
+            .setColor(Colours.godbotHeavenYellow)
             .build()
     )
 }

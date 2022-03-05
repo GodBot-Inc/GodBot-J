@@ -2,6 +2,7 @@ package utils;
 
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 
 public class EventExtender {
 
@@ -35,5 +36,9 @@ public class EventExtender {
         event
                 .replyEmbeds(embed)
                 .queue();
+    }
+
+    public OptionMapping getOption(String optName) {
+        return event.getOption(optName);
     }
 }

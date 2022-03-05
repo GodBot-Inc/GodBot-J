@@ -91,6 +91,11 @@ public final class DurationCalc {
         }
     }
 
+    /**
+     * Basically like longToString, but with zeroes before the actual time
+     * @param duration The duration of the Song in milliseconds
+     * @return The time in such Format: 00:00:00 - HH:MM:SS
+     */
     public static String longToStringPlus(long duration) {
         String strDuration = longToString(duration);
         int strDurationLength = strDuration.split(":").length;

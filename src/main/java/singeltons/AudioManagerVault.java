@@ -30,14 +30,6 @@ public class AudioManagerVault {
         for (Guild guild : guilds) {
             audioManagerStorage.get(botJDA).put(guild.getId(), guild.getAudioManager());
         }
-//        this.logger.info(
-//                new LoggerContent(
-//                        "info",
-//                        "AudioManagerVault-registerJDA",
-//                        "",
-//                        new HashMap<>()
-//                )
-//        );
     }
 
     public void registerGuild(JDA botJDA, Guild guild) {
@@ -45,29 +37,10 @@ public class AudioManagerVault {
             audioManagerStorage.put(botJDA, new HashMap<>());
         }
         audioManagerStorage.get(botJDA).put(guild.getId(), guild.getAudioManager());
-//        this.logger.info(
-//                new LoggerContent(
-//                        "info",
-//                        "AudioManagerVault-registerGuild",
-//                        "",
-//                        new HashMap<>() {{
-//                            put("GuildId", guild.getId());
-//                            put("GuildName", guild.getName());
-//                        }}
-//                )
-//        );
     }
 
     public void removeJDA(JDA botJDA) {
         audioManagerStorage.remove(botJDA);
-//        this.logger.info(
-//                new LoggerContent(
-//                        "info",
-//                        "AudioManagerVault-removeJDA",
-//                        "",
-//                        new HashMap<>()
-//                )
-//        );
     }
 
     public void removeGuild(JDA botJDA, String guildId)
@@ -76,16 +49,6 @@ public class AudioManagerVault {
             throw new ApplicationNotFoundException();
         }
         audioManagerStorage.get(botJDA).remove(guildId);
-//        this.logger.info(
-//                new LoggerContent(
-//                        "info",
-//                        "AudioManagerVault-removeGuild",
-//                        "",
-//                        new HashMap<>() {{
-//                            put("GuildId", guildId);
-//                        }}
-//                )
-//        );
     }
 
     public AudioManager getAudioManager(JDA botJDA, String guildId) {
@@ -98,16 +61,6 @@ public class AudioManagerVault {
             registerGuild(botJDA, guild);
             return getAudioManager(botJDA, guildId);
         }
-//        this.logger.info(
-//                new LoggerContent(
-//                        "info",
-//                        "AudioManagerVault-getAudioManager",
-//                        "",
-//                        new HashMap<>() {{
-//                            put("GuildId", guildId);
-//                        }}
-//                )
-//        );
         return audioManagerStorage.get(botJDA).get(guildId);
     }
 

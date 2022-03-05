@@ -13,10 +13,29 @@ private const val defaultThumbnail =
     "https://ppsfbg.am.files.1drv.com/y4pE72hePezfSkxt0hQjVD1oB35c-z2BAKrwscGcHyHGLthmiPiwTo9VgtDyscK3-Dg3Kp4I0z0cdu32TP7gZYoRhobdXoEDuZ4sBCyTblSLK-GN4q21X0_x2M6ybSxJkbRcJbd_k0NCp0Qc7lJHqY9TtCE1GSxS8p5R_M2MdtCDzKM5ZDChWflUiXXss2nzuH734US77ThE-ECcb2bHdVGy8YvgL7H7AEmr7tdZnZ5d4w/music.png"
 
 fun trackLines(currentMs: Long, maxMs: Long): String {
-    val position: Long = currentMs / (maxMs / 20)
+    fun roundToNearestFive(nump: Int): Int {
+        var num = nump
+        if (num % 5 == 0) return num
+        else if (num % 5 < 2.5) num -= num % 5
+        else num += (5 - num % 5)
+        return num
+    }
+
+    if (currentMs > maxMs) {
+        return trackLinesDefault()
+    }
+
+    println("First: " + (currentMs / maxMs.toDouble()))
+    println("Second " + (currentMs / maxMs.toDouble() * 100))
+    println("Third " + (currentMs / maxMs.toDouble() * 100 / 5))
+    println("Fourth " + roundToNearestFive((currentMs / maxMs.toDouble() * 100).toInt()) / 5)
+
+    val position: Int = roundToNearestFive((currentMs / maxMs.toDouble() * 100).toInt()) / 5
     val sb: StringBuilder = StringBuilder()
-    for (i in 1..21) {
-        if (i == (position - 1).toInt()) {
+    for (i in 0..19) {
+        println(i)
+        if (i == (position - 1)) {
+            println(i == position - 1)
             sb.append(":radio_button:")
             continue
         }
