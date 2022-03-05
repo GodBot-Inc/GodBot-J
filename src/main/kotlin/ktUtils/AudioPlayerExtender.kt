@@ -1,6 +1,6 @@
 package ktUtils
 
-import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
+import com.sedmelluq.discord.lavaplayer.player.AudioPlayer
 import lavaplayerHandlers.AudioPlayerSendHandler
 import lavaplayerHandlers.TrackEventListener
 import net.dv8tion.jda.api.entities.Member
@@ -58,6 +58,8 @@ class AudioPlayerExtender(
     }
 
     private fun updateUsage() = apply { lastAction = System.currentTimeMillis() }
+
+    fun seek(seekPoint: Long) = apply { audioPlayer.playingTrack.position = seekPoint;updateUsage() }
 
     fun cleanup() {
         audioManager.closeAudioConnection()
@@ -169,6 +171,8 @@ class AudioPlayerExtender(
     fun setVolume(volume: Int) = apply { updateUsage(); audioPlayer.volume = volume }
 
     fun getVolume() = audioPlayer.volume
+
+    fun getCurrentSongDuration() = audioPlayer.playingTrack?.duration ?: 0
 
     fun isConnected() = audioManager.isConnected
 

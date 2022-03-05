@@ -1,46 +1,25 @@
 package ktCommands
 
-import io.github.cdimascio.dotenv.Dotenv
+import commands.Command.applicationId
 import ktSnippets.standardError
 import ktUtils.*
 import net.dv8tion.jda.api.EmbedBuilder
-import net.dv8tion.jda.api.entities.Guild
-import net.dv8tion.jda.api.entities.Member
-import net.dv8tion.jda.api.entities.VoiceChannel
 import singeltons.AudioPlayerManagerWrapper
 import singeltons.JDAManager
 import singeltons.PlayerVault
 import snippets.Colours
-import snippets.EmojiIds
 import snippets.ErrorMessages
-import utils.Checks
 import utils.EventExtender
 
-fun clearQueue(event: EventExtender) {
-    val applicationId: String? = Dotenv.load()["APPLICATIONID"]
-    val guild: Guild? = event.event.guild
-    val member: Member? = event.event.member
-    val voiceChannel: VoiceChannel
-
+fun clearQueue(event: EventExtender, payload: SlashCommandPayload) {
     val player: AudioPlayerExtender
-
-    try {
-        voiceChannel = Checks.slashCommandCheck(
-            event,
-            applicationId,
-            member,
-            guild
-        )
-    } catch (e: CheckFailedException) {
-        return
-    }
 
     try {
         player = PlayerVault
             .getInstance()
             .getPlayer(
                 JDAManager.getInstance().getJDA(applicationId),
-                guild!!.id
+                payload.guild.id
             )
     } catch (e: GuildNotFoundException) {
         event.replyEphemeral(
@@ -58,7 +37,7 @@ fun clearQueue(event: EventExtender) {
         return
     }
 
-    if (player.voiceChannel.id != voiceChannel.id) {
+    if (player.voiceChannel.id != payload.voiceChannel.id) {
         event.replyEphemeral(
             standardError(
                 ErrorMessages.NO_PLAYER_IN_VC
@@ -83,23 +62,7 @@ fun clearQueue(event: EventExtender) {
     )
 }
 
-fun leave(event: EventExtender) {
-    val applicationId: String? = Dotenv.load()["APPLICATIONID"]
-    val guild: Guild? = event.event.guild
-    val member: Member? = event.event.member
-    val voiceChannel: VoiceChannel
-
-    try {
-        voiceChannel = Checks.slashCommandCheck(
-            event,
-            applicationId,
-            member,
-            guild
-        )
-    } catch (e: CheckFailedException) {
-        return
-    }
-
+fun leave(event: EventExtender, payload: SlashCommandPayload) {
     val player: AudioPlayerExtender
 
     try {
@@ -107,10 +70,10 @@ fun leave(event: EventExtender) {
             .getInstance()
             .getPlayer(
                 JDAManager.getInstance().getJDA(applicationId),
-                guild!!.id,
-                voiceChannel
+                payload.guild.id,
+                payload.voiceChannel
             )
-    } catch (e: JDANotFound) {
+    } catch (e: JDANotFoundException) {
         event.replyEphemeral(
             standardError(
                 ErrorMessages.PLAYER_NOT_FOUND
@@ -126,7 +89,7 @@ fun leave(event: EventExtender) {
         return
     }
 
-    if (player.voiceChannel.id != voiceChannel.id) {
+    if (player.voiceChannel.id != payload.voiceChannel.id) {
         event.replyEphemeral(
             standardError(
                 ErrorMessages.NO_PLAYER_IN_VC
@@ -142,9 +105,8 @@ fun leave(event: EventExtender) {
         EmbedBuilder()
             .setTitle(
                 String.format(
-                    "%s Left Channel %s",
-                    EmojiIds.leave,
-                    voiceChannel.name
+                    "Left Channel %s",
+                    payload.voiceChannel.name
                 )
             )
             .setColor(Colours.godbotYellow)

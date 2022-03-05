@@ -8,7 +8,7 @@ import snippets.EmojiIds
 fun standardError(description: String): MessageEmbed {
     return EmbedBuilder()
         .setDescription(description)
-        .setColor(Colours.godbotWarnOrange)
+        .setColor(Colours.godbotErrorRed)
         .build()
 }
 
@@ -21,7 +21,7 @@ fun notFoundError(description: String): MessageEmbed {
                 description
             )
         )
-        .setColor(Colours.godbotWarnOrange)
+        .setColor(Colours.godbotErrorRed)
         .build()
 }
 
@@ -34,6 +34,6 @@ fun emptyError(description: String): MessageEmbed {
                 description
             )
         )
-        .setColor(Colours.godbotWarnOrange)
+        .setColor(Colours.godbotErrorRed)
         .build()
 }

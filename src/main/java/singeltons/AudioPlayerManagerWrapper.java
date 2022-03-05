@@ -25,8 +25,7 @@ public class AudioPlayerManagerWrapper {
         playerManager.getConfiguration().setResamplingQuality(AudioConfiguration.ResamplingQuality.HIGH);
         playerManager.getConfiguration().setOpusEncodingQuality(AudioConfiguration.OPUS_QUALITY_MAX);
         // set to 1000 if bad (ms not s)
-        // Should preload 1 Minute and 20 Seconds of audio (incredibly memory intensive, but reduces shattering)
-        // TODO The bot only takes 200 milliseconds of preloading max (implement your own DefaultAudioPlayerManager)
+        // Should preload 1 Minute and 20 Seconds
         playerManager.setFrameBufferDuration((int) TimeUnit.SECONDS.toMillis(80));
         // set to 500 if bad
         playerManager.setItemLoaderThreadPoolSize(1000);
@@ -59,7 +58,7 @@ public class AudioPlayerManagerWrapper {
                             bot,
                             guildId
                     );
-        } catch (JDANotFound | GuildNotFoundException e) {
+        } catch (JDANotFoundException | GuildNotFoundException e) {
             player = createPlayer(
                     bot,
                     guildId,

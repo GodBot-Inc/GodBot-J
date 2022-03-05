@@ -1,58 +1,30 @@
 package commands;
 
-import io.github.cdimascio.dotenv.Dotenv;
 import ktSnippets.ErrorsKt;
 import ktUtils.AudioPlayerExtender;
-import ktUtils.CheckFailedException;
 import ktUtils.GuildNotFoundException;
-import ktUtils.JDANotFound;
+import ktUtils.JDANotFoundException;
+import ktUtils.SlashCommandPayload;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.VoiceChannel;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import singeltons.JDAManager;
 import singeltons.PlayerVault;
 import snippets.Colours;
 import snippets.EmojiIds;
 import snippets.ErrorMessages;
-import utils.*;
+import utils.EventExtender;
 
 public class Stop implements Command {
 
-    public static void trigger(SlashCommandEvent scEvent) {
-        Dotenv dotenv = Dotenv.load();
-        Guild guild = scEvent.getGuild();
-        Member member = scEvent.getMember();
-        String applicationId = dotenv.get("APPLICATIONID");
-
-        EventExtender event = new EventExtender(scEvent);
-
-        VoiceChannel voiceChannel;
-        try {
-            voiceChannel = Checks.slashCommandCheck(
-                    scEvent,
-                    applicationId,
-                    member,
-                    guild
-            );
-        } catch (CheckFailedException e) {
-            event
-                    .replyEphemeral(
-                            ErrorMessages.GENERAL_ERROR
-                    );
-            return;
-        }
-
+    public static void trigger(EventExtender event, SlashCommandPayload payload) {
         AudioPlayerExtender player;
         try {
             player = PlayerVault
                     .getInstance()
                     .getPlayer(
                             JDAManager.getInstance().getJDA(applicationId),
-                            guild.getId()
+                            payload.getGuild().getId()
                     );
-        } catch (JDANotFound e) {
+        } catch (JDANotFoundException e) {
             event.replyEphemeral(
                     ErrorsKt.standardError(
                             ErrorMessages.PLAYER_NOT_FOUND
@@ -68,7 +40,7 @@ public class Stop implements Command {
             return;
         }
 
-        if (!player.getVoiceChannel().getId().equals(voiceChannel.getId())) {
+        if (!player.getVoiceChannel().getId().equals(payload.getVoiceChannel().getId())) {
             event.replyEphemeral(
                     ErrorsKt.standardError(
                             ErrorMessages.NO_PLAYER_IN_VC

@@ -2,7 +2,7 @@ package singeltons;
 
 import ktUtils.AudioPlayerExtender;
 import ktUtils.GuildNotFoundException;
-import ktUtils.JDANotFound;
+import ktUtils.JDANotFoundException;
 import net.dv8tion.jda.api.JDA;
 
 import java.util.HashMap;
@@ -16,9 +16,9 @@ public class PlayerVault {
     private final HashMap<JDA, HashMap<String, AudioPlayerExtender>> playerStorage = new HashMap<>();
 
     public void checkBotAndGuild(JDA bot, String guildId)
-            throws JDANotFound, GuildNotFoundException {
+            throws JDANotFoundException, GuildNotFoundException {
         if (!playerStorage.containsKey(bot)) {
-            throw new JDANotFound();
+            throw new JDANotFoundException();
         }
         if (!playerStorage.get(bot).containsKey(guildId)) {
             throw new GuildNotFoundException();
@@ -54,7 +54,7 @@ public class PlayerVault {
     public AudioPlayerExtender getPlayer(
             JDA jda,
             String guildId
-    ) throws JDANotFound, GuildNotFoundException {
+    ) throws JDANotFoundException, GuildNotFoundException {
         checkBotAndGuild(jda, guildId);
         return playerStorage.get(jda).get(guildId);
     }

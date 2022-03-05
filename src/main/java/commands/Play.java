@@ -1,15 +1,11 @@
 package commands;
 
-import io.github.cdimascio.dotenv.Dotenv;
 import ktSnippets.ErrorsKt;
 import ktSnippets.TrackInfoKt;
 import ktUtils.*;
 import net.dv8tion.jda.api.JDA;
-import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
-import net.dv8tion.jda.api.entities.VoiceChannel;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import org.jetbrains.annotations.NotNull;
@@ -193,8 +189,7 @@ public class Play implements Command {
         interactionHook.sendMessageEmbeds(embed).queue();
     }
 
-    public static void trigger(@NotNull SlashCommandEvent scEvent) {
-        EventExtender event = new EventExtender(scEvent);
+    public static void trigger(@NotNull EventExtender event, SlashCommandPayload payload) {
         String url;
         try {
             url = checkParameters(event);
@@ -203,35 +198,6 @@ public class Play implements Command {
                 .replyEphemeral(
                         ErrorsKt.standardError("No URL provided")
                 );
-            return;
-        }
-
-        Dotenv dotenv = Dotenv.load();
-        Guild guild = scEvent.getGuild();
-        Member member = scEvent.getMember();
-        String applicationId = dotenv.get("APPLICATIONID");
-
-        VoiceChannel voiceChannel;
-
-        try {
-            voiceChannel = Checks.slashCommandCheck(
-                    applicationId,
-                    member,
-                    guild
-            );
-        } catch (VoiceCheckFailedException e) {
-            event.replyEphemeral(
-                    ErrorsKt.standardError(
-                            ErrorMessages.NOT_CONNECTED_TO_VC
-                    )
-                    );
-            return;
-        } catch (CheckFailedException e) {
-            event.replyEphemeral(
-                    ErrorsKt.standardError(
-                            ErrorMessages.GENERAL_ERROR
-                    )
-            );
             return;
         }
 
@@ -256,11 +222,11 @@ public class Play implements Command {
                 .getInstance()
                 .getPlayer(
                         bot,
-                        guild.getId(),
-                        voiceChannel
+                        payload.getGuild().getId(),
+                        payload.getVoiceChannel()
                 );
 
-        if (!player.getVoiceChannel().getId().equals(voiceChannel.getId())) {
+        if (!player.getVoiceChannel().getId().equals(payload.getVoiceChannel().getId())) {
             event.replyEphemeral(
                     ErrorsKt.standardError(
                             ErrorMessages.NO_PLAYER_IN_VC
@@ -269,8 +235,8 @@ public class Play implements Command {
             return;
         }
 
-        InteractionHook interactionHook = scEvent.getHook();
-        scEvent.deferReply().queue();
+        InteractionHook interactionHook = event.event.getHook();
+        event.event.deferReply().queue();
 
         Future<PlayableInfo> infoGatheringFuture = startInfoGathering(url);
 
@@ -296,7 +262,7 @@ public class Play implements Command {
         if (!isVideo) {
             processPlaylist(
                     player,
-                    member,
+                    payload.getMember(),
                     getShuffle(event),
                     interactionHook,
                     infoGatheringFuture
@@ -304,7 +270,7 @@ public class Play implements Command {
         } else {
             processVideo(
                     player,
-                    member,
+                    payload.getMember(),
                     interactionHook,
                     infoGatheringFuture
             );

@@ -17,7 +17,7 @@ class MessageNotFoundException: NotFoundException()
 
 class ApplicationNotFoundException: NotFoundException()
 
-class JDANotFound: NotFoundException()
+class JDANotFoundException: NotFoundException()
 
 class PlayerNotFoundException: NotFoundException()
 
