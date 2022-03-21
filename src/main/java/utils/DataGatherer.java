@@ -10,7 +10,7 @@ import java.io.IOException;
 
 public class DataGatherer {
     public static PlayableInfo gatherPlayableInfo(String url)
-            throws InvalidURLException, PlatformNotFoundException, InternalError {
+            throws InvalidURLException, PlatformNotFoundException, InternalError, IllegalStateException {
         if (Checks.linkIsValid(url)) {
             throw new InvalidURLException();
         }

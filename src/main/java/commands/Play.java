@@ -156,6 +156,11 @@ public class Play implements Command {
                                 ErrorsKt.standardError(ErrorMessages.PLATFORM_NOT_FOUND)
                         ).queue();
                 return;
+            } else if (e.getCause() instanceof  IllegalStateException) {
+                interactionHook.sendMessageEmbeds(
+                        ErrorsKt.standardError(ErrorMessages.INVALID_PLATFORM)
+                ).queue();
+                return;
             }
             interactionHook
                     .sendMessageEmbeds(

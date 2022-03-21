@@ -59,10 +59,6 @@ public class GodBotSystem {
         }
     }
 
-    private static void checkENV() {
-
-    }
-
     private static JDA initializeBotFromToken(String TOKEN, String applicationId, boolean listeners)
             throws LoginException {
         JDABuilder builder = JDABuilder.createDefault(TOKEN);
