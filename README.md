@@ -29,6 +29,13 @@ To run this project, you will need to add the following environment variables to
 
 `SPOT_CLIENT_SECRET`: Spotify Api Client Secret
 
+## Installation
+
+1. Goto ``https://github.com/GodBot-Inc/GB-Logging/releases`` and download the latest jar
+2. Goto ``https://github.com/GodBot-Inc/Lavaplayer/releases`` and download the latest jar
+3. Create a ``/lib`` folder in the root directory of the Project, and move the downloaded jars into it
+4. Open the Project in Intellij, and install all Gradle Dependencies
+
 ## Tech Stack
 
 [**JDA**](https://github.com/DV8FromTheWorld/JDA): Communication with discord. Sending and receiving events.
