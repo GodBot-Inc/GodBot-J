@@ -1,3 +1,6 @@
+import ktLogging.ConfigKt;
+import ktLogging.LoggingLevel;
+import ktLogging.defaults.LoggerImpl;
 import io.github.cdimascio.dotenv.Dotenv;
 import jdaListeners.BotStateListener;
 import jdaListeners.GeneralListener;
@@ -19,44 +22,57 @@ import javax.security.auth.login.LoginException;
 public class GodBotSystem {
     public static void main(String[] args) {
         Dotenv dotenv = Dotenv.load();
+        LoggerImpl logger = new LoggerImpl();
+        ConfigKt.setShowId(false);
 
+        logger.info("Checking Env...", LoggingLevel.HIGH);
         try {
             Checks.checkENV();
         } catch (ENVCheckFailedException e) {
+            logger.fatal("Checking Env Failed stopping Program...", LoggingLevel.HIGH);
             e.printStackTrace();
             System.exit(0);
             return;
         }
+        logger.info("Checking Env Successful", LoggingLevel.HIGH);
 
         // Load Bot-Token into the program
+        logger.info("Getting Bot Credentials", LoggingLevel.HIGH);
         String TOKEN = dotenv.get("TOKEN");
         String israTOKEN = dotenv.get("IsrafilTOKEN");
         String APPLICATIONID = dotenv.get("APPLICATIONID");
         String israAPPLICATIONID = dotenv.get("IsrafilAPPLICATIONID");
+        logger.info("Getting Bot Credentials Successfull", LoggingLevel.HIGH);
 
         JDA godbotJDA;
 //        JDA israJDA;
+        logger.info("Initializing Bot from TOKEN...", LoggingLevel.HIGH);
         try {
             godbotJDA = initializeBotFromToken(TOKEN, APPLICATIONID, true);
 //            israJDA = initializeBotFromToken(israTOKEN, israAPPLICATIONID, false);
         } catch (LoginException e) {
+            logger.fatal("Initializing Failed", LoggingLevel.HIGH);
             e.printStackTrace();
             System.exit(0);
             return;
         }
+        logger.info("Initializing successful", LoggingLevel.HIGH);
 
         godbotJDA.getPresence().setActivity(Activity.playing("music | /help"));
 //        israJDA.getPresence().setActivity(Activity.listening("the GodBot System"));
 
         // Wait until JDA is ready and loaded
+        logger.info("Waiting for the bot to get Ready", LoggingLevel.HIGH);
         try {
             godbotJDA.awaitReady();
 //            israJDA.awaitReady();
         } catch (InterruptedException e) {
+            logger.fatal("Bot failed to start", LoggingLevel.HIGH);
             e.printStackTrace();
             godbotJDA.shutdown();
 //            israJDA.shutdown();
         }
+        logger.info("Bot Ready and loaded", LoggingLevel.HIGH);
     }
 
     private static JDA initializeBotFromToken(String TOKEN, String applicationId, boolean listeners)

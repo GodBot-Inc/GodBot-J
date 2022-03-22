@@ -196,6 +196,7 @@ public class Play implements Command {
 
     public static void trigger(@NotNull EventExtender event, SlashCommandPayload payload) {
         String url;
+
         try {
             url = checkParameters(event);
         } catch (CheckFailedException e) {

@@ -21,17 +21,19 @@ dependencies {
 
     // Custom Dependencies
     implementation('io.github.cdimascio:dotenv-kotlin:6.2.2')
-    implementation('org.mongodb:mongodb-driver-sync:4.4.0')
+    implementation('org.mongodb:mongodb-driver-sync:4.5.0')
     implementation('net.dv8tion:JDA:4.3.0_334')
-    implementation('org.json:json:20210307')
+    implementation('org.json:json:20211205')
     implementation('org.apache.logging.log4j:log4j-api:2.17.0')
     implementation('org.apache.logging.log4j:log4j-core:2.17.0')
     implementation('org.slf4j:slf4j-api:1.7.32')
     implementation('org.slf4j:slf4j-log4j12:1.7.32')
     implementation('com.sedmelluq:jda-nas:1.1.0')
     implementation('com.adamratzman:spotify-api-kotlin-core:3.8.5')
-    implementation files('lib/GB-Logging.jar')
     implementation files('lib/Lavaplayer.jar')
+
+    // GB-Logging Dependencies
+    implementation('com.andreapivetta.kolor:kolor:1.0.0')
 }
 
 test {
