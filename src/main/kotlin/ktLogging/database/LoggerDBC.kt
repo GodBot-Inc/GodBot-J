@@ -1,4 +1,4 @@
-package com.godbot.database
+package ktLogging.database
 
 import com.godbot.database.models.GroupLog
 import com.godbot.database.models.Log

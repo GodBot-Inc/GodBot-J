@@ -1,17 +1,16 @@
 package ktLogging.defaults
 
+import com.godbot.database.models.Log
 import ktLogging.LoggingException
 import ktLogging.LoggingLevel
-import com.godbot.database.LoggerDBC
-import com.godbot.database.models.Log
-import ktLogging.resolveLoggingLvl
+import ktLogging.database.LoggerDBC
 import ktLogging.database.models.LogImpl
+import ktLogging.resolveLoggingLvl
 
 open class DefaultDBLogger(private val dbc: LoggerDBC): LoggerImpl() {
     private var currentChildLogger: DefaultChildDBLogger? = null
     private val childLogSaves = ArrayList<Log>()
     private var operationTitle: String = ""
-
 
     override fun info(msg: String, lvl: LoggingLevel) {
         val log = LogImpl(getId(), "info", lvl, msg)
