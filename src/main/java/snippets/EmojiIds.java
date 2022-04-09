@@ -19,7 +19,7 @@ public class EmojiIds {
     public static final String trackEmoji = "<:tracks:919540015648895026>";
     public static final String searching = "<:searching:942777829253320734>";
     public static final String invalid = "<:invalid:942778717694988358>";
-    public static final String leave = "<:leave:942780013823012867>";
+    public static final String cleaned = "<:cleaned:962363728026812416>";
 
     // Music Player Icons
     public static final String stop = "<:stop:919800546074972240>";

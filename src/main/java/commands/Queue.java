@@ -1,7 +1,9 @@
 package commands;
 
 import interactions.InteractionScheduler;
-import ktSnippets.ErrorsKt;
+import ktLogging.UtilsKt;
+import ktLogging.custom.GodBotChildLogger;
+import ktLogging.custom.GodBotLogger;
 import ktUtils.*;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
@@ -50,6 +52,11 @@ public class Queue implements Command {
     }
 
     public static void trigger(@NotNull EventExtender event, SlashCommandPayload payload) {
+        GodBotChildLogger logger = new GodBotLogger().command(
+                "Queue",
+                UtilsKt.formatPayload(payload)
+        );
+
         AudioPlayerExtender audioPlayer;
         try {
             audioPlayer = PlayerVault
@@ -59,37 +66,22 @@ public class Queue implements Command {
                             payload.getGuild().getId()
                     );
         } catch (JDANotFoundException e) {
-            event.replyEphemeral(
-                    ErrorsKt.standardError(
-                            ErrorMessages.PLAYER_NOT_FOUND
-                    )
-            );
+            ErrorHandlerKt.handleDefaultErrorResponse(event, payload, ErrorMessages.PLAYER_NOT_FOUND, logger);
             return;
         } catch (GuildNotFoundException e) {
-            event.replyEphemeral(
-                    ErrorsKt.standardError(
-                            ErrorMessages.NO_PLAYER_IN_GUILD
-                    )
-            );
+            ErrorHandlerKt.handleDefaultErrorResponse(event, payload, ErrorMessages.NO_PLAYER_IN_GUILD, logger);
             return;
         }
+        logger.info("Got AudioPlayer");
 
         if (!audioPlayer.getVoiceChannel().getId().equals(payload.getVoiceChannel().getId())) {
-            event.replyEphemeral(
-                    ErrorsKt.standardError(
-                            ErrorMessages.NO_PLAYER_IN_VC
-                    )
-            );
+            ErrorHandlerKt.handleDefaultErrorResponse(event, payload, ErrorMessages.NO_PLAYER_IN_VC, logger);
             return;
         }
 
         List<AudioTrackExtender> queue = audioPlayer.getQueue();
         if (queue.isEmpty()) {
-            event.replyEphemeral(
-                    ErrorsKt.standardError(
-                            ErrorMessages.QUEUE_EMPTY
-                    )
-            );
+            ErrorHandlerKt.handleDefaultErrorResponse(event, payload, ErrorMessages.QUEUE_EMPTY, logger);
             return;
         }
 
@@ -102,6 +94,7 @@ public class Queue implements Command {
 
         Document pagesDoc = new Document();
         StringBuilder stringBuilder = new StringBuilder();
+        logger.info("Set preData for QueueBuilder");
 
         for (int i = 0; i < audioPlayer.getQueue().size(); i++) {
             AudioTrackExtender currentTrack = queue.get(i);
@@ -132,6 +125,7 @@ public class Queue implements Command {
 
         builder.setPagesDocument(pagesDoc);
         builder.setLastChanged(System.currentTimeMillis());
+        logger.info("Built Queue Message with all pages");
 
         if ((int) Math.ceil((float) queue.size() / 10) == 1) {
             event.event.replyEmbeds(
@@ -166,7 +160,7 @@ public class Queue implements Command {
                     InteractionScheduler interactionScheduler = new InteractionScheduler(
                             event.event.getTextChannel().getId(),
                             messageId,
-                            5,
+                            10,
                             new Buttons.QueueBuilder()
                                     .setFirstDisabled(true)
                                     .setLeftDisabled(true)
@@ -180,5 +174,6 @@ public class Queue implements Command {
                         interactionScheduler.deleteQueue();
                     }
                 });
+        logger.info("Queue Message Sent");
     }
 }

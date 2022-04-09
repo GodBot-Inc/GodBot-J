@@ -1,6 +1,8 @@
 package ktCommands
 
 import commands.Command.applicationId
+import ktLogging.custom.GodBotLogger
+import ktLogging.formatPayload
 import ktSnippets.standardError
 import ktUtils.*
 import net.dv8tion.jda.api.EmbedBuilder
@@ -8,10 +10,16 @@ import singeltons.AudioPlayerManagerWrapper
 import singeltons.JDAManager
 import singeltons.PlayerVault
 import snippets.Colours
+import snippets.EmojiIds
 import snippets.ErrorMessages
 import utils.EventExtender
 
 fun clearQueue(event: EventExtender, payload: SlashCommandPayload) {
+    val logger = GodBotLogger().command(
+        "clearQueue",
+        formatPayload(payload)
+    )
+
     val player: AudioPlayerExtender
 
     try {
@@ -22,47 +30,38 @@ fun clearQueue(event: EventExtender, payload: SlashCommandPayload) {
                 payload.guild.id
             )
     } catch (e: GuildNotFoundException) {
-        event.replyEphemeral(
-            standardError(
-                ErrorMessages.NO_PLAYER_IN_GUILD
-            )
-        )
+        handleDefaultErrorResponse(event, payload, ErrorMessages.NO_PLAYER_IN_GUILD, logger)
         return
     } catch (e: ChannelNotFoundException) {
-        event.replyEphemeral(
-            standardError(
-                ErrorMessages.NO_PLAYER_IN_VC
-            )
-        )
+        handleDefaultErrorResponse(event, payload, ErrorMessages.NO_PLAYER_IN_VC, logger)
         return
     }
+    logger.info("Got AudioPlayer")
 
     if (player.voiceChannel.id != payload.voiceChannel.id) {
-        event.replyEphemeral(
-            standardError(
-                ErrorMessages.NO_PLAYER_IN_VC
-            )
-        )
+        handleDefaultErrorResponse(event, payload, ErrorMessages.NO_PLAYER_IN_VC, logger)
         return
     }
 
-    val items: Int = player.queue.size
     player.clearQueue()
 
     event.reply(
         EmbedBuilder()
             .setTitle(
-                String.format(
-                    "Cleared Queue: `%s` Items",
-                    items
-                )
+                "${EmojiIds.cleaned} Removed all tracks from the Queue"
             )
             .setColor(Colours.godbotYellow)
             .build()
     )
+    logger.info("Response sent")
 }
 
 fun leave(event: EventExtender, payload: SlashCommandPayload) {
+    val logger = GodBotLogger().command(
+        "leave",
+        formatPayload(payload)
+    )
+
     val player: AudioPlayerExtender
 
     try {
@@ -74,18 +73,10 @@ fun leave(event: EventExtender, payload: SlashCommandPayload) {
                 payload.voiceChannel
             )
     } catch (e: JDANotFoundException) {
-        event.replyEphemeral(
-            standardError(
-                ErrorMessages.PLAYER_NOT_FOUND
-            )
-        )
+        handleDefaultErrorResponse(event, payload, ErrorMessages.PLAYER_NOT_FOUND, logger)
         return
     } catch (e: GuildNotFoundException) {
-        event.replyEphemeral(
-            standardError(
-                ErrorMessages.NO_PLAYER_IN_GUILD
-            )
-        )
+        handleDefaultErrorResponse(event, payload, ErrorMessages.NO_PLAYER_IN_GUILD, logger)
         return
     }
 

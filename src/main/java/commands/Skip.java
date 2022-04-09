@@ -1,6 +1,8 @@
 package commands;
 
-import ktSnippets.ErrorsKt;
+import ktLogging.UtilsKt;
+import ktLogging.custom.GodBotChildLogger;
+import ktLogging.custom.GodBotLogger;
 import ktUtils.*;
 import net.dv8tion.jda.api.EmbedBuilder;
 import org.jetbrains.annotations.NotNull;
@@ -14,6 +16,10 @@ import utils.EventExtender;
 public class Skip implements Command {
 
     public static void trigger(@NotNull EventExtender event, SlashCommandPayload payload) {
+        GodBotChildLogger logger = new GodBotLogger().command(
+                "Skip",
+                UtilsKt.formatPayload(payload)
+        );
         AudioPlayerExtender player;
 
         try {
@@ -24,36 +30,21 @@ public class Skip implements Command {
                             payload.getGuild().getId()
                     );
         } catch (JDANotFoundException e) {
-            event.replyEphemeral(
-                    ErrorsKt.standardError(
-                            ErrorMessages.PLAYER_NOT_FOUND
-                    )
-            );
+            ErrorHandlerKt.handleDefaultErrorResponse(event, payload, ErrorMessages.PLAYER_NOT_FOUND, logger);
             return;
         } catch (GuildNotFoundException e) {
-            event.replyEphemeral(
-                    ErrorsKt.standardError(
-                            ErrorMessages.NO_PLAYER_IN_GUILD
-                    )
-            );
+            ErrorHandlerKt.handleDefaultErrorResponse(event, payload, ErrorMessages.NO_PLAYER_IN_GUILD, logger);
             return;
         }
+        logger.info("Got AudioPlayer");
 
         if (!player.getVoiceChannel().getId().equals(payload.getVoiceChannel().getId())) {
-            event.replyEphemeral(
-                    ErrorsKt.standardError(
-                            ErrorMessages.NO_PLAYER_IN_VC
-                    )
-            );
+            ErrorHandlerKt.handleDefaultErrorResponse(event, payload, ErrorMessages.NO_PLAYER_IN_VC, logger);
             return;
         }
 
         if (player.getCurrentTrack() == null) {
-            event.replyEphemeral(
-                    ErrorsKt.standardError(
-                            ErrorMessages.NO_PLAYING_TRACK
-                    )
-            );
+            ErrorHandlerKt.handleDefaultErrorResponse(event, payload, ErrorMessages.NO_PLAYING_TRACK, logger);
             return;
         }
 
@@ -61,11 +52,7 @@ public class Skip implements Command {
         try {
             audioTrack = player.playNext();
         } catch (QueueEmptyException e) {
-            event.replyEphemeral(
-                    ErrorsKt.emptyError(
-                            ErrorMessages.QUEUE_EMPTY
-                    )
-            );
+            ErrorHandlerKt.handleDefaultErrorResponse(event, payload, ErrorMessages.QUEUE_EMPTY, logger);
             return;
         }
 
@@ -82,5 +69,6 @@ public class Skip implements Command {
                         .setColor(Colours.godbotYellow)
                         .build()
         );
+        logger.info("Response sent");
     }
 }

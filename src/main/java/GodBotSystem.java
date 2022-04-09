@@ -1,10 +1,11 @@
-import ktLogging.ConfigKt;
-import ktLogging.LoggingLevel;
-import ktLogging.defaults.LoggerImpl;
+import com.sedmelluq.discord.lavaplayer.jdaudp.NativeAudioSendFactory;
 import io.github.cdimascio.dotenv.Dotenv;
 import jdaListeners.BotStateListener;
 import jdaListeners.GeneralListener;
 import jdaListeners.InteractionListener;
+import ktLogging.ConfigKt;
+import ktLogging.LoggingLevel;
+import ktLogging.defaults.LoggerImpl;
 import ktUtils.ENVCheckFailedException;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
@@ -45,11 +46,11 @@ public class GodBotSystem {
         logger.info("Getting Bot Credentials Successfull", LoggingLevel.HIGH);
 
         JDA godbotJDA;
-//        JDA israJDA;
+        JDA israJDA;
         logger.info("Initializing Bot from TOKEN...", LoggingLevel.HIGH);
         try {
             godbotJDA = initializeBotFromToken(TOKEN, APPLICATIONID, true);
-//            israJDA = initializeBotFromToken(israTOKEN, israAPPLICATIONID, false);
+            israJDA = initializeBotFromToken(israTOKEN, israAPPLICATIONID, false);
         } catch (LoginException e) {
             logger.fatal("Initializing Failed", LoggingLevel.HIGH);
             e.printStackTrace();
@@ -59,18 +60,18 @@ public class GodBotSystem {
         logger.info("Initializing successful", LoggingLevel.HIGH);
 
         godbotJDA.getPresence().setActivity(Activity.playing("music | /help"));
-//        israJDA.getPresence().setActivity(Activity.listening("the GodBot System"));
+        israJDA.getPresence().setActivity(Activity.listening("the GodBot System"));
 
         // Wait until JDA is ready and loaded
         logger.info("Waiting for the bot to get Ready", LoggingLevel.HIGH);
         try {
             godbotJDA.awaitReady();
-//            israJDA.awaitReady();
+            israJDA.awaitReady();
         } catch (InterruptedException e) {
             logger.fatal("Bot failed to start", LoggingLevel.HIGH);
             e.printStackTrace();
             godbotJDA.shutdown();
-//            israJDA.shutdown();
+            israJDA.shutdown();
         }
         logger.info("Bot Ready and loaded", LoggingLevel.HIGH);
     }
@@ -92,7 +93,7 @@ public class GodBotSystem {
         }
 
         // get jda default audio send factory
-        builder.setAudioSendFactory(new com.sedmelluq.discord.lavaplayer.jdaudp.NativeAudioSendFactory());
+        builder.setAudioSendFactory(new NativeAudioSendFactory());
 
         // Create a bot instance
         JDA botInstance = builder.build();

@@ -21,12 +21,10 @@ public class ListenerLogger implements DefaultLogger{
 
     public void infoAndSave(LoggerContent loggerObj) {
         this.logger.info(loggerObj.getAsString());
-        dbCommunication.commandLog(loggerObj.getDBScheme());
     }
 
     @Override
     public void warn(LoggerContent loggerObj) {
         this.logger.info(loggerObj.getAsString());
-        dbCommunication.audioProcessLog(loggerObj.getDBScheme());
     }
 }

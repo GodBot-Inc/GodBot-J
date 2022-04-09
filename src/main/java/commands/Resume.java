@@ -1,10 +1,9 @@
 package commands;
 
-import ktSnippets.ErrorsKt;
-import ktUtils.AudioPlayerExtender;
-import ktUtils.GuildNotFoundException;
-import ktUtils.JDANotFoundException;
-import ktUtils.SlashCommandPayload;
+import ktLogging.UtilsKt;
+import ktLogging.custom.GodBotChildLogger;
+import ktLogging.custom.GodBotLogger;
+import ktUtils.*;
 import net.dv8tion.jda.api.EmbedBuilder;
 import singeltons.JDAManager;
 import singeltons.PlayerVault;
@@ -16,6 +15,10 @@ import utils.EventExtender;
 public class Resume implements Command {
 
     public static void trigger(EventExtender event, SlashCommandPayload payload) {
+        GodBotChildLogger logger = new GodBotLogger().command(
+                "Resume",
+                UtilsKt.formatPayload(payload)
+        );
         AudioPlayerExtender player;
 
         try {
@@ -26,44 +29,25 @@ public class Resume implements Command {
                             payload.getGuild().getId()
                     );
         } catch (JDANotFoundException e) {
-            event.replyEphemeral(
-                    ErrorsKt.standardError(
-                            ErrorMessages.PLAYER_NOT_FOUND
-                    )
-            );
+            ErrorHandlerKt.handleDefaultErrorResponse(event, payload, ErrorMessages.PLAYER_NOT_FOUND, logger);
             return;
         } catch (GuildNotFoundException e) {
-            event.replyEphemeral(
-                    ErrorsKt.standardError(
-                            ErrorMessages.NO_PLAYER_IN_GUILD
-                    )
-            );
+            ErrorHandlerKt.handleDefaultErrorResponse(event, payload, ErrorMessages.NO_PLAYER_IN_GUILD, logger);
             return;
         }
+        logger.info("Got AudioPlayer");
 
         if (!player.getVoiceChannel().getId().equals(payload.getVoiceChannel().getId())) {
-            event.replyEphemeral(
-                    ErrorsKt.standardError(
-                            ErrorMessages.NO_PLAYER_IN_VC
-                    )
-            );
+            ErrorHandlerKt.handleDefaultErrorResponse(event, payload, ErrorMessages.NO_PLAYER_IN_VC);
             return;
         }
 
         if (player.getCurrentTrack() == null) {
-            event.replyEphemeral(
-                    ErrorsKt.standardError(
-                            ErrorMessages.NO_PLAYING_TRACK
-                    )
-            );
+            ErrorHandlerKt.handleDefaultErrorResponse(event, payload, ErrorMessages.NO_PLAYING_TRACK);
             return;
         }
         if (!player.isPaused()) {
-            event.replyEphemeral(
-                    ErrorsKt.standardError(
-                    "Player is not paused"
-                    )
-            );
+            ErrorHandlerKt.handleDefaultErrorResponse(event, payload, "Player is not paused", logger);
             return;
         }
 
@@ -79,5 +63,6 @@ public class Resume implements Command {
                         .setColor(Colours.godbotYellow)
                         .build()
         );
+        logger.info("Response sent");
     }
 }

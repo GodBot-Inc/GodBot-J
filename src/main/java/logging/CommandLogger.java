@@ -21,12 +21,10 @@ public class CommandLogger implements DefaultLogger {
 
     public void infoAndSave(LoggerContent loggerObj) {
         logger.info(loggerObj.getAsString());
-        dbCommunication.audioProcessLog(loggerObj.getDBScheme());
     }
 
     @Override
     public void warn(LoggerContent loggerObj) {
         logger.warning(loggerObj.getAsString());
-        dbCommunication.audioProcessLog(loggerObj.getDBScheme());
     }
 }

@@ -1,6 +1,8 @@
 package commands;
 
-import ktSnippets.ErrorsKt;
+import ktLogging.UtilsKt;
+import ktLogging.custom.GodBotChildLogger;
+import ktLogging.custom.GodBotLogger;
 import ktSnippets.TrackInfoKt;
 import ktUtils.*;
 import net.dv8tion.jda.api.JDA;
@@ -31,9 +33,11 @@ public class Play implements Command {
             AudioPlayerExtender audioPlayer,
             PlaylistPlayableInfo playlistInfo,
             Member requester,
-            boolean shuffle
+            boolean shuffle,
+            GodBotChildLogger logger
     ) {
         audioPlayer.openConnection();
+        logger.info("Opened Audio Connection");
         if (shuffle) {
             Collections.shuffle(playlistInfo.getPlayableInformation());
         }
@@ -42,6 +46,7 @@ public class Play implements Command {
                 audioPlayer.play(new AudioTrackExtender(playableInfo, requester));
             } catch (GodBotException ignore) {}
         }
+        logger.info("Adding of songs finished");
     }
 
     private static String checkParameters(EventExtender event)
@@ -64,45 +69,28 @@ public class Play implements Command {
 
     private static void processPlaylist(
             AudioPlayerExtender player,
-            Member member,
+            SlashCommandPayload payload,
             boolean shuffle,
             InteractionHook interactionHook,
-            Future<PlayableInfo> playableFuture
+            Future<PlayableInfo> playableFuture,
+            GodBotChildLogger logger
     ) {
         PlaylistPlayableInfo playlistInformation;
         try{
             playlistInformation = (PlaylistPlayableInfo) playableFuture.get();
         } catch (InterruptedException e) {
-            interactionHook
-                    .sendMessageEmbeds(
-                            ErrorsKt.standardError(
-                                    ErrorMessages.INFO_GATHERING_PLAYLIST_FAILED
-                            )
-                    ).queue();
+            ErrorHandlerKt.handleInteractionHookErrorResponse(interactionHook, payload, ErrorMessages.INFO_GATHERING_PLAYLIST_FAILED, logger);
             return;
         } catch (ExecutionException e) {
             if (e.getCause() instanceof InvalidURLException) {
-                interactionHook
-                        .sendMessageEmbeds(
-                                ErrorsKt.standardError(
-                                        ErrorMessages.PLAY_INVALID_URL
-                                )
-                        ).queue();
+                ErrorHandlerKt.handleInteractionHookErrorResponse(interactionHook, payload, ErrorMessages.PLAY_INVALID_URL, logger);
                 return;
             } else if (e.getCause() instanceof PlatformNotFoundException) {
-                interactionHook
-                        .sendMessageEmbeds(
-                                ErrorsKt.standardError(ErrorMessages.PLATFORM_NOT_FOUND)
-                        ).queue();
+                ErrorHandlerKt.handleInteractionHookErrorResponse(interactionHook, payload, ErrorMessages.PLATFORM_NOT_FOUND, logger);
                 return;
             }
-            e.printStackTrace();
-            interactionHook
-                    .sendMessageEmbeds(
-                            ErrorsKt.standardError(
-                                    ErrorMessages.INFO_GATHERING_PLAYLIST_FAILED
-                            )
-                    ).queue();
+            logger.error("Should not happen: " + e.getMessage());
+            ErrorHandlerKt.handleInteractionHookErrorResponse(interactionHook, payload, ErrorMessages.INFO_GATHERING_PLAYLIST_FAILED);
             return;
         }
 
@@ -111,14 +99,16 @@ public class Play implements Command {
         Executors.newCachedThreadPool().submit(() -> playPlaylist(
                 player,
                 playlistInformation,
-                member,
-                shuffle
+                payload.getMember(),
+                shuffle,
+                logger
         ));
+        logger.info("Started Play Playlist Async");
 
         interactionHook
                 .sendMessageEmbeds(
                         TrackInfoKt.playPlaylist(
-                                member,
+                                payload.getMember(),
                                 playlistInformation,
                                 positionInQueue,
                                 positionInQueue + playlistInformation.getVideoIds().size() - 1
@@ -128,99 +118,73 @@ public class Play implements Command {
 
     private static void processVideo(
             AudioPlayerExtender player,
-            Member member,
+            SlashCommandPayload payload,
             InteractionHook interactionHook,
-            Future<PlayableInfo> playableFuture
+            Future<PlayableInfo> playableFuture,
+            GodBotChildLogger logger
     ) {
         PlayableInfo playableInfo;
         try {
             playableInfo = playableFuture.get();
         } catch (InterruptedException e) {
-            interactionHook
-                    .sendMessageEmbeds(
-                            ErrorsKt.standardError(ErrorMessages.INFO_GATHERING_SONG_FAILED)
-                    ).queue();
+            ErrorHandlerKt.handleInteractionHookErrorResponse(interactionHook, payload, ErrorMessages.INFO_GATHERING_SONG_FAILED, logger);
             return;
         } catch (ExecutionException e) {
             if (e.getCause() instanceof InvalidURLException) {
-                interactionHook
-                        .sendMessageEmbeds(
-                                ErrorsKt.standardError(
-                                        ErrorMessages.INVALID_URL
-                                )
-                        ).queue();
+                ErrorHandlerKt.handleInteractionHookErrorResponse(interactionHook, payload, ErrorMessages.INVALID_URL, logger);
                 return;
             } else if (e.getCause() instanceof PlatformNotFoundException) {
-                interactionHook
-                        .sendMessageEmbeds(
-                                ErrorsKt.standardError(ErrorMessages.PLATFORM_NOT_FOUND)
-                        ).queue();
+                ErrorHandlerKt.handleInteractionHookErrorResponse(interactionHook, payload, ErrorMessages.PLATFORM_NOT_FOUND, logger);
                 return;
             } else if (e.getCause() instanceof  IllegalStateException) {
-                interactionHook.sendMessageEmbeds(
-                        ErrorsKt.standardError(ErrorMessages.INVALID_PLATFORM)
-                ).queue();
+                ErrorHandlerKt.handleInteractionHookErrorResponse(interactionHook, payload, ErrorMessages.INVALID_PLATFORM, logger);
                 return;
             }
-            interactionHook
-                    .sendMessageEmbeds(
-                            ErrorsKt.standardError(
-                                    ErrorMessages.INFO_GATHERING_SONG_FAILED
-                            )
-                    ).queue();
+            logger.error("Should not happen: " + e.getMessage());
+            ErrorHandlerKt.handleInteractionHookErrorResponse(interactionHook, payload, ErrorMessages.INFO_GATHERING_SONG_FAILED);
             return;
         }
         player.openConnection();
+        logger.info("Opened audio connection to " + player.getVoiceChannel().getName());
 
         int position;
         try {
-            position = player.play(new AudioTrackExtender(playableInfo, member));
+            position = player.play(new AudioTrackExtender(playableInfo, payload.getMember()));
         } catch (GodBotException e) {
-            interactionHook
-                    .sendMessageEmbeds(
-                            ErrorsKt.notFoundError(
-                                    ErrorMessages.TRACK_NOT_FOUND
-                            )
-                    ).queue();
+            ErrorHandlerKt.handleInteractionHookErrorResponse(interactionHook, payload, ErrorMessages.TRACK_NOT_FOUND, logger);
             return;
         }
+        logger.info("Got Video Position: " + position);
 
         MessageEmbed embed = TrackInfoKt.playVideo(
-                member,
+                payload.getMember(),
                 playableInfo,
                 position,
                 player.getQueue().size() + 1
         );
         interactionHook.sendMessageEmbeds(embed).queue();
+        logger.info("Send Response");
     }
 
     public static void trigger(@NotNull EventExtender event, SlashCommandPayload payload) {
+        GodBotChildLogger logger = new GodBotLogger().command(
+                "Play",
+                UtilsKt.formatPayload(payload)
+        );
         String url;
 
         try {
             url = checkParameters(event);
         } catch (CheckFailedException e) {
-            event
-                .replyEphemeral(
-                        ErrorsKt.standardError("No URL provided")
-                );
+            ErrorHandlerKt.handleDefaultErrorResponse(event, payload, "No URL provided");
             return;
         }
-
-        try {
-            checkParameters(event);
-        } catch (CheckFailedException e) {
-            return;
-        }
+        logger.info("Got Url Parameter");
 
         if (Checks.linkIsValid(url)) {
-            event
-                    .replyEphemeral(
-                            ErrorsKt.standardError(ErrorMessages.PLAY_INVALID_URL)
-                    );
+            ErrorHandlerKt.handleDefaultErrorResponse(event, payload, ErrorMessages.PLAY_INVALID_URL);
             return;
         }
-
 
         JDA bot = JDAManager.getInstance().getJDA(applicationId);
 
@@ -231,18 +195,16 @@ public class Play implements Command {
                         payload.getGuild().getId(),
                         payload.getVoiceChannel()
                 );
+        logger.info("Successfully got Player");
 
         if (!player.getVoiceChannel().getId().equals(payload.getVoiceChannel().getId())) {
-            event.replyEphemeral(
-                    ErrorsKt.standardError(
-                            ErrorMessages.NO_PLAYER_IN_VC
-                    )
-            );
+            ErrorHandlerKt.handleDefaultErrorResponse(event, payload, ErrorMessages.NO_PLAYER_IN_VC, logger);
             return;
         }
 
         InteractionHook interactionHook = event.event.getHook();
         event.event.deferReply().queue();
+        logger.info("Deferred Reply");
 
         Future<PlayableInfo> infoGatheringFuture = startInfoGathering(url);
 
@@ -250,35 +212,30 @@ public class Play implements Command {
         try {
             isVideo = LinkHelper.isVideo(url);
         } catch (InvalidURLException e) {
-            interactionHook
-                    .sendMessageEmbeds(
-                            ErrorsKt.standardError(ErrorMessages.PLAY_INVALID_URL)
-                    ).queue();
+            ErrorHandlerKt.handleInteractionHookErrorResponse(interactionHook, payload, ErrorMessages.PLAY_INVALID_URL, logger);
             return;
         } catch (PlatformNotFoundException e) {
-            interactionHook
-                    .sendMessageEmbeds(
-                            ErrorsKt.standardError(ErrorMessages.PLATFORM_NOT_FOUND)
-                    )
-                    .addActionRow()
-                    .queue();
+            ErrorHandlerKt.handleInteractionHookErrorResponse(interactionHook, payload, ErrorMessages.PLATFORM_NOT_FOUND, logger);
             return;
         }
 
         if (!isVideo) {
             processPlaylist(
                     player,
-                    payload.getMember(),
+                    payload,
                     getShuffle(event),
                     interactionHook,
-                    infoGatheringFuture
+                    infoGatheringFuture,
+                    logger
             );
         } else {
+            // TODO: Add Logging
             processVideo(
                     player,
-                    payload.getMember(),
+                    payload,
                     interactionHook,
-                    infoGatheringFuture
+                    infoGatheringFuture,
+                    logger
             );
         }
     }
