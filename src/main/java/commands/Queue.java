@@ -57,21 +57,17 @@ public class Queue implements Command {
                 UtilsKt.formatPayload(payload)
         );
 
-        AudioPlayerExtender audioPlayer;
-        try {
-            audioPlayer = PlayerVault
-                    .getInstance()
-                    .getPlayer(
-                            JDAManager.getInstance().getJDA(applicationId),
-                            payload.getGuild().getId()
-                    );
-        } catch (JDANotFoundException e) {
-            ErrorHandlerKt.handleDefaultErrorResponse(event, payload, ErrorMessages.PLAYER_NOT_FOUND, logger);
-            return;
-        } catch (GuildNotFoundException e) {
-            ErrorHandlerKt.handleDefaultErrorResponse(event, payload, ErrorMessages.NO_PLAYER_IN_GUILD, logger);
+        AudioPlayerExtender audioPlayer = PlayerVault
+                .getInstance()
+                .getPlayer(
+                        JDAManager.getInstance().getJDA(applicationId),
+                        payload.getGuild().getId()
+                );
+        if (audioPlayer == null) {
+            ErrorHandlerKt.handleDefaultErrorResponse(event, payload, ErrorMessages.NO_PLAYER_FOUND, logger);
             return;
         }
+
         logger.info("Got AudioPlayer");
 
         if (!audioPlayer.getVoiceChannel().getId().equals(payload.getVoiceChannel().getId())) {

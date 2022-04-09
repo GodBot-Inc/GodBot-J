@@ -49,16 +49,9 @@ public class AudioPlayerManagerWrapper {
         return player;
     }
 
-    public AudioPlayerExtender getPlayer(JDA bot, String guildId, VoiceChannel voiceChannel) {
-        AudioPlayerExtender player;
-        try {
-            player = PlayerVault
-                    .getInstance()
-                    .getPlayer(
-                            bot,
-                            guildId
-                    );
-        } catch (JDANotFoundException | GuildNotFoundException e) {
+    public AudioPlayerExtender getOrCreatePlayer(JDA bot, String guildId, VoiceChannel voiceChannel) {
+        AudioPlayerExtender player = PlayerVault.getInstance().getPlayer(bot, guildId);
+        if (player == null) {
             player = createPlayer(
                     bot,
                     guildId,

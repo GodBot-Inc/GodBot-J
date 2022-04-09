@@ -51,11 +51,12 @@ public class PlayerVault {
         }
     }
 
-    public AudioPlayerExtender getPlayer(
-            JDA jda,
-            String guildId
-    ) throws JDANotFoundException, GuildNotFoundException {
-        checkBotAndGuild(jda, guildId);
+    public AudioPlayerExtender getPlayer(JDA jda, String guildId) {
+        try {
+            checkBotAndGuild(jda, guildId);
+        } catch(JDANotFoundException | GuildNotFoundException e) {
+            return null;
+        }
         return playerStorage.get(jda).get(guildId);
     }
 

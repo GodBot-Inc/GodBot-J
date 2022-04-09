@@ -31,7 +31,7 @@ public class Join implements Command {
         AudioPlayerExtender audioPlayer;
         audioPlayer = AudioPlayerManagerWrapper
                 .getInstance()
-                .getPlayer(godbotJDA, payload.getGuild().getId(), payload.getVoiceChannel());
+                .getOrCreatePlayer(godbotJDA, payload.getGuild().getId(), payload.getVoiceChannel());
         logger.info("Got Audio Player");
 
         if (!audioPlayer.getVoiceChannel().equals(payload.getVoiceChannel())) {

@@ -108,7 +108,7 @@ fun loop(event: EventExtender, payload: SlashCommandPayload) {
     try {
         player = AudioPlayerManagerWrapper
             .getInstance()
-            .getPlayer(
+            .getOrCreatePlayer(
                 JDAManager.getInstance().getJDA(applicationId),
                 payload.guild.id,
                 payload.voiceChannel
@@ -184,7 +184,7 @@ fun skipTo(event: EventExtender, payload: SlashCommandPayload) {
     try {
         player = AudioPlayerManagerWrapper
             .getInstance()
-            .getPlayer(
+            .getOrCreatePlayer(
                 JDAManager.getInstance().getJDA(applicationId),
                 payload.guild.id,
                 payload.voiceChannel

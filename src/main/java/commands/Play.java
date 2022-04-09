@@ -190,7 +190,7 @@ public class Play implements Command {
 
         AudioPlayerExtender player = AudioPlayerManagerWrapper
                 .getInstance()
-                .getPlayer(
+                .getOrCreatePlayer(
                         bot,
                         payload.getGuild().getId(),
                         payload.getVoiceChannel()

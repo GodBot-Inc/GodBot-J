@@ -18,6 +18,7 @@ public final class ErrorMessages {
     public static final String NO_PLAYING_TRACK = "There is no track playing";
     public static final String NO_PLAYER_IN_GUILD = "There is no player registered for this guild";
     public static final String NO_PLAYER_IN_VC = "There is no player registered for this VoiceChannel";
+    public static final String NO_PLAYER_FOUND = "There was no player found";
     public static final String PLAYER_NOT_FOUND = "The player for your channel wasn't found";
 
     public static final String INTERPRETATIONS_EMPTY = "I could not fetch any information about the song";

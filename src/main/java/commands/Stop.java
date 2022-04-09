@@ -19,21 +19,18 @@ public class Stop implements Command {
                 "Stop",
                 UtilsKt.formatPayload(payload)
         );
-        AudioPlayerExtender player;
-        try {
-            player = PlayerVault
-                    .getInstance()
-                    .getPlayer(
-                            JDAManager.getInstance().getJDA(applicationId),
-                            payload.getGuild().getId()
-                    );
-        } catch (JDANotFoundException e) {
-            ErrorHandlerKt.handleDefaultErrorResponse(event, payload, ErrorMessages.PLAYER_NOT_FOUND, logger);
-            return;
-        } catch (GuildNotFoundException e) {
-            ErrorHandlerKt.handleDefaultErrorResponse(event, payload, ErrorMessages.NO_PLAYER_IN_GUILD, logger);
+
+        AudioPlayerExtender player = PlayerVault
+                .getInstance()
+                .getPlayer(
+                        JDAManager.getInstance().getJDA(applicationId),
+                        payload.getGuild().getId()
+                );
+        if (player == null) {
+            ErrorHandlerKt.handleDefaultErrorResponse(event, payload, ErrorMessages.NO_PLAYER_FOUND, logger);
             return;
         }
+
         logger.info("Got AudioPlayer");
 
         if (!player.getVoiceChannel().getId().equals(payload.getVoiceChannel().getId())) {
