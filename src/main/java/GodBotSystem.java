@@ -40,17 +40,13 @@ public class GodBotSystem {
         // Load Bot-Token into the program
         logger.info("Getting Bot Credentials", LoggingLevel.HIGH);
         String TOKEN = dotenv.get("TOKEN");
-        String israTOKEN = dotenv.get("IsrafilTOKEN");
         String APPLICATIONID = dotenv.get("APPLICATIONID");
-        String israAPPLICATIONID = dotenv.get("IsrafilAPPLICATIONID");
         logger.info("Getting Bot Credentials Successfull", LoggingLevel.HIGH);
 
         JDA godbotJDA;
-        JDA israJDA;
         logger.info("Initializing Bot from TOKEN...", LoggingLevel.HIGH);
         try {
-            godbotJDA = initializeBotFromToken(TOKEN, APPLICATIONID, true);
-            israJDA = initializeBotFromToken(israTOKEN, israAPPLICATIONID, false);
+            godbotJDA = initializeBotFromToken(TOKEN, APPLICATIONID);
         } catch (LoginException e) {
             logger.fatal("Initializing Failed", LoggingLevel.HIGH);
             e.printStackTrace();
@@ -60,23 +56,20 @@ public class GodBotSystem {
         logger.info("Initializing successful", LoggingLevel.HIGH);
 
         godbotJDA.getPresence().setActivity(Activity.playing("music | /help"));
-        israJDA.getPresence().setActivity(Activity.listening("the GodBot System"));
 
         // Wait until JDA is ready and loaded
         logger.info("Waiting for the bot to get Ready", LoggingLevel.HIGH);
         try {
             godbotJDA.awaitReady();
-            israJDA.awaitReady();
         } catch (InterruptedException e) {
             logger.fatal("Bot failed to start", LoggingLevel.HIGH);
             e.printStackTrace();
             godbotJDA.shutdown();
-            israJDA.shutdown();
         }
         logger.info("Bot Ready and loaded", LoggingLevel.HIGH);
     }
 
-    private static JDA initializeBotFromToken(String TOKEN, String applicationId, boolean listeners)
+    private static JDA initializeBotFromToken(String TOKEN, String applicationId)
             throws LoginException {
         JDABuilder builder = JDABuilder.createDefault(TOKEN);
 
@@ -84,13 +77,11 @@ public class GodBotSystem {
         configureMemoryUsage(builder);
 
         // Registers all Listeners to the Bot-EventListener
-        if (listeners) {
-            builder.addEventListeners(
-                    new InteractionListener(),
-                    new BotStateListener(),
-                    new GeneralListener()
-            );
-        }
+        builder.addEventListeners(
+                new InteractionListener(),
+                new BotStateListener(),
+                new GeneralListener()
+        );
 
         // get jda default audio send factory
         builder.setAudioSendFactory(new NativeAudioSendFactory());
