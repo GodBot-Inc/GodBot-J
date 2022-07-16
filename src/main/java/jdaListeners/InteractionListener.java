@@ -9,8 +9,6 @@ import ktSnippets.ErrorsKt;
 import ktUtils.ButtonException;
 import ktUtils.CheckFailedException;
 import ktUtils.SlashCommandPayload;
-import logging.ListenerLogger;
-import logging.LoggerContent;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
@@ -27,12 +25,6 @@ import javax.annotation.Nonnull;
 import java.util.HashMap;
 
 public class InteractionListener extends ListenerAdapter {
-
-    private final ListenerLogger logger;
-
-    public InteractionListener() {
-        this.logger = new ListenerLogger("InteractionListener");
-    }
 
     public HashMap<String, String> getLogArgs(@Nonnull SlashCommandEvent event) {
         User user = event.getUser();
@@ -55,14 +47,6 @@ public class InteractionListener extends ListenerAdapter {
 
     @Override
     public void onSlashCommand(@Nonnull SlashCommandEvent event) {
-        this.logger.info(
-                new LoggerContent(
-                        "info",
-                        "SlashCommandEvent",
-                        "",
-                        getLogArgs(event)
-                )
-        );
         // TODO: Put check block here, and always pass the VoiceChannel, if given
         Dotenv dotenv = Dotenv.load();
         String applicationId = dotenv.get("APPLICATIONID");

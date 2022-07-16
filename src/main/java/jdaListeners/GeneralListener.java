@@ -20,15 +20,14 @@ public class GeneralListener extends ListenerAdapter {
 
     @Override
     public void onGuildVoiceMove(@NotNull GuildVoiceMoveEvent event) {
-        AudioPlayerExtender audioPlayerExtender;
-        try {
-            audioPlayerExtender = PlayerVault.getInstance().getPlayer(
-                    JDAManager.getInstance().getJDA(applicationId),
-                    event.getGuild().getId()
-            );
-        } catch (JDANotFoundException | GuildNotFoundException e) {
-            return;
+        AudioPlayerExtender audioPlayerExtender = PlayerVault.getInstance().getPlayer(
+                JDAManager.getInstance().getJDA(applicationId),
+                event.getGuild().getId()
+        );
+        if (audioPlayerExtender == null) {
+           return;
         }
+
         if (event.getMember().getId().equals(applicationId)) {
             audioPlayerExtender.changeChannel(event.getChannelJoined());
         }
@@ -47,12 +46,12 @@ public class GeneralListener extends ListenerAdapter {
     @Override
     public void onGuildVoiceJoin(@NotNull GuildVoiceJoinEvent event) {
         JDA godbotJDA = JDAManager.getInstance().getJDA(applicationId);
-        AudioPlayerExtender audioPlayer;
-        try {
-            audioPlayer = PlayerVault.getInstance().getPlayer(godbotJDA, event.getGuild().getId());
-        } catch (JDANotFoundException | GuildNotFoundException e) {
+
+        AudioPlayerExtender audioPlayer = PlayerVault.getInstance().getPlayer(godbotJDA, event.getGuild().getId());
+        if (audioPlayer == null) {
             return;
         }
+
         if (event.getChannelJoined() == audioPlayer.getVoiceChannel() &&
             // If only the joined member and the bot are connected to the channel
             event.getChannelJoined().getMembers().size() == 2) {
@@ -63,15 +62,15 @@ public class GeneralListener extends ListenerAdapter {
     @Override
     public void onGuildVoiceLeave(@NotNull GuildVoiceLeaveEvent event) {
         JDA godbotJDA = JDAManager.getInstance().getJDA(applicationId);
-        AudioPlayerExtender audioPlayer;
         if (godbotJDA == null) {
             return;
         }
-        try {
-            audioPlayer = PlayerVault.getInstance().getPlayer(godbotJDA, event.getGuild().getId());
-        } catch (JDANotFoundException | GuildNotFoundException e) {
+
+        AudioPlayerExtender audioPlayer = PlayerVault.getInstance().getPlayer(godbotJDA, event.getGuild().getId());
+        if (audioPlayer == null) {
             return;
         }
+
         if (event.getMember().getId().equals(godbotJDA.getSelfUser().getId())) {
             audioPlayer.cleanup();
             return;

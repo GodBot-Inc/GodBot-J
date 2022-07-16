@@ -2,7 +2,6 @@ package singeltons;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import lavaplayerHandlers.AudioPlayerSendHandler;
-import logging.AudioLogger;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.managers.AudioManager;
@@ -17,11 +16,6 @@ public class AudioManagerVault {
 
     //                   BotJDA        GuildId  Destination
     private final HashMap<JDA, HashMap<String, AudioManager>> audioManagerStorage = new HashMap<>();
-    private final AudioLogger logger;
-
-    private AudioManagerVault() {
-        this.logger = new AudioLogger(this.getClass().getName() + "Logger");
-    }
 
     public void registerJDA(JDA botJDA, List<Guild> guilds) {
         if (!audioManagerStorage.containsKey(botJDA)) {

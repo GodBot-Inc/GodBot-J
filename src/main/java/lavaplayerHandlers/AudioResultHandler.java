@@ -4,14 +4,10 @@ import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
-import logging.AudioLogger;
-import logging.LoggerContent;
 
 import java.util.HashMap;
 
 public class AudioResultHandler implements AudioLoadResultHandler {
-
-    private final AudioLogger logger = new AudioLogger("AudioResultHandlerLogger");
 
     /*
      1 -> TrackLoaded
@@ -26,16 +22,6 @@ public class AudioResultHandler implements AudioLoadResultHandler {
     public void trackLoaded(AudioTrack audioTrack) {
         this.actionType = 1;
         this.audioTrack = audioTrack;
-        logger.info(
-                new LoggerContent(
-                        "info",
-                        "trackLoaded",
-                        "",
-                        new HashMap<>() {{
-                            put("Track", audioTrack.getInfo().title);
-                        }}
-                )
-        );
     }
     
     @Override

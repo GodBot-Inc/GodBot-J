@@ -1,9 +1,11 @@
 package snippets;
 
+import net.dv8tion.jda.api.entities.Emoji;
+
 public class EmojiIds {
 
     // Platform Icons
-    public static final String youtubeEmoji = "<:youtube:898548549615255572>";
+    public static final Emoji youtubeEmoji = Emoji.fromMarkdown("<:youtube:898548549615255572>");
     public static final String youtubeMusicEmoji = "<:youtubeMusic:918547117767794698>";
     public static final String soundcloudEmoji = "<:soundcloud:898548569051631618>";
     public static final String spotifyEmoji = "<:spotify:898548583370989590>";
