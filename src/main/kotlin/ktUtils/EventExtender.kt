@@ -4,13 +4,20 @@ import ktSnippets.standardError
 import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.entities.Emoji
 import net.dv8tion.jda.api.entities.MessageEmbed
+import net.dv8tion.jda.api.entities.TextChannel
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent
+import net.dv8tion.jda.api.interactions.InteractionHook
 import net.dv8tion.jda.api.interactions.commands.OptionMapping
 import snippets.Colours
+import java.awt.Color
 
-import java.awt.*
+class EventExtender(event: SlashCommandEvent) {
 
-class EventExtender(val event: SlashCommandEvent) {
+    val event: SlashCommandEvent
+
+    init {
+        this.event = event
+    }
 
     fun replyEphemeral(message: String, color: Color = Colours.godbotYellow) {
         this.replyEphemeral(
@@ -29,6 +36,15 @@ class EventExtender(val event: SlashCommandEvent) {
         this.reply(
             EmbedBuilder()
                 .setTitle(message)
+                .setColor(color)
+                .build()
+        )
+    }
+
+    fun replyLink(message: String, color: Color = Colours.godbotYellow) {
+        this.reply(
+            EmbedBuilder()
+                .setDescription("**$message**")
                 .setColor(color)
                 .build()
         )
@@ -53,6 +69,14 @@ class EventExtender(val event: SlashCommandEvent) {
 
     fun clearError(message: String) {
         this.reply(standardError(message))
+    }
+
+    fun getTextChannel(): TextChannel = this.event.textChannel
+
+    fun getHook(): InteractionHook = this.event.hook
+
+    fun deferReply() {
+        this.event.deferReply().queue()
     }
 
     fun getOption(optionName: String): OptionMapping? {

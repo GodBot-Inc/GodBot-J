@@ -1,6 +1,5 @@
 package ktCommands
 
-import ktSnippets.standardError
 import ktSnippets.trackLines
 import ktUtils.*
 import net.dv8tion.jda.api.EmbedBuilder
@@ -9,7 +8,7 @@ import singeltons.PlayerVault
 import snippets.Colours
 import snippets.ErrorMessages
 import utils.DurationCalc
-import utils.EventExtender
+import ktUtils.EventExtender
 import java.util.concurrent.TimeUnit
 
 fun seek(event: EventExtender, payload: SlashCommandPayload) {
@@ -28,24 +27,16 @@ fun seek(event: EventExtender, payload: SlashCommandPayload) {
             JDAManager.getInstance().getJDA(payload.applicationId),
             payload.guild.id
         )
-    if (player == null) {
+    if (player == null || player.voiceChannel.id != payload.voiceChannel.id) {
         event.error(ErrorMessages.NO_PLAYER_IN_VC)
         return
     }
-
-    if (player.voiceChannel.id != payload.voiceChannel.id) {
-        event.replyEphemeral(standardError(ErrorMessages.NO_PLAYER_IN_VC))
-        return
-    }
     if (player.queue.isEmpty()) {
-        event.replyEphemeral(standardError(ErrorMessages.QUEUE_EMPTY))
+        event.error(ErrorMessages.QUEUE_EMPTY)
         return
     }
-
     if (player.currentTrack == null) {
-        event.replyEphemeral(
-            standardError(ErrorMessages.NO_PLAYING_TRACK)
-        )
+        event.error(ErrorMessages.NO_PLAYING_TRACK)
         return
     }
 
@@ -53,10 +44,8 @@ fun seek(event: EventExtender, payload: SlashCommandPayload) {
     val duration: Long = player.currentTrack?.songInfo?.duration ?: 0
 
     if (seekPoint > duration) {
-        event.replyEphemeral(
-            standardError("I can't skip to ${DurationCalc.longToString(seekPoint)}" +
-                    ", because the song is only ${DurationCalc.longToString(duration)} long")
-        )
+        event.error("I can't skip to ${DurationCalc.longToString(seekPoint)}" +
+                ", because the song is only ${DurationCalc.longToString(duration)} long")
         return
     }
 
