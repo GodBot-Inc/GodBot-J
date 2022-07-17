@@ -1,5 +1,6 @@
 package utils;
 
+import ktSnippets.ErrorsKt;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
@@ -35,6 +36,19 @@ public class EventExtender {
     public void reply(MessageEmbed embed) {
         event
                 .replyEmbeds(embed)
+                .queue();
+    }
+
+    public void error(String message) {
+        event
+                .replyEmbeds(ErrorsKt.standardError(message))
+                .setEphemeral(true)
+                .queue();
+    }
+
+    public void clearError(String message) {
+        event
+                .replyEmbeds(ErrorsKt.standardError(message))
                 .queue();
     }
 

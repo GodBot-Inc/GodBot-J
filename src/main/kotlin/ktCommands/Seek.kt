@@ -22,16 +22,14 @@ fun seek(event: EventExtender, payload: SlashCommandPayload) {
                 TimeUnit.SECONDS.toMillis(seconds?.asLong ?: 0)
     }
 
-    val player: AudioPlayerExtender
-    try {
-        player = PlayerVault
-            .getInstance()
-            .getPlayer(
-                JDAManager.getInstance().getJDA(payload.applicationId),
-                payload.guild.id
-            )
-    } catch (e: PlayerNotFoundException) {
-        event.replyEphemeral(standardError(ErrorMessages.NO_PLAYER_IN_VC))
+    val player = PlayerVault
+        .getInstance()
+        .getPlayer(
+            JDAManager.getInstance().getJDA(payload.applicationId),
+            payload.guild.id
+        )
+    if (player == null) {
+        event.error(ErrorMessages.NO_PLAYER_IN_VC)
         return
     }
 

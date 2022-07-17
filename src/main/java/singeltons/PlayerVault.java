@@ -5,6 +5,7 @@ import ktUtils.GuildNotFoundException;
 import ktUtils.JDANotFoundException;
 import net.dv8tion.jda.api.JDA;
 
+import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -51,7 +52,7 @@ public class PlayerVault {
         }
     }
 
-    public AudioPlayerExtender getPlayer(JDA jda, String guildId) {
+    public @Nullable AudioPlayerExtender getPlayer(JDA jda, String guildId) {
         try {
             checkBotAndGuild(jda, guildId);
         } catch(JDANotFoundException | GuildNotFoundException e) {

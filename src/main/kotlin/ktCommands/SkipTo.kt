@@ -30,16 +30,14 @@ fun skipTo(event: EventExtender, payload: SlashCommandPayload) {
         return
     }
 
-    val player: AudioPlayerExtender
-    try {
-        player = PlayerVault
-            .getInstance()
-            .getPlayer(
-                JDAManager.getInstance().getJDA(Command.applicationId),
-                payload.guild.id
-            )
-    } catch (e: PlayerNotFoundException) {
-        event.replyEphemeral(standardError(ErrorMessages.NO_PLAYER_IN_VC))
+    val player = PlayerVault
+        .getInstance()
+        .getPlayer(
+            JDAManager.getInstance().getJDA(Command.applicationId),
+            payload.guild.id
+        )
+    if (player == null) {
+        event.error(ErrorMessages.NO_PLAYER_IN_VC)
         return
     }
 
