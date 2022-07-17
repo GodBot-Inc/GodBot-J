@@ -31,10 +31,19 @@ To run this project, you will need to add the following environment variables to
 
 ## Installation
 
-1. Goto ``https://github.com/GodBot-Inc/GB-Logging/releases`` and download the latest jar
-2. Goto ``https://github.com/GodBot-Inc/Lavaplayer/releases`` and download the latest jar
-3. Create a ``/lib`` folder in the root directory of the Project, and move the downloaded jars into it
-4. Open the Project in Intellij, and install all Gradle Dependencies
+
+1. Open the Project in Intellij, and install all Gradle Dependencies
+2. Add the .env with the given variables (see Environment Variables)
+3. Hit run, and enjoy the music!
+
+## Supported Systems
+
+As of now only these two platforms are supported. The bot doesn't work on
+Apple Silicon. If you want to run it on such a system do it on a vm.
+
+- Windows (x86 and x64)
+- Linux (x86 and x64, glibc >= 2.15)
+
 
 ## Tech Stack
 
