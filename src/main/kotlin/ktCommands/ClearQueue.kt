@@ -10,7 +10,7 @@ import singeltons.PlayerVault
 import snippets.Colours
 import snippets.EmojiIds
 import snippets.ErrorMessages
-import utils.EventExtender
+import ktUtils.EventExtender
 
 fun clearQueue(event: EventExtender, payload: SlashCommandPayload) {
     val logger = GodBotLogger().command(
@@ -18,26 +18,14 @@ fun clearQueue(event: EventExtender, payload: SlashCommandPayload) {
         formatPayload(payload)
     )
 
-    val player: AudioPlayerExtender
-
-    try {
-        player = PlayerVault
-            .getInstance()
-            .getPlayer(
-                JDAManager.getInstance().getJDA(Command.applicationId),
-                payload.guild.id
-            )
-    } catch (e: GuildNotFoundException) {
-        handleDefaultErrorResponse(event, payload, ErrorMessages.NO_PLAYER_IN_GUILD, logger)
-        return
-    } catch (e: ChannelNotFoundException) {
-        handleDefaultErrorResponse(event, payload, ErrorMessages.NO_PLAYER_IN_VC, logger)
-        return
-    }
-    logger.info("Got AudioPlayer")
-
-    if (player.voiceChannel.id != payload.voiceChannel.id) {
-        handleDefaultErrorResponse(event, payload, ErrorMessages.NO_PLAYER_IN_VC, logger)
+    val player = PlayerVault
+        .getInstance()
+        .getPlayer(
+            JDAManager.getInstance().getJDA(Command.applicationId),
+            payload.guild.id
+        )
+    if (player == null || player.voiceChannel.id != payload.voiceChannel.id) {
+        event.error(ErrorMessages.NO_PLAYER_IN_VC)
         return
     }
 

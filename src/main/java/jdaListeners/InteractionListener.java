@@ -18,7 +18,7 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
 import snippets.ErrorMessages;
 import utils.Checks;
-import utils.EventExtender;
+import ktUtils.EventExtender;
 
 import javax.annotation.Nonnull;
 import java.util.HashMap;
@@ -74,9 +74,9 @@ public class InteractionListener extends ListenerAdapter {
         EventExtender eventExtender = new EventExtender(event);
 
         switch (event.getName()) {
-            case "join" -> Join.trigger(eventExtender, payload);
+            case "join" -> JoinKt.join(eventExtender, payload);
             case "play" -> Play.trigger(eventExtender, payload);
-            case "pause" -> Pause.trigger(eventExtender, payload);
+            case "pause" -> PauseKt.pause(eventExtender, payload);
             case "resume" -> Resume.trigger(eventExtender, payload);
             case "stop" -> Stop.trigger(eventExtender, payload);
             case "skip" -> Skip.trigger(eventExtender, payload);
