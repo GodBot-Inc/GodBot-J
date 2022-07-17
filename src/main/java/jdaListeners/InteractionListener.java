@@ -3,8 +3,7 @@ package jdaListeners;
 import commands.*;
 import interactions.ButtonActionsKt;
 import io.github.cdimascio.dotenv.Dotenv;
-import ktCommands.GeneralCommandsKt;
-import ktCommands.MusicControlCommandsKt;
+import ktCommands.*;
 import ktSnippets.ErrorsKt;
 import ktUtils.ButtonException;
 import ktUtils.CheckFailedException;
@@ -82,13 +81,13 @@ public class InteractionListener extends ListenerAdapter {
             case "stop" -> Stop.trigger(eventExtender, payload);
             case "skip" -> Skip.trigger(eventExtender, payload);
             case "queue" -> Queue.trigger(eventExtender, payload);
-            case "clear-queue" -> GeneralCommandsKt.clearQueue(eventExtender, payload);
-            case "remove" -> MusicControlCommandsKt.remove(eventExtender, payload);
-            case "leave" -> GeneralCommandsKt.leave(eventExtender, payload);
-            case "loop" -> MusicControlCommandsKt.loop(eventExtender, payload);
-            case "skipto" -> MusicControlCommandsKt.skipTo(eventExtender, payload);
-            case "volume" -> MusicControlCommandsKt.volume(eventExtender, payload);
-            case "seek" -> MusicControlCommandsKt.seek(eventExtender, payload);
+            case "clear-queue" -> ClearQueueKt.clearQueue(eventExtender, payload);
+            case "remove" -> RemoveKt.remove(eventExtender, payload);
+            case "leave" -> LeaveKt.leave(eventExtender, payload);
+            case "loop" -> LoopKt.loop(eventExtender, payload);
+            case "skipto" -> SkipToKt.skipTo(eventExtender, payload);
+            case "volume" -> VolumeKt.volume(eventExtender, payload);
+            case "seek" -> SeekKt.seek(eventExtender, payload);
         }
     }
 
@@ -105,7 +104,7 @@ public class InteractionListener extends ListenerAdapter {
                 case "queue_first" -> ButtonActionsKt.onQueueFirst(event);
                 case "queue_left" -> ButtonActionsKt.onQueueLeft(event);
                 case "queue_right" -> ButtonActionsKt.onQueueRight(event);
-                case "queue_last" -> ButtonActionsKt.onQueueLast(event);
+                case " queue_last" -> ButtonActionsKt.onQueueLast(event);
             }
         } catch (ButtonException e) {
             event.replyEmbeds(

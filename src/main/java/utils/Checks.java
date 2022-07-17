@@ -77,45 +77,6 @@ public class Checks {
         return member.getVoiceState().getChannel();
     }
 
-    public static VoiceChannel slashCommandCheck(
-            EventExtender event,
-            String applicationId,
-            Member member,
-            Guild guild
-    ) throws CheckFailedException {
-        if (applicationId == null) {
-            event.replyEphemeral(
-                    ErrorsKt.standardError(ErrorMessages.GENERAL_ERROR)
-            );
-            throw new CheckFailedException();
-        }
-        if (guild == null) {
-            event.replyEphemeral(
-                    ErrorsKt.standardError(ErrorMessages.GENERAL_ERROR)
-            );
-            throw new CheckFailedException();
-        }
-        if (member == null) {
-            event.replyEphemeral(
-                    ErrorsKt.standardError(ErrorMessages.GENERAL_ERROR)
-            );
-            throw new CheckFailedException();
-        }
-        if (
-                member.getVoiceState() == null ||
-                        member
-                                .getVoiceState()
-                                .getChannel() == null
-        ) {
-            event.replyEphemeral(
-                    ErrorsKt.standardError(ErrorMessages.NOT_CONNECTED_TO_VC)
-            );
-            throw new VoiceCheckFailedException();
-        }
-
-        return member.getVoiceState().getChannel();
-    }
-
     public static boolean linkIsValid(String url) {
         try {
             new URL(url).toURI();
