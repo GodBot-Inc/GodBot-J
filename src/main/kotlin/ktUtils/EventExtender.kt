@@ -29,7 +29,7 @@ class EventExtender(event: SlashCommandEvent) {
     }
 
     fun replyEphemeral(embed: MessageEmbed) {
-        this.event.replyEmbeds(embed)
+        this.event.replyEmbeds(embed).queue()
     }
 
     fun reply(message: String, color: Color = Colours.godbotYellow) {
@@ -60,7 +60,7 @@ class EventExtender(event: SlashCommandEvent) {
     }
 
     fun reply(embed: MessageEmbed) {
-        this.event.replyEmbeds(embed)
+        this.event.replyEmbeds(embed).queue()
     }
 
     fun error(message: String) {
