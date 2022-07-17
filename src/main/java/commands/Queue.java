@@ -16,7 +16,7 @@ import snippets.Colours;
 import snippets.EmojiIds;
 import snippets.ErrorMessages;
 import utils.DurationCalc;
-import utils.EventExtender;
+import ktUtils.EventExtender;
 import utils.MongoCommunication;
 import utils.QueueWrapper;
 
@@ -124,18 +124,18 @@ public class Queue implements Command {
         logger.info("Built Queue Message with all pages");
 
         if ((int) Math.ceil((float) queue.size() / 10) == 1) {
-            event.event.replyEmbeds(
+            event.reply(
                     getQueueEmbed(
                             (String) pagesDoc.get("0"),
                             payload.getMember().getUser().getAvatarUrl(),
                             0,
                             (int) Math.ceil((float) queue.size() / 10)
                     )
-            ).queue();
+            );
             return;
         }
 
-        event.event.replyEmbeds(
+        event.getEvent().replyEmbeds(
                     getQueueEmbed(
                             (String) pagesDoc.get("0"),
                             payload.getMember().getUser().getAvatarUrl(),
@@ -154,7 +154,7 @@ public class Queue implements Command {
                     builder.setMessageId(messageId);
                     MongoCommunication.getInstance().addQueue(builder.build().toBson());
                     InteractionScheduler interactionScheduler = new InteractionScheduler(
-                            event.event.getTextChannel().getId(),
+                            event.getTextChannel().getId(),
                             messageId,
                             10,
                             new Buttons.QueueBuilder()

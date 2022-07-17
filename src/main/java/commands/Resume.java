@@ -10,7 +10,7 @@ import singeltons.PlayerVault;
 import snippets.Colours;
 import snippets.EmojiIds;
 import snippets.ErrorMessages;
-import utils.EventExtender;
+import ktUtils.EventExtender;
 
 public class Resume implements Command {
 

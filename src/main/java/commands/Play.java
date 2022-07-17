@@ -18,7 +18,7 @@ import singeltons.JDAManager;
 import snippets.ErrorMessages;
 import utils.Checks;
 import utils.DataGatherer;
-import utils.EventExtender;
+import ktUtils.EventExtender;
 import utils.LinkHelper;
 
 import java.util.Collections;
@@ -51,7 +51,7 @@ public class Play implements Command {
 
     private static String checkParameters(EventExtender event)
             throws CheckFailedException {
-        OptionMapping url = event.event.getOption("url");
+        OptionMapping url = event.getOption("url");
         if (url == null) {
             throw new CheckFailedException();
         }
@@ -59,7 +59,7 @@ public class Play implements Command {
     }
 
     private static boolean getShuffle(EventExtender event) {
-        OptionMapping shuffle = event.event.getOption("shuffle");
+        OptionMapping shuffle = event.getOption("shuffle");
         return shuffle != null && shuffle.getAsBoolean();
     }
 
@@ -202,8 +202,8 @@ public class Play implements Command {
             return;
         }
 
-        InteractionHook interactionHook = event.event.getHook();
-        event.event.deferReply().queue();
+        InteractionHook interactionHook = event.getHook();
+        event.deferReply();
         logger.info("Deferred Reply");
 
         Future<PlayableInfo> infoGatheringFuture = startInfoGathering(url);
