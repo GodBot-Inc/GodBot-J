@@ -4,6 +4,7 @@ import io.github.cdimascio.dotenv.Dotenv;
 import ktSnippets.ErrorsKt;
 import ktUtils.CheckFailedException;
 import ktUtils.ENVCheckFailedException;
+import ktUtils.EventExtender;
 import ktUtils.VoiceCheckFailedException;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;

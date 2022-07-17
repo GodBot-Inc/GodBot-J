@@ -6,7 +6,6 @@ import ktLogging.custom.GodBotLogger
 import ktLogging.formatPayload
 import ktSnippets.standardError
 import net.dv8tion.jda.api.interactions.InteractionHook
-import utils.EventExtender
 
 @JvmOverloads
 fun handleDefaultErrorResponse(
@@ -17,18 +16,6 @@ fun handleDefaultErrorResponse(
     loggingLevel: LoggingLevel = LoggingLevel.HIGH
 ){
     event.replyEphemeral(standardError(msg))
-    logger.error(formatPayload(payload), loggingLevel)
-}
-
-@JvmOverloads
-fun handleClearErrorResponse(
-    event: EventExtender,
-    payload: SlashCommandPayload,
-    msg: String,
-    logger: Logger = GodBotLogger(),
-    loggingLevel: LoggingLevel = LoggingLevel.HIGH
-) {
-    event.reply(standardError(msg))
     logger.error(formatPayload(payload), loggingLevel)
 }
 
