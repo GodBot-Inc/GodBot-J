@@ -58,7 +58,6 @@ fun getPlaylistInfo(id: String): SpotifyPlaylist {
         .thumbnailUri(playlist.images[0].url)
         .size(playlist.tracks.size)
         .videoIds(videoIds)
-        .playableInfo(playableInformation)
 
     val creator: String? = playlist.owner.displayName
     if (creator != null) {
