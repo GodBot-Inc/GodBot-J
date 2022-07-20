@@ -1,11 +1,11 @@
 package ktCommands
 
 import commands.Command
-import ktUtils.SlashCommandPayload
+import lib.SlashCommandPayload
 import singeltons.JDAManager
 import singeltons.PlayerVault
 import snippets.ErrorMessages
-import ktUtils.EventExtender
+import lib.EventExtender
 import snippets.EmojiIds
 
 fun pause(event: EventExtender, payload: SlashCommandPayload) {

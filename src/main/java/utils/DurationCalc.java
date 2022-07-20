@@ -1,40 +1,6 @@
 package utils;
 
 public final class DurationCalc {
-
-    /**
-     * Converts the duration from the passed YT String a milliseconds
-     * @param duration passed in a String from YouTube
-     * @return the duration converted into milliseconds
-     */
-    public static long ytStringToLong(String duration) {
-        long time = 0;
-        if (duration.contains("PT") || duration.contains("PM")) {
-            duration = duration.substring(2);
-        }
-        if (duration.contains("H")) {
-            // multiply hours with 3600000 to get milliseconds
-            time += Long.parseLong(duration.split("H")[0]) * 3600000;
-        }
-        if (duration.contains("M")) {
-            if (duration.contains("H")) {
-                time += Long.parseLong(duration.split("H")[1].split("M")[0]) * 60000;
-            } else {
-                time += Long.parseLong(duration.split("M")[0]) * 60000;
-            }
-        }
-        if (duration.contains("S")) {
-            if (duration.contains("M")) {
-                time += Long.parseLong(duration.split("M")[1].split("S")[0]) * 1000;
-            } else if (duration.contains("H")) {
-                time += Long.parseLong(duration.split("H")[1].split("S")[0]) * 1000;
-            } else {
-                time += Long.parseLong(duration.split("S")[0]) * 1000;
-            }
-        }
-        return time;
-    }
-
     /**
      * Converts milliseconds into a user readable String
      * @param duration in milliseconds (has to be of type long)

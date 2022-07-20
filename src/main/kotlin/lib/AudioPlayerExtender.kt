@@ -1,6 +1,9 @@
-package ktUtils
+package lib
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer
+import ktUtils.GodBotException
+import ktUtils.QueueEmptyException
+import ktUtils.TrackNotFoundException
 import lavaplayerHandlers.AudioPlayerSendHandler
 import lavaplayerHandlers.TrackEventListener
 import net.dv8tion.jda.api.entities.Member

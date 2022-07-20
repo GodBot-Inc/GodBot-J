@@ -1,9 +1,9 @@
 package ktCommands
 
 import commands.Command
-import ktUtils.AudioTrackExtender
-import ktUtils.EventExtender
-import ktUtils.SlashCommandPayload
+import lib.AudioTrackExtender
+import lib.EventExtender
+import lib.SlashCommandPayload
 import singeltons.JDAManager
 import singeltons.PlayerVault
 import snippets.ErrorMessages

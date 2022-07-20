@@ -1,14 +1,14 @@
 package ktCommands
 
 import ktSnippets.trackLines
-import ktUtils.*
 import net.dv8tion.jda.api.EmbedBuilder
 import singeltons.JDAManager
 import singeltons.PlayerVault
 import snippets.Colours
 import snippets.ErrorMessages
 import utils.DurationCalc
-import ktUtils.EventExtender
+import lib.EventExtender
+import lib.SlashCommandPayload
 import java.util.concurrent.TimeUnit
 
 fun seek(event: EventExtender, payload: SlashCommandPayload) {

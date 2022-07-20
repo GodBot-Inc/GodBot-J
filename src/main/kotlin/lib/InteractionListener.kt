@@ -8,8 +8,6 @@ import io.github.cdimascio.dotenv.Dotenv
 import kotlinx.coroutines.runBlocking
 import ktCommands.*
 import ktCommands.play.play
-import ktUtils.EventExtender
-import ktUtils.SlashCommandPayload
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent
 import net.dv8tion.jda.api.hooks.ListenerAdapter
 import snippets.ErrorMessages

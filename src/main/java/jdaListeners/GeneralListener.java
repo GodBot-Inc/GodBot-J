@@ -1,9 +1,7 @@
 package jdaListeners;
 
 import io.github.cdimascio.dotenv.Dotenv;
-import ktUtils.AudioPlayerExtender;
-import ktUtils.GuildNotFoundException;
-import ktUtils.JDANotFoundException;
+import lib.AudioPlayerExtender;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceJoinEvent;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceLeaveEvent;

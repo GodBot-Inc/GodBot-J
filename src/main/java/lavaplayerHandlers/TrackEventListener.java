@@ -5,7 +5,7 @@ import com.sedmelluq.discord.lavaplayer.player.event.AudioEventAdapter;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
-import ktUtils.AudioPlayerExtender;
+import lib.AudioPlayerExtender;
 import ktUtils.QueueEmptyException;
 
 import java.util.Objects;

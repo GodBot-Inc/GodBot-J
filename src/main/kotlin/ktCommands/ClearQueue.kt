@@ -3,14 +3,14 @@ package ktCommands
 import commands.Command
 import ktLogging.custom.GodBotLogger
 import ktLogging.formatPayload
-import ktUtils.*
 import net.dv8tion.jda.api.EmbedBuilder
 import singeltons.JDAManager
 import singeltons.PlayerVault
 import snippets.Colours
 import snippets.EmojiIds
 import snippets.ErrorMessages
-import ktUtils.EventExtender
+import lib.EventExtender
+import lib.SlashCommandPayload
 
 fun clearQueue(event: EventExtender, payload: SlashCommandPayload) {
     val logger = GodBotLogger().command(

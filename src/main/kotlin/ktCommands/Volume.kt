@@ -1,11 +1,11 @@
 package ktCommands
 
-import ktUtils.*
 import singeltons.JDAManager
 import singeltons.PlayerVault
 import snippets.EmojiIds
 import snippets.ErrorMessages
-import ktUtils.EventExtender
+import lib.EventExtender
+import lib.SlashCommandPayload
 import net.dv8tion.jda.api.entities.Emoji
 
 fun volume(event: EventExtender, payload: SlashCommandPayload) {

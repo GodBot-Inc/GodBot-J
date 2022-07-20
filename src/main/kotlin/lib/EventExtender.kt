@@ -1,4 +1,4 @@
-package ktUtils
+package lib
 
 import ktSnippets.standardError
 import net.dv8tion.jda.api.EmbedBuilder
@@ -65,10 +65,6 @@ class EventExtender(event: SlashCommandEvent) {
 
     fun error(message: String) {
         this.replyEphemeral(standardError(message))
-    }
-
-    fun clearError(message: String) {
-        this.reply(standardError(message))
     }
 
     fun getTextChannel(): TextChannel = this.event.textChannel

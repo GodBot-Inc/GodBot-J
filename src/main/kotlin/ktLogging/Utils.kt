@@ -1,7 +1,7 @@
 package ktLogging
 
 import com.andreapivetta.kolor.*
-import ktUtils.SlashCommandPayload
+import lib.SlashCommandPayload
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 

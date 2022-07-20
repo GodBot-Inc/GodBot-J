@@ -5,6 +5,8 @@ import ktLogging.LoggingLevel
 import ktLogging.custom.GodBotLogger
 import ktLogging.formatPayload
 import ktSnippets.standardError
+import lib.EventExtender
+import lib.SlashCommandPayload
 import net.dv8tion.jda.api.interactions.InteractionHook
 
 @JvmOverloads

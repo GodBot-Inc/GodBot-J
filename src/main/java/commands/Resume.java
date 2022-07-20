@@ -4,13 +4,15 @@ import ktLogging.UtilsKt;
 import ktLogging.custom.GodBotChildLogger;
 import ktLogging.custom.GodBotLogger;
 import ktUtils.*;
+import lib.AudioPlayerExtender;
+import lib.SlashCommandPayload;
 import net.dv8tion.jda.api.EmbedBuilder;
 import singeltons.JDAManager;
 import singeltons.PlayerVault;
 import snippets.Colours;
 import snippets.EmojiIds;
 import snippets.ErrorMessages;
-import ktUtils.EventExtender;
+import lib.EventExtender;
 
 public class Resume implements Command {
 

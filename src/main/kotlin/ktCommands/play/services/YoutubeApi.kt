@@ -61,11 +61,6 @@ suspend fun getYTVideoInfo(id: String) = coroutineScope {
 }
 
 suspend fun getYTPlaylistInfo(id: String) = coroutineScope {
-    val infoRequest = builder
-        .uri(UrlBuilder.YT().getPlaylist().id(id).build())
-        .GET()
-        .build()
-
     val itemsRequest: CompletableFuture<HttpResponse<String>> = client.sendAsync(
         builder.uri(UrlBuilder.YT().getPlaylistItems().id(id).build())
             .GET()

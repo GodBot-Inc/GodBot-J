@@ -1,6 +1,6 @@
 package singeltons;
 
-import ktUtils.AudioPlayerExtender;
+import lib.AudioPlayerExtender;
 import ktUtils.GuildNotFoundException;
 import ktUtils.JDANotFoundException;
 import net.dv8tion.jda.api.JDA;

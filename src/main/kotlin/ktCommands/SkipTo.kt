@@ -8,7 +8,8 @@ import net.dv8tion.jda.api.interactions.commands.OptionMapping
 import singeltons.JDAManager
 import singeltons.PlayerVault
 import snippets.ErrorMessages
-import ktUtils.EventExtender
+import lib.EventExtender
+import lib.SlashCommandPayload
 
 fun skipTo(event: EventExtender, payload: SlashCommandPayload) {
     fun skipCheckParameter(event: SlashCommandEvent): Long {
