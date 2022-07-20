@@ -1,12 +1,12 @@
 package ktSnippets
 
+import ktUtils.millisToStringDisplay
 import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.entities.Member
 import net.dv8tion.jda.api.entities.MessageEmbed
 import playableInfo.*
 import snippets.Colours
 import snippets.EmojiIds
-import utils.DurationCalc
 import javax.annotation.CheckReturnValue
 
 private const val defaultThumbnail =
@@ -135,7 +135,7 @@ fun playVideo(
     ) else String.format(
         "%s %s",
         trackLinesDefault(),
-        DurationCalc.longToStringPlus(playableInfo.duration)
+        millisToStringDisplay(playableInfo.duration)
     )
 
     return EmbedBuilder()
@@ -207,7 +207,7 @@ fun playPlaylist(
     ) else String.format(
         "%s %s",
         trackLinesDefault(),
-        DurationCalc.longToStringPlus(playlistInfo.duration)
+        millisToStringDisplay(playlistInfo.duration)
     )
 
     return EmbedBuilder()

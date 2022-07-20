@@ -4,9 +4,12 @@ import interactions.InteractionScheduler;
 import ktLogging.UtilsKt;
 import ktLogging.custom.GodBotChildLogger;
 import ktLogging.custom.GodBotLogger;
-import ktUtils.*;
+import ktUtils.ButtonException;
+import ktUtils.ErrorHandlerKt;
+import ktUtils.FormatterKt;
 import lib.AudioPlayerExtender;
 import lib.AudioTrackExtender;
+import lib.EventExtender;
 import lib.SlashCommandPayload;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
@@ -18,8 +21,6 @@ import snippets.Buttons;
 import snippets.Colours;
 import snippets.EmojiIds;
 import snippets.ErrorMessages;
-import utils.DurationCalc;
-import lib.EventExtender;
 import utils.MongoCommunication;
 import utils.QueueWrapper;
 
@@ -103,7 +104,7 @@ public class Queue implements Command {
                             i+1,
                             currentTrack.getSongInfo().getTitle(),
                             currentTrack.getSongInfo().getUri(),
-                            DurationCalc.longToString(currentTrack.getSongInfo().getDuration()),
+                            FormatterKt.millisToString(currentTrack.getSongInfo().getDuration()),
                             Objects.requireNonNull(currentTrack.getRequester()).getAsMention()
                     )
             );

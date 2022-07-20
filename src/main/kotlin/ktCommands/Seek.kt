@@ -1,14 +1,14 @@
 package ktCommands
 
 import ktSnippets.trackLines
+import ktUtils.millisToString
+import lib.EventExtender
+import lib.SlashCommandPayload
 import net.dv8tion.jda.api.EmbedBuilder
 import singeltons.JDAManager
 import singeltons.PlayerVault
 import snippets.Colours
 import snippets.ErrorMessages
-import utils.DurationCalc
-import lib.EventExtender
-import lib.SlashCommandPayload
 import java.util.concurrent.TimeUnit
 
 fun seek(event: EventExtender, payload: SlashCommandPayload) {
@@ -44,8 +44,8 @@ fun seek(event: EventExtender, payload: SlashCommandPayload) {
     val duration: Long = player.currentTrack?.songInfo?.duration ?: 0
 
     if (seekPoint > duration) {
-        event.error("I can't skip to ${DurationCalc.longToString(seekPoint)}" +
-                ", because the song is only ${DurationCalc.longToString(duration)} long")
+        event.error("I can't skip to ${millisToString(seekPoint)}" +
+                ", because the song is only ${millisToString(duration)} long")
         return
     }
 
@@ -57,7 +57,7 @@ fun seek(event: EventExtender, payload: SlashCommandPayload) {
             .setThumbnail(player.currentTrack?.songInfo?.thumbnailUri)
             .setDescription(
                 trackLines(seekPoint, player.getCurrentSongDuration()) + " "
-                        + "**${DurationCalc.longToString(seekPoint)} - ${DurationCalc.longToString(duration)}**"
+                        + "**${millisToString(seekPoint)} - ${millisToString(duration)}**"
             )
             .setColor(Colours.godbotHeavenYellow)
             .build()
