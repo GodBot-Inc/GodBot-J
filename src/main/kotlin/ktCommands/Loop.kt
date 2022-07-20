@@ -1,8 +1,8 @@
 package ktCommands
 
 import commands.Command
-import lib.EventExtender
-import lib.SlashCommandPayload
+import objects.EventExtender
+import objects.SlashCommandPayload
 import singeltons.JDAManager
 import singeltons.PlayerVault
 import snippets.EmojiIds

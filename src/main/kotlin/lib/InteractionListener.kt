@@ -9,6 +9,8 @@ import ktCommands.*
 import ktCommands.play.play
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent
 import net.dv8tion.jda.api.hooks.ListenerAdapter
+import objects.EventExtender
+import objects.SlashCommandPayload
 import snippets.ErrorMessages
 
 class InteractionListener: ListenerAdapter() {

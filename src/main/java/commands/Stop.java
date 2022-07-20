@@ -5,14 +5,14 @@ import ktLogging.custom.GodBotChildLogger;
 import ktLogging.custom.GodBotLogger;
 import ktUtils.*;
 import lib.AudioPlayerExtender;
-import lib.SlashCommandPayload;
+import objects.SlashCommandPayload;
 import net.dv8tion.jda.api.EmbedBuilder;
 import singeltons.JDAManager;
 import singeltons.PlayerVault;
 import snippets.Colours;
 import snippets.EmojiIds;
 import snippets.ErrorMessages;
-import lib.EventExtender;
+import objects.EventExtender;
 
 public class Stop implements Command {
 

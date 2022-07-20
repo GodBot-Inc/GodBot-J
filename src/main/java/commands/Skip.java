@@ -6,7 +6,7 @@ import ktLogging.custom.GodBotLogger;
 import ktUtils.*;
 import lib.AudioPlayerExtender;
 import lib.AudioTrackExtender;
-import lib.SlashCommandPayload;
+import objects.SlashCommandPayload;
 import net.dv8tion.jda.api.EmbedBuilder;
 import org.jetbrains.annotations.NotNull;
 import singeltons.JDAManager;
@@ -14,7 +14,7 @@ import singeltons.PlayerVault;
 import snippets.Colours;
 import snippets.EmojiIds;
 import snippets.ErrorMessages;
-import lib.EventExtender;
+import objects.EventExtender;
 
 public class Skip implements Command {
 

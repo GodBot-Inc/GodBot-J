@@ -16,8 +16,8 @@ import ktSnippets.playVideo
 import ktUtils.CouldNotExtractVideoInformation
 import ktUtils.TrackNotFoundException
 import ktUtils.VideoNotFoundException
-import lib.EventExtender
-import lib.SlashCommandPayload
+import objects.EventExtender
+import objects.SlashCommandPayload
 import playableInfo.YouTubePlaylist
 import playableInfo.YouTubeSong
 import singeltons.AudioPlayerManagerWrapper

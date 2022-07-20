@@ -2,8 +2,8 @@ package ktCommands
 
 import ktSnippets.trackLines
 import ktUtils.millisToString
-import lib.EventExtender
-import lib.SlashCommandPayload
+import objects.EventExtender
+import objects.SlashCommandPayload
 import net.dv8tion.jda.api.EmbedBuilder
 import singeltons.JDAManager
 import singeltons.PlayerVault

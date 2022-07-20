@@ -2,8 +2,8 @@ package ktCommands
 
 import commands.Command
 import lib.AudioTrackExtender
-import lib.EventExtender
-import lib.SlashCommandPayload
+import objects.EventExtender
+import objects.SlashCommandPayload
 import singeltons.JDAManager
 import singeltons.PlayerVault
 import snippets.ErrorMessages
@@ -19,9 +19,10 @@ fun remove(event: EventExtender, payload: SlashCommandPayload) {
         .getInstance()
         .getPlayer(
             JDAManager.getInstance().getJDA(Command.applicationId),
-            payload.guild.id
+            payload.guild.id,
+            payload.voiceChannel.id
         )
-    if (player == null || player.voiceChannel.id != payload.voiceChannel.id) {
+    if (player == null) {
         event.error(ErrorMessages.NO_PLAYER_IN_VC)
         return
     }

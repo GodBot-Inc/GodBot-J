@@ -9,8 +9,8 @@ import singeltons.PlayerVault
 import snippets.Colours
 import snippets.EmojiIds
 import snippets.ErrorMessages
-import lib.EventExtender
-import lib.SlashCommandPayload
+import objects.EventExtender
+import objects.SlashCommandPayload
 
 fun clearQueue(event: EventExtender, payload: SlashCommandPayload) {
     val logger = GodBotLogger().command(

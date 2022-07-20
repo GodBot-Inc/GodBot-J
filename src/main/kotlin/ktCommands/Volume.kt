@@ -4,8 +4,8 @@ import singeltons.JDAManager
 import singeltons.PlayerVault
 import snippets.EmojiIds
 import snippets.ErrorMessages
-import lib.EventExtender
-import lib.SlashCommandPayload
+import objects.EventExtender
+import objects.SlashCommandPayload
 import net.dv8tion.jda.api.entities.Emoji
 
 fun volume(event: EventExtender, payload: SlashCommandPayload) {

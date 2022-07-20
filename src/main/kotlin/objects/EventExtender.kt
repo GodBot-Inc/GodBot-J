@@ -1,4 +1,4 @@
-package lib
+package objects
 
 import ktSnippets.standardError
 import net.dv8tion.jda.api.EmbedBuilder
@@ -17,15 +17,6 @@ class EventExtender(event: SlashCommandEvent) {
 
     init {
         this.event = event
-    }
-
-    fun replyEphemeral(message: String, color: Color = Colours.godbotYellow) {
-        this.replyEphemeral(
-            EmbedBuilder()
-                .setTitle(message)
-                .setColor(color)
-                .build()
-        )
     }
 
     fun replyEphemeral(embed: MessageEmbed) {
