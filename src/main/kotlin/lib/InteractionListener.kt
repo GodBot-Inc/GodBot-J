@@ -1,7 +1,6 @@
 package lib
 
 import commands.Queue
-import commands.Resume
 import commands.Skip
 import commands.Stop
 import io.github.cdimascio.dotenv.Dotenv
@@ -43,7 +42,7 @@ class InteractionListener: ListenerAdapter() {
             "join" -> join(event, payload)
             "play" -> runBlocking { play(event, payload) }
             "pause" -> pause(event, payload)
-            "resume" -> Resume.trigger(event, payload)
+            "resume" -> resume(event, payload)
             "stop" -> Stop.trigger(event, payload)
             "skip" -> Skip.trigger(event, payload)
             "queue" -> Queue.trigger(event, payload)
