@@ -18,7 +18,7 @@ import singeltons.JDAManager
 import javax.security.auth.login.LoginException
 import kotlin.system.exitProcess
 
-fun main() {
+fun main(args: Array<String>) {
     println("Checking Env...")
     if (!validEnv())
         exitProcess(0)
