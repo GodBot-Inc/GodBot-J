@@ -81,9 +81,9 @@ public class Checks {
     public static boolean linkIsValid(String url) {
         try {
             new URL(url).toURI();
-            return false;
-        } catch (MalformedURLException | URISyntaxException e) {
             return true;
+        } catch (MalformedURLException | URISyntaxException e) {
+            return false;
         }
     }
 

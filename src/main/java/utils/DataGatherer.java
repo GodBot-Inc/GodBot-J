@@ -11,9 +11,6 @@ import java.io.IOException;
 public class DataGatherer {
     public static PlayableInfo gatherPlayableInfo(String url)
             throws InvalidURLException, PlatformNotFoundException, InternalError, IllegalStateException {
-        if (Checks.linkIsValid(url)) {
-            throw new InvalidURLException();
-        }
         String platform = LinkHelper.getPlatform(url);
         switch (platform) {
             case "youtube" -> {

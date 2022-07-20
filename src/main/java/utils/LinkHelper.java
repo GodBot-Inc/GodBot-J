@@ -4,6 +4,7 @@ import ktUtils.*;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import javax.annotation.Nullable;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -43,13 +44,17 @@ public class LinkHelper {
      * @throws PlatformNotFoundException if the platform could not be determined
      * @throws InvalidURLException if the link is invalid
      */
-    public static boolean isVideo(String url)
+    public static @Nullable TypeAndId isVideo(String url)
             throws PlatformNotFoundException, InvalidURLException {
         String platform = getPlatform(url);
         if (platform.equals("youtube")) {
-            return DataGatherer.ytGetTypeAndId(url).type.equals("video");
+            TypeAndId typeAndId = DataGatherer.ytGetTypeAndId(url);
+            if (typeAndId.type.equals("video"))
+                return typeAndId;
+            else
+                return null;
         }
-        throw new PlatformNotFoundException();
+        return null;
     }
 
     /**

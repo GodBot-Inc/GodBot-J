@@ -10,6 +10,7 @@ import playableInfo.YouTubePlaylist;
 import playableInfo.YouTubeSong;
 import utils.DurationCalc;
 import utils.LinkHelper;
+import ktUtils.UrlBuilder;
 
 import java.io.IOException;
 import java.net.URI;
@@ -30,15 +31,6 @@ public class YoutubeApi {
         System.out.println(searchResult.toString(4));
     }
 
-    public static void search(String title)
-            throws IOException, RequestException {
-        searchLogic(
-                UrlBuilder.UrlConstructor.getSearch()
-                        .setSearch(title)
-                        .build()
-        );
-    }
-
     /**
      * This function gathers information about the video with the given id
      * @param id The YouTube id of the video that should be gathered information about
@@ -57,9 +49,9 @@ public class YoutubeApi {
             VideoNotFoundException {
 
         JSONObject videoInfo = LinkHelper.sendRequest(
-                UrlBuilder.UrlConstructor.getYTVideo()
-                        .setId(id)
-                        .build()
+                new UrlBuilder.YT().getVideo()
+                        .id(id)
+                        .buildString()
         );
 
         YouTubeSong.Builder builder = new YouTubeSong.Builder();
@@ -153,12 +145,12 @@ public class YoutubeApi {
      */
     public static YouTubePlaylist getPlaylistInfoAsync(String id)
             throws VideoNotFoundException, CouldNotExtractVideoInformation {
-        String playlistInfoUrl = UrlBuilder.UrlConstructor.getPlaylistInfo()
-                .setId(id)
-                .build();
-        String playlistItemsUrl = UrlBuilder.UrlConstructor.getPlaylistItems()
-                .setId(id)
-                .build();
+        String playlistInfoUrl = new UrlBuilder.YT().getPlaylist()
+                .id(id)
+                .buildString();
+        String playlistItemsUrl = new UrlBuilder.YT().getPlaylistItems()
+                .id(id)
+                .buildString();
 
         HttpClient httpClient = HttpClient.newHttpClient();
 
@@ -255,10 +247,10 @@ public class YoutubeApi {
 
             boolean sendRequest;
             try {
-                url = UrlBuilder.UrlConstructor.getPlaylistItemsToken()
-                        .setId(id)
-                        .setPageToken(playlistItemsObject.getString("nextPageToken"))
-                        .build();
+                url = new UrlBuilder.YT().getPlaylistItemsToken()
+                        .id(id)
+                        .pageToken(playlistItemsObject.getString("nextPageToken"))
+                        .buildString();
                 sendRequest = true;
             } catch (JSONException e) {
                 sendRequest = false;
@@ -308,7 +300,6 @@ public class YoutubeApi {
             try {
                 YouTubeSong cur = ytSong.get();
                 playableInfoBuilder.addDuration(cur.getDuration());
-                playableInfoBuilder.addPlayable(cur);
             } catch (ExecutionException | InterruptedException ignore) {}
         }
 

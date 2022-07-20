@@ -127,6 +127,11 @@ class AudioPlayerExtender(
     }
 
     @Throws(TrackNotFoundException::class)
+    fun play(playableInfo: PlayableInfo, payload: SlashCommandPayload): Int {
+        return this.play(AudioTrackExtender(playableInfo, payload.member))
+    }
+
+    @Throws(TrackNotFoundException::class)
     fun play(audioTrackExtender: AudioTrackExtender): Int {
         updateUsage()
         if (!audioManager.isConnected)
