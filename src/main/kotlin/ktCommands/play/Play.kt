@@ -10,6 +10,8 @@ import ktCommands.play.lib.InteractionHookWrapper
 import ktCommands.play.services.getYTPlaylistInfo
 import ktCommands.play.services.getYTVideoInfo
 import ktCommands.play.utils.convertYtUrlToId
+import ktCommands.play.utils.isSong
+import ktCommands.play.utils.isValid
 import ktSnippets.playVideo
 import ktUtils.*
 import playableInfo.YouTubePlaylist
@@ -17,9 +19,6 @@ import playableInfo.YouTubeSong
 import singeltons.AudioPlayerManagerWrapper
 import singeltons.JDAManager
 import snippets.ErrorMessages
-import utils.Checks
-import utils.LinkHelper
-import utils.TypeAndId
 
 suspend fun play(event: EventExtender, payload: SlashCommandPayload) {
     val url = event.getOption("url")?.asString
@@ -27,20 +26,14 @@ suspend fun play(event: EventExtender, payload: SlashCommandPayload) {
         event.error(ErrorMessages.NOT_RECEIVED_PARAMETER)
         return
     }
-    if (!Checks.linkIsValid(url)) {
+    if (!isValid(url)) {
         event.error(ErrorMessages.INVALID_URL)
         return
     }
 
     coroutineScope {
-        val isVideo: TypeAndId?
-
-        try {
-            isVideo = LinkHelper.isVideo(url)
-        } catch (e: InvalidURLException) {
-            event.error(ErrorMessages.INVALID_URL)
-            return@coroutineScope
-        } catch (e: PlatformNotFoundException) {
+        val isSong = isSong(url)
+        if (isSong == null) {
             event.error(ErrorMessages.INVALID_PLATFORM)
             return@coroutineScope
         }
@@ -48,7 +41,7 @@ suspend fun play(event: EventExtender, payload: SlashCommandPayload) {
         val hook = InteractionHookWrapper(event.getHook())
         event.deferReply()
 
-        if (isVideo != null)
+        if (isSong)
             resolveVideo(payload, hook, url)
         else
             resolvePlaylist(event, payload, hook, url)

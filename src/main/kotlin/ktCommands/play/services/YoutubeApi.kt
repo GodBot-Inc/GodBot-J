@@ -1,7 +1,5 @@
 package ktCommands.play.services
 
-import com.adamratzman.spotify.utils.Language
-import io.github.cdimascio.dotenv.Dotenv
 import kotlinx.coroutines.*
 import ktCommands.play.utils.convertYtToMillis
 import ktUtils.CouldNotExtractVideoInformation
@@ -12,7 +10,6 @@ import org.json.JSONException
 import org.json.JSONObject
 import playableInfo.YouTubePlaylist
 import playableInfo.YouTubeSong
-import utils.LinkHelper
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse
@@ -22,17 +19,11 @@ import java.util.concurrent.CompletableFuture
 val client = HttpClient.newHttpClient()
 val builder = HttpRequest.newBuilder()
 
+// TODO: Check for invalid code responses
+
 @Throws(VideoNotFoundException::class, CouldNotExtractVideoInformation::class)
 suspend fun getYTVideoInfo(id: String) = coroutineScope {
-    val apiKey = Dotenv.load()["YT_API_KEY"]
-    var response = LinkHelper.sendRequest("https://youtube.googleapis.com/youtube/v3/videos?" +
-            "part=contentDetails" +
-            "&part=snippet" +
-            "&part=statistics" +
-            "&id=${Language.id}" +
-            "&maxResults=1" +
-            "&key=$apiKey")
-
+    var response = get(UrlBuilder.YT().getVideo().id(id).build())
     val builder = YouTubeSong.Builder()
 
     if (response.getJSONArray("items").isEmpty)
