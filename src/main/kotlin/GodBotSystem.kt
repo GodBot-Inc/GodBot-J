@@ -3,7 +3,7 @@ import com.andreapivetta.kolor.green
 import com.andreapivetta.kolor.red
 import com.sedmelluq.discord.lavaplayer.jdaudp.NativeAudioSendFactory
 import io.github.cdimascio.dotenv.Dotenv
-import jdaListeners.BotStateListener
+import lib.jda.BotStateListener
 import lib.jda.GeneralListener
 import lib.jda.InteractionListener
 import net.dv8tion.jda.api.JDA
