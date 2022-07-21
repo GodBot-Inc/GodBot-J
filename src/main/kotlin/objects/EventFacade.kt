@@ -83,4 +83,8 @@ class EventFacade(event: SlashCommandEvent) {
     fun getOption(optionName: String): OptionMapping? {
         return this.event.getOption(optionName)
     }
+
+    fun getLong(optionName: String): Long? {
+        return this.event.getOption(optionName)?.asLong
+    }
 }

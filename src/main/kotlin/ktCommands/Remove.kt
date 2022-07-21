@@ -9,7 +9,7 @@ import objects.SlashCommandPayload
 import singeltons.JDAManager
 
 fun remove(event: EventFacade, payload: SlashCommandPayload) {
-    val position: Long? = event.getOption("position")?.asLong
+    val position: Long? = event.getLong("position")
     if (position == null) {
         event.error(notReceivedParameter)
         return

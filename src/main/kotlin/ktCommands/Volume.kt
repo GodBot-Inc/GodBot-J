@@ -8,7 +8,7 @@ import objects.SlashCommandPayload
 import singeltons.JDAManager
 
 fun volume(event: EventFacade, payload: SlashCommandPayload) {
-    val level: Int? = event.getOption("level")?.asLong?.toInt()
+    val level: Int? = event.getLong("level")?.toInt()
     if (level == null) {
         event.error(notReceivedParameter)
         return
