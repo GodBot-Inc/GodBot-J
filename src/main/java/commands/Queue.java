@@ -8,8 +8,7 @@ import ktLogging.UtilsKt;
 import ktLogging.custom.GodBotChildLogger;
 import ktLogging.custom.GodBotLogger;
 import ktUtils.ButtonException;
-import ktUtils.ErrorHandlerKt;
-import ktUtils.FormatterKt;
+import ktUtils.ConverterKt;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import objects.AudioPlayerExtender;
@@ -68,20 +67,20 @@ public class Queue implements Command {
                         payload.getGuild().getId()
                 );
         if (audioPlayer == null) {
-            ErrorHandlerKt.handleDefaultErrorResponse(event, payload, ErrorMessagesKt.noPlayerFound, logger);
+            event.error(ErrorMessagesKt.noPlayerFound);
             return;
         }
 
         logger.info("Got AudioPlayer");
 
         if (!audioPlayer.getVoiceChannel().getId().equals(payload.getVoiceChannel().getId())) {
-            ErrorHandlerKt.handleDefaultErrorResponse(event, payload, ErrorMessagesKt.noPlayerInVc, logger);
+            event.error(ErrorMessagesKt.noPlayerInVc);
             return;
         }
 
         List<AudioTrackExtender> queue = audioPlayer.getQueue();
         if (queue.isEmpty()) {
-            ErrorHandlerKt.handleDefaultErrorResponse(event, payload, ErrorMessagesKt.queueEmpty, logger);
+            event.error(ErrorMessagesKt.queueEmpty);
             return;
         }
 
@@ -104,7 +103,7 @@ public class Queue implements Command {
                             i+1,
                             currentTrack.getSongInfo().getTitle(),
                             currentTrack.getSongInfo().getUri(),
-                            FormatterKt.millisToString(currentTrack.getSongInfo().getDuration()),
+                            ConverterKt.millisToString(currentTrack.getSongInfo().getDuration()),
                             Objects.requireNonNull(currentTrack.getRequester()).getAsMention()
                     )
             );
