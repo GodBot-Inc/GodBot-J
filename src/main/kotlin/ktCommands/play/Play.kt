@@ -1,8 +1,6 @@
 package ktCommands.play
 
-import commands.Command
-import constants.songNotFound
-import constants.songProcessingError
+import constants.*
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
@@ -24,23 +22,22 @@ import playableInfo.YouTubePlaylist
 import playableInfo.YouTubeSong
 import singeltons.AudioPlayerManagerWrapper
 import singeltons.JDAManager
-import snippets.ErrorMessages
 
 suspend fun play(event: EventFacade, payload: SlashCommandPayload) {
     val url = event.getOption("url")?.asString
     if (url == null) {
-        event.error(ErrorMessages.NOT_RECEIVED_PARAMETER)
+        event.error(notReceivedParameter)
         return
     }
     if (!isValid(url)) {
-        event.error(ErrorMessages.INVALID_URL)
+        event.error(invalidURL)
         return
     }
 
     coroutineScope {
         val isSong = isSong(url)
         if (isSong == null) {
-            event.error(ErrorMessages.INVALID_PLATFORM)
+            event.error(invalidPlatform)
             return@coroutineScope
         }
 
@@ -64,7 +61,7 @@ suspend fun resolveVideo(
     val player = AudioPlayerManagerWrapper
         .getInstance()
         .getOrCreatePlayer(
-            JDAManager.getInstance().getJDA(Command.applicationId),
+            JDAManager.getInstance().getJDA(payload.applicationId),
             payload.guild.id,
             payload.voiceChannel
         )
@@ -108,7 +105,7 @@ suspend fun resolvePlaylist(
     val player = AudioPlayerManagerWrapper
         .getInstance()
         .getOrCreatePlayer(
-            JDAManager.getInstance().getJDA(Command.applicationId),
+            JDAManager.getInstance().getJDA(payload.applicationId),
             payload.guild.id,
             payload.voiceChannel
         )

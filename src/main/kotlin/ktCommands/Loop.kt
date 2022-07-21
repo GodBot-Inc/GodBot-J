@@ -3,16 +3,16 @@ package ktCommands
 import commands.Command
 import constants.loopEmoji
 import constants.noLoopEmoji
+import constants.notReceivedParameter
 import ktUtils.getPlayer
 import objects.EventFacade
 import objects.SlashCommandPayload
 import singeltons.JDAManager
-import snippets.ErrorMessages
 
 fun loop(event: EventFacade, payload: SlashCommandPayload) {
     val mode = event.getOption("mode")?.asBoolean
     if (mode == null) {
-        event.error(ErrorMessages.NOT_RECEIVED_PARAMETER)
+        event.error(notReceivedParameter)
         return
     }
 

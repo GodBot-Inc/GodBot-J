@@ -1,6 +1,8 @@
 package lib
 
 import commands.Queue
+import constants.generalError
+import constants.notConnectedToVc
 import io.github.cdimascio.dotenv.Dotenv
 import kotlinx.coroutines.runBlocking
 import ktCommands.*
@@ -9,7 +11,6 @@ import net.dv8tion.jda.api.events.interaction.SlashCommandEvent
 import net.dv8tion.jda.api.hooks.ListenerAdapter
 import objects.EventFacade
 import objects.SlashCommandPayload
-import snippets.ErrorMessages
 
 class InteractionListener: ListenerAdapter() {
 
@@ -23,11 +24,11 @@ class InteractionListener: ListenerAdapter() {
         val voiceChannel = member?.voiceState?.channel
 
         if (guild == null || member == null) {
-            event.error(ErrorMessages.GENERAL_ERROR)
+            event.error(generalError)
             return
         }
         if (voiceChannel == null) {
-            event.error(ErrorMessages.NOT_CONNECTED_TO_VC)
+            event.error(notConnectedToVc)
             return
         }
 

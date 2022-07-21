@@ -1,20 +1,16 @@
 package ktCommands
 
-import constants.louderEmoji
-import constants.muteEmoji
-import constants.noAudioChangeEmoji
-import constants.quieterEmoji
+import constants.*
 import ktUtils.getPlayerWithQueue
 import net.dv8tion.jda.api.entities.Emoji
 import objects.EventFacade
 import objects.SlashCommandPayload
 import singeltons.JDAManager
-import snippets.ErrorMessages
 
 fun volume(event: EventFacade, payload: SlashCommandPayload) {
     val level: Int? = event.getOption("level")?.asLong?.toInt()
     if (level == null) {
-        event.error(ErrorMessages.NOT_RECEIVED_PARAMETER)
+        event.error(notReceivedParameter)
         return
     }
 

@@ -1,16 +1,17 @@
 package ktCommands
 
 import commands.Command
+import constants.loadingFailed
+import constants.notReceivedParameter
 import ktUtils.getPlayerWithQueue
 import objects.EventFacade
 import objects.SlashCommandPayload
 import singeltons.JDAManager
-import snippets.ErrorMessages
 
 fun skipTo(event: EventFacade, payload: SlashCommandPayload) {
     val position: Long? = event.getOption("position")?.asLong
     if (position == null) {
-        event.error(ErrorMessages.NOT_RECEIVED_PARAMETER)
+        event.error(notReceivedParameter)
         return
     }
 
@@ -29,7 +30,7 @@ fun skipTo(event: EventFacade, payload: SlashCommandPayload) {
     }
 
     if (player.currentTrack == null) {
-        event.error(ErrorMessages.LOADING_FAILED)
+        event.error(loadingFailed)
         return
     }
 

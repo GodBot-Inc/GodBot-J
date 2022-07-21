@@ -1,17 +1,17 @@
 package ktCommands
 
 import commands.Command
+import constants.notReceivedParameter
 import ktUtils.getPlayerWithQueue
 import objects.AudioTrackExtender
 import objects.EventFacade
 import objects.SlashCommandPayload
 import singeltons.JDAManager
-import snippets.ErrorMessages
 
 fun remove(event: EventFacade, payload: SlashCommandPayload) {
     val position: Long? = event.getOption("position")?.asLong
     if (position == null) {
-        event.error(ErrorMessages.NOT_RECEIVED_PARAMETER)
+        event.error(notReceivedParameter)
         return
     }
 

@@ -2,6 +2,7 @@ package commands;
 
 import constants.ColorsKt;
 import constants.EmojisKt;
+import constants.ErrorMessagesKt;
 import interactions.InteractionScheduler;
 import ktLogging.UtilsKt;
 import ktLogging.custom.GodBotChildLogger;
@@ -20,7 +21,6 @@ import org.jetbrains.annotations.NotNull;
 import singeltons.JDAManager;
 import singeltons.PlayerVault;
 import snippets.Buttons;
-import snippets.ErrorMessages;
 import utils.MongoCommunication;
 import utils.QueueWrapper;
 
@@ -68,20 +68,20 @@ public class Queue implements Command {
                         payload.getGuild().getId()
                 );
         if (audioPlayer == null) {
-            ErrorHandlerKt.handleDefaultErrorResponse(event, payload, ErrorMessages.NO_PLAYER_FOUND, logger);
+            ErrorHandlerKt.handleDefaultErrorResponse(event, payload, ErrorMessagesKt.noPlayerFound, logger);
             return;
         }
 
         logger.info("Got AudioPlayer");
 
         if (!audioPlayer.getVoiceChannel().getId().equals(payload.getVoiceChannel().getId())) {
-            ErrorHandlerKt.handleDefaultErrorResponse(event, payload, ErrorMessages.NO_PLAYER_IN_VC, logger);
+            ErrorHandlerKt.handleDefaultErrorResponse(event, payload, ErrorMessagesKt.noPlayerInVc, logger);
             return;
         }
 
         List<AudioTrackExtender> queue = audioPlayer.getQueue();
         if (queue.isEmpty()) {
-            ErrorHandlerKt.handleDefaultErrorResponse(event, payload, ErrorMessages.QUEUE_EMPTY, logger);
+            ErrorHandlerKt.handleDefaultErrorResponse(event, payload, ErrorMessagesKt.queueEmpty, logger);
             return;
         }
 
