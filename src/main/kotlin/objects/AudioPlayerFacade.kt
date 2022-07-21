@@ -5,9 +5,9 @@ import ktUtils.GodBotException
 import ktUtils.LoadFailedException
 import ktUtils.QueueEmptyException
 import ktUtils.TrackNotFoundException
-import lavaplayerHandlers.TrackEventListener
 import lib.lavaplayer.AudioPlayerSendHandler
 import lib.lavaplayer.AudioResultHandler
+import lib.lavaplayer.TrackEventListener
 import net.dv8tion.jda.api.entities.Member
 import net.dv8tion.jda.api.entities.VoiceChannel
 import net.dv8tion.jda.api.managers.AudioManager

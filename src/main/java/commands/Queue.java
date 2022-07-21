@@ -8,7 +8,7 @@ import ktLogging.UtilsKt;
 import ktLogging.custom.GodBotChildLogger;
 import ktLogging.custom.GodBotLogger;
 import ktUtils.ButtonException;
-import ktUtils.ConverterKt;
+import ktUtils.TimeConverterKt;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import objects.AudioPlayerExtender;
@@ -103,7 +103,7 @@ public class Queue implements Command {
                             i+1,
                             currentTrack.getSongInfo().getTitle(),
                             currentTrack.getSongInfo().getUri(),
-                            ConverterKt.millisToString(currentTrack.getSongInfo().getDuration()),
+                            TimeConverterKt.millisToString(currentTrack.getSongInfo().getDuration()),
                             Objects.requireNonNull(currentTrack.getRequester()).getAsMention()
                     )
             );
