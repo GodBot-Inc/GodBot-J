@@ -1,4 +1,4 @@
-package lib
+package lib.jda
 
 import commands.Queue
 import constants.generalError

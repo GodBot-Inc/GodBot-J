@@ -1,6 +1,5 @@
 package ktCommands
 
-import commands.Command
 import constants.loadingFailed
 import constants.notReceivedParameter
 import ktUtils.getPlayerWithQueue
@@ -16,7 +15,7 @@ fun skipTo(event: EventFacade, payload: SlashCommandPayload) {
     }
 
     val player = getPlayerWithQueue(
-        JDAManager.getInstance().getJDA(Command.applicationId),
+        JDAManager.getInstance().getJDA(payload.applicationId),
         payload.guild.id,
         payload.voiceChannel.id,
         event

@@ -1,6 +1,5 @@
 package ktCommands
 
-import commands.Command
 import constants.notReceivedParameter
 import ktUtils.getPlayerWithQueue
 import objects.AudioTrackExtender
@@ -16,7 +15,7 @@ fun remove(event: EventFacade, payload: SlashCommandPayload) {
     }
 
     val player = getPlayerWithQueue(
-        JDAManager.getInstance().getJDA(Command.applicationId),
+        JDAManager.getInstance().getJDA(payload.applicationId),
         payload.guild.id,
         payload.voiceChannel.id,
         event

@@ -4,8 +4,8 @@ import com.andreapivetta.kolor.red
 import com.sedmelluq.discord.lavaplayer.jdaudp.NativeAudioSendFactory
 import io.github.cdimascio.dotenv.Dotenv
 import jdaListeners.BotStateListener
-import jdaListeners.GeneralListener
-import lib.InteractionListener
+import lib.jda.GeneralListener
+import lib.jda.InteractionListener
 import net.dv8tion.jda.api.JDA
 import net.dv8tion.jda.api.JDABuilder
 import net.dv8tion.jda.api.entities.Activity

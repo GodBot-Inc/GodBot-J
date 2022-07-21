@@ -1,6 +1,5 @@
 package ktCommands
 
-import commands.Command
 import constants.loopEmoji
 import constants.noLoopEmoji
 import constants.notReceivedParameter
@@ -17,7 +16,7 @@ fun loop(event: EventFacade, payload: SlashCommandPayload) {
     }
 
     val player = getPlayer(
-        JDAManager.getInstance().getJDA(Command.applicationId),
+        JDAManager.getInstance().getJDA(payload.applicationId),
         payload.guild.id,
         payload.voiceChannel.id,
         event
