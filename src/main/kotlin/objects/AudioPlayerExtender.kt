@@ -13,7 +13,7 @@ import net.dv8tion.jda.api.entities.VoiceChannel
 import net.dv8tion.jda.api.managers.AudioManager
 import objects.playableInformation.PlayableInfo
 import singeltons.AudioPlayerManagerWrapper
-import singeltons.PlayerVault
+import state.PlayerStorage
 import java.util.concurrent.TimeUnit
 import kotlin.concurrent.thread
 
@@ -74,7 +74,7 @@ class AudioPlayerExtender(
         lifecycle = false
         // only stops the player
         audioPlayer.destroy()
-        PlayerVault.getInstance().removePlayer(this)
+        PlayerStorage.remove(this.audioManager.guild.id)
     }
 
     fun openConnection() = apply { updateUsage(); if(!audioManager.isConnected) audioManager.openAudioConnection(voiceChannel) }
