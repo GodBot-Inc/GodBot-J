@@ -6,12 +6,14 @@ import constants.songProcessingError
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 import ktCommands.play.lib.InteractionHookWrapper
 import ktCommands.play.services.getYTPlaylistInfo
 import ktCommands.play.services.getYTVideoInfo
 import ktCommands.play.utils.convertYtUrlToId
 import ktCommands.play.utils.isSong
 import ktCommands.play.utils.isValid
+import ktSnippets.playPlaylist
 import ktSnippets.playVideo
 import ktUtils.CouldNotExtractVideoInformation
 import ktUtils.TrackNotFoundException
@@ -110,5 +112,28 @@ suspend fun resolvePlaylist(
             payload.guild.id,
             payload.voiceChannel
         )
-    player.openConnection()
+
+    val positionInQueue = player.queue.size + 1
+    val info = infoJob.await()
+
+    launch {
+        player.openConnection()
+        if (event.getOption("shuffle")?.asBoolean == true)
+            info.songInfos.shuffle()
+
+        for (songInfo in info.songInfos) {
+            try {
+                player.play(info, payload)
+            } catch (ignore: TrackNotFoundException) { }
+        }
+    }
+
+    hook.reply(
+        playPlaylist(
+            payload.member,
+            info,
+            positionInQueue,
+             positionInQueue + info.videoIds.size - 1
+        )
+    )
 }

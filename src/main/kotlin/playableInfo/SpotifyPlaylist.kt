@@ -9,6 +9,7 @@ class SpotifyPlaylist private constructor(
     override val thumbnailUri: String?,
     override val size: Int,
     override val videoIds: ArrayList<String>,
+    override val songInfos: ArrayList<PlayableInfo>
 ) : PlaylistPlayableInfo {
 
     data class Builder(
@@ -19,7 +20,9 @@ class SpotifyPlaylist private constructor(
         var uri: String? = null,
         var thumbnailUri: String? = null,
         var size: Int = 0,
-        var videoIds: ArrayList<String> = ArrayList()) {
+        var videoIds: ArrayList<String> = ArrayList(),
+        var songInfos: ArrayList<PlayableInfo>
+    ) {
 
         fun duration(duration: Long) = apply { this.duration = duration }
         fun creator(creator: String) = apply { this.creator = creator }
@@ -30,6 +33,8 @@ class SpotifyPlaylist private constructor(
         fun size(size: Int) = apply { this.size = size }
         fun videoIds(videoIds: ArrayList<String>) = apply { this.videoIds = videoIds }
         fun addVideoId(videoId: String) = apply { this.videoIds.add(videoId) }
-        fun build() = SpotifyPlaylist(duration, creator, creatorLink, title, uri, thumbnailUri, size, videoIds)
+        fun songInfos(songInfos: ArrayList<PlayableInfo>) = apply { this.songInfos = songInfos }
+        fun addSongInfo(songInfo: PlayableInfo) = apply { this.songInfos.add(songInfo) }
+        fun build() = SpotifyPlaylist(duration, creator, creatorLink, title, uri, thumbnailUri, size, videoIds, songInfos)
     }
 }

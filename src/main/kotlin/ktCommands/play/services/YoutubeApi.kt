@@ -5,6 +5,7 @@ import ktCommands.play.utils.convertYtToMillis
 import ktUtils.CouldNotExtractVideoInformation
 import ktUtils.UrlBuilder
 import ktUtils.VideoNotFoundException
+import ktUtils.YouTubeApiException
 import lib.get
 import org.json.JSONException
 import org.json.JSONObject
@@ -109,7 +110,7 @@ suspend fun getYTPlaylistInfo(id: String) = coroutineScope {
     val size = contentDetails.getInt("itemCount")
     ytBuilder.size = size
 
-    val durationRequests: ArrayList<Deferred<Long?>> = ArrayList()
+    val infoRequests: ArrayList<Deferred<YouTubeSong>> = ArrayList()
     var nextPage = true
     var items = JSONObject(withContext(Dispatchers.IO) {
         itemsRequest.join()
@@ -140,7 +141,7 @@ suspend fun getYTPlaylistInfo(id: String) = coroutineScope {
                 continue
             }
             ytBuilder.addVideoId(videoId)
-            durationRequests.add(async { getVideoDuration(videoId) })
+            infoRequests.add(async { getYTVideoInfo(videoId) })
         }
 
         if (processedSongs >= size)
@@ -149,10 +150,15 @@ suspend fun getYTPlaylistInfo(id: String) = coroutineScope {
         items = nextPageRequest?.await() ?: break
     }
 
-    for (duration in durationRequests) {
-        val finishedDuration = duration.await()
-        if (finishedDuration != null)
-            ytBuilder.addDuration(finishedDuration)
+    for (infoDeferred in infoRequests) {
+        val info = try {
+            infoDeferred.await()
+        } catch (e: YouTubeApiException) {
+            continue
+        }
+
+        ytBuilder.addSongInfo(info)
+        ytBuilder.addDuration(info.duration)
     }
 
     return@coroutineScope ytBuilder.build()
