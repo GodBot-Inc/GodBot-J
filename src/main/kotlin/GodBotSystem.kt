@@ -27,7 +27,7 @@ fun main(args: Array<String>) {
     val dotenv = Dotenv.load()
 
     try {
-        GodBotJda = initializeFromToken(dotenv["TOKEN"], dotenv["APPLICATIONID"])
+        GodBotJda = initializeFromToken(dotenv["TOKEN"])
     } catch (e: LoginException) {
         println("Initializing Failed".red())
         exitProcess(0)
@@ -45,7 +45,7 @@ fun main(args: Array<String>) {
     println("Bot successfully started".green())
 }
 
-private fun initializeFromToken(token: String, applicationId: String): JDA {
+private fun initializeFromToken(token: String): JDA {
     val builder = JDABuilder.createDefault(token)
     configureMemoryUsage(builder)
     builder.addEventListeners(
