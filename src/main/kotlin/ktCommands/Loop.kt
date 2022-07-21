@@ -6,7 +6,6 @@ import constants.notReceivedParameter
 import ktUtils.getPlayer
 import objects.EventFacade
 import objects.SlashCommandPayload
-import singeltons.JDAManager
 
 fun loop(event: EventFacade, payload: SlashCommandPayload) {
     val mode = event.getOption("mode")?.asBoolean
@@ -16,7 +15,6 @@ fun loop(event: EventFacade, payload: SlashCommandPayload) {
     }
 
     val player = getPlayer(
-        JDAManager.getInstance().getJDA(payload.applicationId),
         payload.guild.id,
         payload.voiceChannel.id,
         event

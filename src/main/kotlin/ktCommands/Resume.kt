@@ -4,11 +4,9 @@ import constants.playEmoji
 import ktUtils.getPlayingPlayer
 import objects.EventFacade
 import objects.SlashCommandPayload
-import singeltons.JDAManager
 
 fun resume(event: EventFacade, payload: SlashCommandPayload) {
     val player = getPlayingPlayer(
-        JDAManager.getInstance().getJDA(payload.applicationId),
         payload.guild.id,
         payload.voiceChannel.id,
         event

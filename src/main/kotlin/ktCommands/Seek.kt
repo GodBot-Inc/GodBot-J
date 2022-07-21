@@ -7,7 +7,6 @@ import ktUtils.millisToString
 import net.dv8tion.jda.api.EmbedBuilder
 import objects.EventFacade
 import objects.SlashCommandPayload
-import singeltons.JDAManager
 import java.util.concurrent.TimeUnit
 
 fun seek(event: EventFacade, payload: SlashCommandPayload) {
@@ -21,7 +20,6 @@ fun seek(event: EventFacade, payload: SlashCommandPayload) {
     }
 
     val player = getPlayingPlayer(
-        JDAManager.getInstance().getJDA(payload.applicationId),
         payload.guild.id,
         payload.voiceChannel.id,
         event

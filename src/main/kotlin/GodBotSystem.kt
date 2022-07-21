@@ -13,10 +13,11 @@ import net.dv8tion.jda.api.requests.GatewayIntent
 import net.dv8tion.jda.api.utils.ChunkingFilter
 import net.dv8tion.jda.api.utils.MemberCachePolicy
 import net.dv8tion.jda.api.utils.cache.CacheFlag
-import singeltons.AudioManagerVault
-import singeltons.JDAManager
 import javax.security.auth.login.LoginException
 import kotlin.system.exitProcess
+
+
+var GodBotJda: JDA? = null
 
 fun main(args: Array<String>) {
     println("Checking Env...")
@@ -25,21 +26,20 @@ fun main(args: Array<String>) {
 
     val dotenv = Dotenv.load()
 
-    val godBotJDA: JDA
     try {
-        godBotJDA = initializeFromToken(dotenv["TOKEN"], dotenv["APPLICATIONID"])
+        GodBotJda = initializeFromToken(dotenv["TOKEN"], dotenv["APPLICATIONID"])
     } catch (e: LoginException) {
         println("Initializing Failed".red())
         exitProcess(0)
     }
 
-    godBotJDA.presence.activity = Activity.playing("music | /help")
+    GodBotJda!!.presence.activity = Activity.playing("music | /help")
 
     try {
-        godBotJDA.awaitReady()
+        GodBotJda!!.awaitReady()
     } catch (e: InterruptedException) {
         println("Bot failed to start".red())
-        godBotJDA.shutdown()
+        GodBotJda!!.shutdown()
         exitProcess(0)
     }
     println("Bot successfully started".green())
@@ -54,10 +54,7 @@ private fun initializeFromToken(token: String, applicationId: String): JDA {
         GeneralListener()
     )
     builder.setAudioSendFactory(NativeAudioSendFactory())
-    val botInstance = builder.build()
-    AudioManagerVault.getInstance().registerJDA(botInstance, botInstance.guilds)
-    JDAManager.getInstance().registerJDA(applicationId, botInstance)
-    return botInstance
+    return builder.build()
 }
 
 private fun configureMemoryUsage(builder: JDABuilder) {

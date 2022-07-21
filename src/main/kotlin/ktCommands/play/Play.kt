@@ -21,7 +21,6 @@ import objects.SlashCommandPayload
 import objects.playableInformation.YouTubePlaylist
 import objects.playableInformation.YouTubeSong
 import singeltons.AudioPlayerManagerWrapper
-import singeltons.JDAManager
 
 suspend fun play(event: EventFacade, payload: SlashCommandPayload) {
     val url = event.getOption("url")?.asString
@@ -61,8 +60,7 @@ suspend fun resolveVideo(
     val player = AudioPlayerManagerWrapper
         .getInstance()
         .getOrCreatePlayer(
-            JDAManager.getInstance().getJDA(payload.applicationId),
-            payload.guild.id,
+            payload.guild,
             payload.voiceChannel
         )
     player.openConnection()
@@ -105,8 +103,7 @@ suspend fun resolvePlaylist(
     val player = AudioPlayerManagerWrapper
         .getInstance()
         .getOrCreatePlayer(
-            JDAManager.getInstance().getJDA(payload.applicationId),
-            payload.guild.id,
+            payload.guild,
             payload.voiceChannel
         )
 

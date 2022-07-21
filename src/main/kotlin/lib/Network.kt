@@ -9,8 +9,8 @@ import java.net.http.HttpClient
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse.BodyHandlers
 
-val client = HttpClient.newHttpClient()
-val builder = HttpRequest.newBuilder()
+val client: HttpClient = HttpClient.newHttpClient()
+val builder: HttpRequest.Builder = HttpRequest.newBuilder()
 
 suspend fun get(uri: URI): JSONObject = coroutineScope {
     val response = withContext(Dispatchers.IO) {

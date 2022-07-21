@@ -1,12 +1,11 @@
 package interactions
 
-import io.github.cdimascio.dotenv.Dotenv
+import GodBotJda
 import ktUtils.ButtonException
 import ktUtils.MessageNotFoundException
 import net.dv8tion.jda.api.JDA
 import net.dv8tion.jda.api.entities.Message
 import net.dv8tion.jda.api.interactions.components.Button
-import singeltons.JDAManager
 import utils.MongoCommunication
 import java.util.concurrent.TimeUnit
 
@@ -16,17 +15,15 @@ class InteractionScheduler(
     private var time: Int,
     private val expiredButtons: List<Button>
     ) {
-    private val jda: JDA?
+    private val jda: JDA = GodBotJda!!
 
     init {
-        val dotenv: Dotenv = Dotenv.load()
-        jda = JDAManager.getInstance().getJDA(dotenv["APPLICATIONID"])
         // Conversion to milliseconds
         time *= 60000
     }
 
     private fun updateMessage() : Message {
-        return (jda?.getTextChannelById(textChannelId) ?: throw MessageNotFoundException())
+        return (jda.getTextChannelById(textChannelId) ?: throw MessageNotFoundException())
             .retrieveMessageById(messageId).submit().join()
     }
 

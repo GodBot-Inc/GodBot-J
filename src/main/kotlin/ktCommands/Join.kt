@@ -3,14 +3,12 @@ package ktCommands
 import objects.EventFacade
 import objects.SlashCommandPayload
 import singeltons.AudioPlayerManagerWrapper
-import singeltons.JDAManager
 
 fun join(event: EventFacade, payload: SlashCommandPayload) {
     val player = AudioPlayerManagerWrapper
         .getInstance()
         .getOrCreatePlayer(
-            JDAManager.getInstance().getJDA(payload.applicationId),
-            payload.guild.id,
+            payload.guild,
             payload.voiceChannel
         )
     if (player.isConnected()) {

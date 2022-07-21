@@ -8,20 +8,14 @@ import net.dv8tion.jda.api.events.guild.voice.GuildVoiceJoinEvent
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceLeaveEvent
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceMoveEvent
 import net.dv8tion.jda.api.hooks.ListenerAdapter
-import singeltons.JDAManager
-import singeltons.PlayerVault
+import state.PlayerStorage
 
 class GeneralListener: ListenerAdapter() {
     private val dotenv = Dotenv.load()
     private val applicationId = dotenv["APPLICATIONID"]
 
     override fun onGuildVoiceMove(event: GuildVoiceMoveEvent) {
-        val player = PlayerVault
-            .getInstance()
-            .getPlayer(
-                JDAManager.getInstance().getJDA(applicationId),
-                event.guild.id
-            ) ?: return
+        val player = PlayerStorage.get(event.guild.id) ?: return
         if (event.member.id == applicationId)
             player.changeChannel(event.channelJoined)
 
@@ -29,23 +23,13 @@ class GeneralListener: ListenerAdapter() {
     }
 
     override fun onGuildVoiceJoin(event: GuildVoiceJoinEvent) {
-        val player = PlayerVault
-            .getInstance()
-            .getPlayer(
-                JDAManager.getInstance().getJDA(applicationId),
-                event.guild.id
-            ) ?: return
+        val player = PlayerStorage.get(event.guild.id) ?: return
 
         autoPauseJoin(event, player)
     }
 
     override fun onGuildVoiceLeave(event: GuildVoiceLeaveEvent) {
-        val player = PlayerVault
-            .getInstance()
-            .getPlayer(
-                JDAManager.getInstance().getJDA(applicationId),
-                event.guild.id
-            ) ?: return
+        val player = PlayerStorage.get(event.guild.id) ?: return
 
         if (event.member.id == applicationId) {
             player.cleanup()

@@ -17,9 +17,8 @@ import objects.EventFacade;
 import objects.SlashCommandPayload;
 import org.bson.Document;
 import org.jetbrains.annotations.NotNull;
-import singeltons.JDAManager;
-import singeltons.PlayerVault;
 import snippets.Buttons;
+import state.PlayerStorage;
 import utils.MongoCommunication;
 import utils.QueueWrapper;
 
@@ -60,12 +59,7 @@ public class Queue implements Command {
                 UtilsKt.formatPayload(payload)
         );
 
-        AudioPlayerExtender audioPlayer = PlayerVault
-                .getInstance()
-                .getPlayer(
-                        JDAManager.getInstance().getJDA(applicationId),
-                        payload.getGuild().getId()
-                );
+        AudioPlayerExtender audioPlayer = PlayerStorage.INSTANCE.get(payload.getGuild().getId());
         if (audioPlayer == null) {
             event.error(ErrorMessagesKt.noPlayerFound);
             return;

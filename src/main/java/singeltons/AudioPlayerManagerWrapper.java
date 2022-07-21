@@ -4,10 +4,10 @@ import com.sedmelluq.discord.lavaplayer.player.AudioConfiguration;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
 import lib.lavaplayer.AudioResultHandler;
-import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.VoiceChannel;
 import objects.AudioPlayerExtender;
+import state.PlayerStorage;
 
 import java.util.concurrent.TimeUnit;
 
@@ -31,23 +31,21 @@ public class AudioPlayerManagerWrapper {
         AudioSourceManagers.registerRemoteSources(playerManager);
     }
 
-    private AudioPlayerExtender createPlayer(JDA bot, Guild guild, VoiceChannel voiceChannel) {
-        PlayerVault vault = PlayerVault.getInstance();
+    private AudioPlayerExtender createPlayer(Guild guild, VoiceChannel voiceChannel) {
         AudioPlayerExtender player =
                 new AudioPlayerExtender(
                         playerManager.createPlayer(),
                         voiceChannel,
                         guild.getAudioManager()
                 );
-        vault.storePlayer(bot, guild.getId(), player);
+        PlayerStorage.INSTANCE.store(guild.getId(), player);
         return player;
     }
 
-    public AudioPlayerExtender getOrCreatePlayer(JDA bot, Guild guild, VoiceChannel voiceChannel) {
-        AudioPlayerExtender player = PlayerVault.getInstance().getPlayer(bot, guild.getId());
+    public AudioPlayerExtender getOrCreatePlayer(Guild guild, VoiceChannel voiceChannel) {
+        AudioPlayerExtender player = PlayerStorage.INSTANCE.get(guild.getId());
         if (player == null) {
             player = createPlayer(
-                    bot,
                     guild,
                     voiceChannel
             );

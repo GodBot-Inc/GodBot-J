@@ -5,7 +5,6 @@ import ktUtils.getPlayerWithQueue
 import net.dv8tion.jda.api.entities.Emoji
 import objects.EventFacade
 import objects.SlashCommandPayload
-import singeltons.JDAManager
 
 fun volume(event: EventFacade, payload: SlashCommandPayload) {
     val level: Int? = event.getLong("level")?.toInt()
@@ -15,7 +14,6 @@ fun volume(event: EventFacade, payload: SlashCommandPayload) {
     }
 
     val player = getPlayerWithQueue(
-        JDAManager.getInstance().getJDA(payload.applicationId),
         payload.guild.id,
         payload.voiceChannel.id,
         event
