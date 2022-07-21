@@ -1,10 +1,12 @@
 package objects
 
+import com.andreapivetta.kolor.red
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer
 import ktUtils.GodBotException
 import ktUtils.LoadFailedException
 import ktUtils.QueueEmptyException
 import ktUtils.TrackNotFoundException
+import lib.jda.PremiumPlayerManager
 import lib.lavaplayer.AudioPlayerSendHandler
 import lib.lavaplayer.AudioResultHandler
 import lib.lavaplayer.TrackEventListener
@@ -12,7 +14,6 @@ import net.dv8tion.jda.api.entities.Member
 import net.dv8tion.jda.api.entities.VoiceChannel
 import net.dv8tion.jda.api.managers.AudioManager
 import objects.playableInformation.PlayableInfo
-import singeltons.AudioPlayerManagerWrapper
 import state.PlayerStorage
 import java.util.concurrent.TimeUnit
 import kotlin.concurrent.thread
@@ -122,12 +123,15 @@ class AudioPlayerExtender(
     fun playNow(audioTrackExtender: AudioTrackExtender) {
         updateUsage()
         val callback = AudioResultHandler()
-        AudioPlayerManagerWrapper
-                .getInstance()
-                .loadItem(
-                    audioTrackExtender.songInfo.uri,
-                    callback
-                )
+        val url = audioTrackExtender.songInfo.uri
+        if (url == null) {
+            println("URL OF SONG IS NULL".red())
+            throw TrackNotFoundException()
+        }
+        PremiumPlayerManager.loadItem(
+            url,
+            callback
+        )
 
         val playableTrack = callback.awaitReady()
         audioPlayer.stopTrack()

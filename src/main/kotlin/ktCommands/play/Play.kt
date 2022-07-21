@@ -16,11 +16,11 @@ import ktSnippets.playVideoMessage
 import ktUtils.CouldNotExtractVideoInformation
 import ktUtils.TrackNotFoundException
 import ktUtils.VideoNotFoundException
+import lib.jda.PremiumPlayerManager
 import objects.EventFacade
 import objects.SlashCommandPayload
 import objects.playableInformation.YouTubePlaylist
 import objects.playableInformation.YouTubeSong
-import singeltons.AudioPlayerManagerWrapper
 
 suspend fun play(event: EventFacade, payload: SlashCommandPayload) {
     val url = event.getOption("url")?.asString
@@ -57,12 +57,10 @@ suspend fun resolveVideo(
 ) = coroutineScope {
     val infoJob: Deferred<YouTubeSong> = async { getYTVideoInfo(convertYtUrlToId(url)) }
 
-    val player = AudioPlayerManagerWrapper
-        .getInstance()
-        .getOrCreatePlayer(
-            payload.guild,
-            payload.voiceChannel
-        )
+    val player = PremiumPlayerManager.getOrCreatePlayer(
+        payload.guild,
+        payload.voiceChannel
+    )
     player.openConnection()
 
     val info: YouTubeSong
@@ -100,12 +98,10 @@ suspend fun resolvePlaylist(
 ) = coroutineScope {
     val infoJob: Deferred<YouTubePlaylist> = async { getYTPlaylistInfo(convertYtUrlToId(url)) }
 
-    val player = AudioPlayerManagerWrapper
-        .getInstance()
-        .getOrCreatePlayer(
-            payload.guild,
-            payload.voiceChannel
-        )
+    val player = PremiumPlayerManager.getOrCreatePlayer(
+        payload.guild,
+        payload.voiceChannel
+    )
 
     val positionInQueue = player.queue.size + 1
     val info = infoJob.await()
