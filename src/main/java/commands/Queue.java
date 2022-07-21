@@ -1,5 +1,6 @@
 package commands;
 
+import constants.ColorsKt;
 import constants.EmojisKt;
 import interactions.InteractionScheduler;
 import ktLogging.UtilsKt;
@@ -19,7 +20,6 @@ import org.jetbrains.annotations.NotNull;
 import singeltons.JDAManager;
 import singeltons.PlayerVault;
 import snippets.Buttons;
-import snippets.Colours;
 import snippets.ErrorMessages;
 import utils.MongoCommunication;
 import utils.QueueWrapper;
@@ -43,7 +43,7 @@ public class Queue implements Command {
                         )
                 )
                 .setDescription(description)
-                .setColor(Colours.godbotYellow)
+                .setColor(ColorsKt.getPrimary())
                 .setFooter(
                         String.format(
                                 "Page %s/%s",
