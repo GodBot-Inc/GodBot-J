@@ -1,30 +1,26 @@
 package ktCommands
 
 import commands.Command
-import objects.EventExtender
+import ktUtils.getPlayer
+import objects.EventFacade
 import objects.SlashCommandPayload
 import singeltons.JDAManager
-import singeltons.PlayerVault
 import snippets.EmojiIds
 import snippets.ErrorMessages
 
-fun loop(event: EventExtender, payload: SlashCommandPayload) {
+fun loop(event: EventFacade, payload: SlashCommandPayload) {
     val mode = event.getOption("mode")?.asBoolean
     if (mode == null) {
         event.error(ErrorMessages.NOT_RECEIVED_PARAMETER)
         return
     }
 
-    val player = PlayerVault
-        .getInstance()
-        .getPlayer(
-            JDAManager.getInstance().getJDA(Command.applicationId),
-            payload.guild.id
-        )
-    if (player == null || player.voiceChannel.id != payload.voiceChannel.id) {
-        event.error(ErrorMessages.NO_PLAYER_IN_VC)
-        return
-    }
+    val player = getPlayer(
+        JDAManager.getInstance().getJDA(Command.applicationId),
+        payload.guild.id,
+        payload.voiceChannel.id,
+        event
+    ) ?: return
 
     if (player.loop == mode && player.loop) {
         event.error("This Player is already in Loop Mode")

@@ -1,33 +1,21 @@
 package ktCommands
 
 import commands.Command
-import ktLogging.custom.GodBotLogger
-import ktLogging.formatPayload
+import ktUtils.getPlayerWithQueue
 import net.dv8tion.jda.api.EmbedBuilder
+import objects.EventFacade
+import objects.SlashCommandPayload
 import singeltons.JDAManager
-import singeltons.PlayerVault
 import snippets.Colours
 import snippets.EmojiIds
-import snippets.ErrorMessages
-import objects.EventExtender
-import objects.SlashCommandPayload
 
-fun clearQueue(event: EventExtender, payload: SlashCommandPayload) {
-    val logger = GodBotLogger().command(
-        "clearQueue",
-        formatPayload(payload)
-    )
-
-    val player = PlayerVault
-        .getInstance()
-        .getPlayer(
-            JDAManager.getInstance().getJDA(Command.applicationId),
-            payload.guild.id
-        )
-    if (player == null || player.voiceChannel.id != payload.voiceChannel.id) {
-        event.error(ErrorMessages.NO_PLAYER_IN_VC)
-        return
-    }
+fun clearQueue(event: EventFacade, payload: SlashCommandPayload) {
+    val player = getPlayerWithQueue(
+        JDAManager.getInstance().getJDA(Command.applicationId),
+        payload.guild.id,
+        payload.voiceChannel.id,
+        event
+    ) ?: return
 
     player.clearQueue()
 
@@ -39,5 +27,4 @@ fun clearQueue(event: EventExtender, payload: SlashCommandPayload) {
             .setColor(Colours.godbotYellow)
             .build()
     )
-    logger.info("Response sent")
 }

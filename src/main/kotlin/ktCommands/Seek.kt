@@ -1,17 +1,16 @@
 package ktCommands
 
 import ktSnippets.trackLines
+import ktUtils.getPlayingPlayer
 import ktUtils.millisToString
-import objects.EventExtender
-import objects.SlashCommandPayload
 import net.dv8tion.jda.api.EmbedBuilder
+import objects.EventFacade
+import objects.SlashCommandPayload
 import singeltons.JDAManager
-import singeltons.PlayerVault
 import snippets.Colours
-import snippets.ErrorMessages
 import java.util.concurrent.TimeUnit
 
-fun seek(event: EventExtender, payload: SlashCommandPayload) {
+fun seek(event: EventFacade, payload: SlashCommandPayload) {
     fun getSeekPoint(): Long {
         val hours = event.getOption("hours")
         val minutes = event.getOption("minutes")
@@ -21,24 +20,12 @@ fun seek(event: EventExtender, payload: SlashCommandPayload) {
                 TimeUnit.SECONDS.toMillis(seconds?.asLong ?: 0)
     }
 
-    val player = PlayerVault
-        .getInstance()
-        .getPlayer(
-            JDAManager.getInstance().getJDA(payload.applicationId),
-            payload.guild.id
-        )
-    if (player == null || player.voiceChannel.id != payload.voiceChannel.id) {
-        event.error(ErrorMessages.NO_PLAYER_IN_VC)
-        return
-    }
-    if (player.queue.isEmpty()) {
-        event.error(ErrorMessages.QUEUE_EMPTY)
-        return
-    }
-    if (player.currentTrack == null) {
-        event.error(ErrorMessages.NO_PLAYING_TRACK)
-        return
-    }
+    val player = getPlayingPlayer(
+        JDAManager.getInstance().getJDA(payload.applicationId),
+        payload.guild.id,
+        payload.voiceChannel.id,
+        event
+    ) ?: return
 
     val seekPoint: Long = getSeekPoint()
     val duration: Long = player.currentTrack?.songInfo?.duration ?: 0

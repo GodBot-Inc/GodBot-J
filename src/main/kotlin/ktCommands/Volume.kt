@@ -1,35 +1,26 @@
 package ktCommands
 
+import ktUtils.getPlayerWithQueue
+import net.dv8tion.jda.api.entities.Emoji
+import objects.EventFacade
+import objects.SlashCommandPayload
 import singeltons.JDAManager
-import singeltons.PlayerVault
 import snippets.EmojiIds
 import snippets.ErrorMessages
-import objects.EventExtender
-import objects.SlashCommandPayload
-import net.dv8tion.jda.api.entities.Emoji
 
-fun volume(event: EventExtender, payload: SlashCommandPayload) {
+fun volume(event: EventFacade, payload: SlashCommandPayload) {
     val level: Int? = event.getOption("level")?.asLong?.toInt()
     if (level == null) {
         event.error(ErrorMessages.NOT_RECEIVED_PARAMETER)
         return
     }
 
-    val player = PlayerVault
-        .getInstance()
-        .getPlayer(
-            JDAManager.getInstance().getJDA(payload.applicationId),
-            payload.guild.id
-        )
-    if (player == null || player.voiceChannel.id != payload.voiceChannel.id) {
-        event.error(ErrorMessages.NO_PLAYER_IN_VC)
-        return
-    }
-
-    if(player.queue.isEmpty()) {
-        event.error(ErrorMessages.QUEUE_EMPTY)
-        return
-    }
+    val player = getPlayerWithQueue(
+        JDAManager.getInstance().getJDA(payload.applicationId),
+        payload.guild.id,
+        payload.voiceChannel.id,
+        event
+    ) ?: return
 
     val playerVolume: Int = player.getVolume()
     var emoji: Emoji = EmojiIds.noAudioChange

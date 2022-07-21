@@ -1,35 +1,26 @@
 package ktCommands
 
 import commands.Command
-import lib.AudioTrackExtender
-import objects.EventExtender
+import ktUtils.getPlayerWithQueue
+import objects.AudioTrackExtender
+import objects.EventFacade
 import objects.SlashCommandPayload
 import singeltons.JDAManager
-import singeltons.PlayerVault
 import snippets.ErrorMessages
 
-fun remove(event: EventExtender, payload: SlashCommandPayload) {
+fun remove(event: EventFacade, payload: SlashCommandPayload) {
     val position: Long? = event.getOption("position")?.asLong
     if (position == null) {
         event.error(ErrorMessages.NOT_RECEIVED_PARAMETER)
         return
     }
 
-    val player = PlayerVault
-        .getInstance()
-        .getPlayer(
-            JDAManager.getInstance().getJDA(Command.applicationId),
-            payload.guild.id,
-            payload.voiceChannel.id
-        )
-    if (player == null) {
-        event.error(ErrorMessages.NO_PLAYER_IN_VC)
-        return
-    }
-    if (player.queue.isEmpty()) {
-        event.error(ErrorMessages.QUEUE_EMPTY)
-        return
-    }
+    val player = getPlayerWithQueue(
+        JDAManager.getInstance().getJDA(Command.applicationId),
+        payload.guild.id,
+        payload.voiceChannel.id,
+        event
+    ) ?: return
 
     val audioTrack: AudioTrackExtender
     try {

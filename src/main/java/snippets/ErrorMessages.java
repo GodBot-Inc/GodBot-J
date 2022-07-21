@@ -7,6 +7,7 @@ public final class ErrorMessages {
             "The Song or Playlist or Song you want to access might be private.";
     public static final String PLAY_INVALID_URL = "The given url is invalid\n " +
             "If you want to search for a song use the /searchplay command";
+    public static final String NO_APPROPRIATE_PLAYER = "No appropriate player found.";
     public static final String TRACK_NOT_FOUND = "The Track associated with your url could not be found";
     public static final String INTERNAL_API_ERROR = "The requested Api has some issues resolving my request";
     public static final String INTERNAL_ERROR = "An Internal Error occurred. Please contact the developers about this";

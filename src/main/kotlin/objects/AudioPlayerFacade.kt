@@ -1,4 +1,4 @@
-package lib
+package objects
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer
 import ktUtils.GodBotException
@@ -9,7 +9,6 @@ import lavaplayerHandlers.TrackEventListener
 import net.dv8tion.jda.api.entities.Member
 import net.dv8tion.jda.api.entities.VoiceChannel
 import net.dv8tion.jda.api.managers.AudioManager
-import objects.SlashCommandPayload
 import playableInfo.PlayableInfo
 import singeltons.AudioPlayerManagerWrapper
 import singeltons.PlayerVault

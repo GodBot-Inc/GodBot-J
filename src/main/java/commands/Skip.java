@@ -3,22 +3,23 @@ package commands;
 import ktLogging.UtilsKt;
 import ktLogging.custom.GodBotChildLogger;
 import ktLogging.custom.GodBotLogger;
-import ktUtils.*;
-import lib.AudioPlayerExtender;
-import lib.AudioTrackExtender;
-import objects.SlashCommandPayload;
+import ktUtils.ErrorHandlerKt;
+import ktUtils.QueueEmptyException;
 import net.dv8tion.jda.api.EmbedBuilder;
+import objects.AudioPlayerExtender;
+import objects.AudioTrackExtender;
+import objects.EventFacade;
+import objects.SlashCommandPayload;
 import org.jetbrains.annotations.NotNull;
 import singeltons.JDAManager;
 import singeltons.PlayerVault;
 import snippets.Colours;
 import snippets.EmojiIds;
 import snippets.ErrorMessages;
-import objects.EventExtender;
 
 public class Skip implements Command {
 
-    public static void trigger(@NotNull EventExtender event, SlashCommandPayload payload) {
+    public static void trigger(@NotNull EventFacade event, SlashCommandPayload payload) {
         GodBotChildLogger logger = new GodBotLogger().command(
                 "Skip",
                 UtilsKt.formatPayload(payload)

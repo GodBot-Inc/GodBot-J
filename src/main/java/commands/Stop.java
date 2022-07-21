@@ -3,20 +3,20 @@ package commands;
 import ktLogging.UtilsKt;
 import ktLogging.custom.GodBotChildLogger;
 import ktLogging.custom.GodBotLogger;
-import ktUtils.*;
-import lib.AudioPlayerExtender;
-import objects.SlashCommandPayload;
+import ktUtils.ErrorHandlerKt;
 import net.dv8tion.jda.api.EmbedBuilder;
+import objects.AudioPlayerExtender;
+import objects.EventFacade;
+import objects.SlashCommandPayload;
 import singeltons.JDAManager;
 import singeltons.PlayerVault;
 import snippets.Colours;
 import snippets.EmojiIds;
 import snippets.ErrorMessages;
-import objects.EventExtender;
 
 public class Stop implements Command {
 
-    public static void trigger(EventExtender event, SlashCommandPayload payload) {
+    public static void trigger(EventFacade event, SlashCommandPayload payload) {
         GodBotChildLogger logger = new GodBotLogger().command(
                 "Stop",
                 UtilsKt.formatPayload(payload)

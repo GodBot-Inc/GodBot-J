@@ -11,7 +11,7 @@ import net.dv8tion.jda.api.interactions.commands.OptionMapping
 import snippets.Colours
 import java.awt.Color
 
-class EventExtender(event: SlashCommandEvent) {
+class EventFacade(event: SlashCommandEvent) {
 
     val event: SlashCommandEvent
 

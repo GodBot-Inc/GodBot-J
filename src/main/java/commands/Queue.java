@@ -7,12 +7,12 @@ import ktLogging.custom.GodBotLogger;
 import ktUtils.ButtonException;
 import ktUtils.ErrorHandlerKt;
 import ktUtils.FormatterKt;
-import lib.AudioPlayerExtender;
-import lib.AudioTrackExtender;
-import objects.EventExtender;
-import objects.SlashCommandPayload;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
+import objects.AudioPlayerExtender;
+import objects.AudioTrackExtender;
+import objects.EventFacade;
+import objects.SlashCommandPayload;
 import org.bson.Document;
 import org.jetbrains.annotations.NotNull;
 import singeltons.JDAManager;
@@ -55,7 +55,7 @@ public class Queue implements Command {
                 .build();
     }
 
-    public static void trigger(@NotNull EventExtender event, SlashCommandPayload payload) {
+    public static void trigger(@NotNull EventFacade event, SlashCommandPayload payload) {
         GodBotChildLogger logger = new GodBotLogger().command(
                 "Queue",
                 UtilsKt.formatPayload(payload)

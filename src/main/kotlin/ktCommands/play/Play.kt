@@ -16,7 +16,7 @@ import ktSnippets.playVideo
 import ktUtils.CouldNotExtractVideoInformation
 import ktUtils.TrackNotFoundException
 import ktUtils.VideoNotFoundException
-import objects.EventExtender
+import objects.EventFacade
 import objects.SlashCommandPayload
 import playableInfo.YouTubePlaylist
 import playableInfo.YouTubeSong
@@ -24,7 +24,7 @@ import singeltons.AudioPlayerManagerWrapper
 import singeltons.JDAManager
 import snippets.ErrorMessages
 
-suspend fun play(event: EventExtender, payload: SlashCommandPayload) {
+suspend fun play(event: EventFacade, payload: SlashCommandPayload) {
     val url = event.getOption("url")?.asString
     if (url == null) {
         event.error(ErrorMessages.NOT_RECEIVED_PARAMETER)
@@ -96,7 +96,7 @@ suspend fun resolveVideo(
 }
 
 suspend fun resolvePlaylist(
-    event: EventExtender,
+    event: EventFacade,
     payload: SlashCommandPayload,
     hook: InteractionHookWrapper,
     url: String

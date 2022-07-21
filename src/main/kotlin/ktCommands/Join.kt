@@ -1,13 +1,13 @@
 package ktCommands
 
 import commands.Command
+import objects.EventFacade
 import objects.SlashCommandPayload
 import singeltons.AudioPlayerManagerWrapper
 import singeltons.JDAManager
 import snippets.Colours
-import objects.EventExtender
 
-fun join(event: EventExtender, payload: SlashCommandPayload) {
+fun join(event: EventFacade, payload: SlashCommandPayload) {
     val player = AudioPlayerManagerWrapper
         .getInstance()
         .getOrCreatePlayer(

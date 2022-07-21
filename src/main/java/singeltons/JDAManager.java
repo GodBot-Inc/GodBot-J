@@ -1,7 +1,6 @@
 package singeltons;
 
 import net.dv8tion.jda.api.JDA;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 
@@ -16,11 +15,7 @@ public class JDAManager {
         JDAStorage.put(applicationId, jda);
     }
 
-    @Nullable
     public JDA getJDA(String applicationId) {
-        if (!JDAStorage.containsKey(applicationId)) {
-            return null;
-        }
         return JDAStorage.get(applicationId);
     }
 

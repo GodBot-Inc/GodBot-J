@@ -5,12 +5,12 @@ import ktLogging.LoggingLevel
 import ktLogging.custom.GodBotLogger
 import ktLogging.formatPayload
 import ktSnippets.standardError
-import objects.EventExtender
+import objects.EventFacade
 import objects.SlashCommandPayload
 
 @JvmOverloads
 fun handleDefaultErrorResponse(
-    event: EventExtender,
+    event: EventFacade,
     payload: SlashCommandPayload,
     msg: String,
     logger: Logger = GodBotLogger(),

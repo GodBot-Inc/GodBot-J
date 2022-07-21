@@ -9,7 +9,7 @@ import ktCommands.*
 import ktCommands.play.play
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent
 import net.dv8tion.jda.api.hooks.ListenerAdapter
-import objects.EventExtender
+import objects.EventFacade
 import objects.SlashCommandPayload
 import snippets.ErrorMessages
 
@@ -18,7 +18,7 @@ class InteractionListener: ListenerAdapter() {
     override fun onSlashCommand(pureEvent: SlashCommandEvent) {
         val dotenv = Dotenv.load()
         val applicationId = dotenv.get("APPLICATIONID")
-        val event = EventExtender(pureEvent)
+        val event = EventFacade(pureEvent)
 
         val guild = pureEvent.guild
         val member = pureEvent.member

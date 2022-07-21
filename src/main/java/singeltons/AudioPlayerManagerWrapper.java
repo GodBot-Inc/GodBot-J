@@ -5,11 +5,11 @@ import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
-import ktUtils.*;
+import ktUtils.TrackNotFoundException;
 import lavaplayerHandlers.AudioResultHandler;
-import lib.AudioPlayerExtender;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.VoiceChannel;
+import objects.AudioPlayerExtender;
 
 import java.util.concurrent.TimeUnit;
 
