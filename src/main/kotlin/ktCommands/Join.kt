@@ -5,7 +5,6 @@ import objects.EventFacade
 import objects.SlashCommandPayload
 import singeltons.AudioPlayerManagerWrapper
 import singeltons.JDAManager
-import snippets.Colours
 
 fun join(event: EventFacade, payload: SlashCommandPayload) {
     val player = AudioPlayerManagerWrapper
@@ -21,5 +20,5 @@ fun join(event: EventFacade, payload: SlashCommandPayload) {
     }
 
     player.openConnection()
-    event.reply("Joined the channel ${payload.voiceChannel.name}", Colours.godbotYellow)
+    event.reply("Joined the channel ${payload.voiceChannel.name}")
 }

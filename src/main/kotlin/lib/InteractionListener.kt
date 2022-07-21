@@ -1,7 +1,6 @@
 package lib
 
 import commands.Queue
-import commands.Skip
 import commands.Stop
 import io.github.cdimascio.dotenv.Dotenv
 import kotlinx.coroutines.runBlocking
@@ -46,7 +45,7 @@ class InteractionListener: ListenerAdapter() {
             "pause" -> pause(event, payload)
             "resume" -> resume(event, payload)
             "stop" -> Stop.trigger(event, payload)
-            "skip" -> Skip.trigger(event, payload)
+            "skip" -> skip(event, payload)
             "queue" -> Queue.trigger(event, payload)
             "clear-queue" -> clearQueue(event, payload)
             "remove" -> remove(event, payload)

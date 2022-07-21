@@ -1,11 +1,11 @@
 package ktSnippets
 
+import constants.secondary
 import ktUtils.millisToStringDisplay
 import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.entities.Member
 import net.dv8tion.jda.api.entities.MessageEmbed
 import playableInfo.*
-import snippets.Colours
 import snippets.EmojiIds
 import javax.annotation.CheckReturnValue
 
@@ -145,7 +145,7 @@ fun playVideo(
         .addField("Sources", formatSongSource(playableInfo), true)
         .addField("Position", getPositionInQueueVideo(positionInQueue, queueSize), true)
         .addField("Duration", duration, false)
-        .setColor(Colours.godbotHeavenYellow)
+        .setColor(secondary)
         .setFooter(
             String.format(
                 "Added by %s", requester.effectiveName
@@ -225,7 +225,7 @@ fun playPlaylist(
         .addField("Sources", formatPlaylistSource(playlistInfo), true)
         .addField("Position", getPositionInQueue(positionInQueue, queueSize), true)
         .addField("Total Duration", duration, false)
-        .setColor(Colours.godbotHeavenYellow)
+        .setColor(secondary)
         .setFooter(
             String.format(
                 "Added by %s", requester.effectiveName

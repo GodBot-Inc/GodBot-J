@@ -1,5 +1,6 @@
 package ktCommands
 
+import constants.secondary
 import ktSnippets.trackLines
 import ktUtils.getPlayingPlayer
 import ktUtils.millisToString
@@ -7,7 +8,6 @@ import net.dv8tion.jda.api.EmbedBuilder
 import objects.EventFacade
 import objects.SlashCommandPayload
 import singeltons.JDAManager
-import snippets.Colours
 import java.util.concurrent.TimeUnit
 
 fun seek(event: EventFacade, payload: SlashCommandPayload) {
@@ -46,7 +46,7 @@ fun seek(event: EventFacade, payload: SlashCommandPayload) {
                 trackLines(seekPoint, player.getCurrentSongDuration()) + " "
                         + "**${millisToString(seekPoint)} - ${millisToString(duration)}**"
             )
-            .setColor(Colours.godbotHeavenYellow)
+            .setColor(secondary)
             .build()
     )
 }

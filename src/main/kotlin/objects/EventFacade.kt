@@ -1,6 +1,7 @@
 package objects
 
-import ktSnippets.standardError
+import constants.errorRed
+import constants.primary
 import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.entities.Emoji
 import net.dv8tion.jda.api.entities.MessageEmbed
@@ -8,7 +9,6 @@ import net.dv8tion.jda.api.entities.TextChannel
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent
 import net.dv8tion.jda.api.interactions.InteractionHook
 import net.dv8tion.jda.api.interactions.commands.OptionMapping
-import snippets.Colours
 import java.awt.Color
 
 class EventFacade(event: SlashCommandEvent) {
@@ -23,7 +23,7 @@ class EventFacade(event: SlashCommandEvent) {
         this.event.replyEmbeds(embed).queue()
     }
 
-    fun reply(message: String, color: Color = Colours.godbotYellow) {
+    fun reply(message: String, color: Color = primary) {
         this.reply(
             EmbedBuilder()
                 .setTitle(message)
@@ -32,7 +32,7 @@ class EventFacade(event: SlashCommandEvent) {
         )
     }
 
-    fun replyLink(message: String, color: Color = Colours.godbotYellow) {
+    fun replyLink(message: String, color: Color = primary) {
         this.reply(
             EmbedBuilder()
                 .setDescription("**$message**")
@@ -41,10 +41,19 @@ class EventFacade(event: SlashCommandEvent) {
         )
     }
 
-    fun replyEmote(emote: Emoji, message: String, color: Color = Colours.godbotYellow) {
+    fun replyEmote(emote: Emoji, message: String, color: Color = primary) {
         this.reply(
             EmbedBuilder()
-                .setDescription("${emote.asMention}**${message}**")
+                .setTitle("${emote.asMention} $message")
+                .setColor(color)
+                .build()
+        )
+    }
+
+    fun replyEmoteLink(emote: Emoji, message: String, color: Color = primary) {
+        this.reply(
+            EmbedBuilder()
+                .setDescription("${emote.asMention} **$message**")
                 .setColor(color)
                 .build()
         )
@@ -55,7 +64,12 @@ class EventFacade(event: SlashCommandEvent) {
     }
 
     fun error(message: String) {
-        this.replyEphemeral(standardError(message))
+        this.replyEphemeral(
+            EmbedBuilder()
+                .setDescription(message)
+                .setColor(errorRed)
+                .build()
+        )
     }
 
     fun getTextChannel(): TextChannel = this.event.textChannel
