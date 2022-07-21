@@ -1,5 +1,8 @@
 package lib.jda
 
+import features.autoPauseJoin
+import features.autoPauseLeave
+import features.autoPauseMove
 import io.github.cdimascio.dotenv.Dotenv
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceJoinEvent
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceLeaveEvent
@@ -22,13 +25,7 @@ class GeneralListener: ListenerAdapter() {
         if (event.member.id == applicationId)
             player.changeChannel(event.channelJoined)
 
-        if (event.channelLeft == player.voiceChannel &&
-            event.channelLeft.members.size == 1)
-            player.setPaused(true)
-
-        if (event.channelJoined == player.voiceChannel &&
-            event.channelJoined.members.size >= 2)
-            player.setPaused(false)
+        autoPauseMove(event, player)
     }
 
     override fun onGuildVoiceJoin(event: GuildVoiceJoinEvent) {
@@ -39,10 +36,7 @@ class GeneralListener: ListenerAdapter() {
                 event.guild.id
             ) ?: return
 
-        if (event.channelJoined == player.voiceChannel &&
-            event.channelJoined.members.size == 2) {
-            player.setPaused(true)
-        }
+        autoPauseJoin(event, player)
     }
 
     override fun onGuildVoiceLeave(event: GuildVoiceLeaveEvent) {
@@ -57,8 +51,6 @@ class GeneralListener: ListenerAdapter() {
             player.cleanup()
             return
         }
-        if (event.channelLeft == player.voiceChannel &&
-            event.channelLeft.members.size == 1)
-            player.setPaused(true)
+        autoPauseLeave(event, player)
     }
 }
