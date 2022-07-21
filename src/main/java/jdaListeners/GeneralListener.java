@@ -1,7 +1,7 @@
 package jdaListeners;
 
 import io.github.cdimascio.dotenv.Dotenv;
-import lib.AudioPlayerExtender;
+import objects.AudioPlayerExtender;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceJoinEvent;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceLeaveEvent;
