@@ -1,4 +1,4 @@
-package playableInfo
+package objects.playableInformation
 
 interface PlaylistPlayableInfo : PlayableInfo {
     val size: Int

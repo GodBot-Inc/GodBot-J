@@ -1,30 +1,30 @@
 package ktCommands.play.services
 
 import kotlinx.coroutines.*
+import ktCommands.play.utils.YTUrlBuilder
 import ktCommands.play.utils.convertYtToMillis
 import ktUtils.CouldNotExtractVideoInformation
-import ktUtils.UrlBuilder
 import ktUtils.VideoNotFoundException
 import ktUtils.YouTubeApiException
 import lib.get
+import objects.playableInformation.YouTubePlaylist
+import objects.playableInformation.YouTubeSong
 import org.json.JSONException
 import org.json.JSONObject
-import playableInfo.YouTubePlaylist
-import playableInfo.YouTubeSong
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse
 import java.util.concurrent.CompletableFuture
 
 
-val client = HttpClient.newHttpClient()
-val builder = HttpRequest.newBuilder()
+val client: HttpClient = HttpClient.newHttpClient()
+val builder: HttpRequest.Builder = HttpRequest.newBuilder()
 
 // TODO: Check for invalid code responses
 
 @Throws(VideoNotFoundException::class, CouldNotExtractVideoInformation::class)
 suspend fun getYTVideoInfo(id: String) = coroutineScope {
-    var response = get(UrlBuilder.YT().getVideo().id(id).build())
+    var response = get(YTUrlBuilder().getVideo().id(id).build())
     val builder = YouTubeSong.Builder()
 
     if (response.getJSONArray("items").isEmpty)
@@ -63,14 +63,14 @@ suspend fun getYTVideoInfo(id: String) = coroutineScope {
 
 suspend fun getYTPlaylistInfo(id: String) = coroutineScope {
     val itemsRequest: CompletableFuture<HttpResponse<String>> = client.sendAsync(
-        builder.uri(UrlBuilder.YT().getPlaylistItems().id(id).build())
+        builder.uri(YTUrlBuilder().getPlaylistItems().id(id).build())
             .GET()
             .build(),
         HttpResponse.BodyHandlers.ofString()
     )
     var response = JSONObject(withContext(Dispatchers.IO) {
         client.send(
-            builder.uri(UrlBuilder.YT().getPlaylist().id(id).build())
+            builder.uri(YTUrlBuilder().getPlaylist().id(id).build())
                 .GET()
                 .build(),
             HttpResponse.BodyHandlers.ofString()
@@ -120,7 +120,7 @@ suspend fun getYTPlaylistInfo(id: String) = coroutineScope {
     while (nextPage) {
         var nextPageRequest: Deferred<JSONObject>? = null
         try {
-            nextPageRequest = async { get(UrlBuilder.YT().getPlaylistItemsToken()
+            nextPageRequest = async { get(YTUrlBuilder().getPlaylistItemsToken()
                 .id(id)
                 .pageToken(items.getString("nextPageToken"))
                 .build()) }
@@ -162,18 +162,4 @@ suspend fun getYTPlaylistInfo(id: String) = coroutineScope {
     }
 
     return@coroutineScope ytBuilder.build()
-}
-
-suspend fun getVideoDuration(id: String): Long? {
-    val response = get(UrlBuilder.YT().getVideoDuration().id(id).build())
-
-    return try {
-        response
-            .getJSONArray("items")
-            .getJSONObject(0)
-            .getJSONObject("contentDetails")
-            .getLong("duration")
-    } catch (e: JSONException) {
-        null
-    }
 }

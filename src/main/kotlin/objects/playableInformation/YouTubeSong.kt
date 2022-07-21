@@ -1,4 +1,4 @@
-package playableInfo
+package objects.playableInformation
 
 class YouTubeSong private constructor (
     override val duration: Long,

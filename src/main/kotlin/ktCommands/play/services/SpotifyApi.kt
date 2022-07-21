@@ -10,9 +10,9 @@ import io.github.cdimascio.dotenv.Dotenv
 import ktUtils.PlaylistNotFoundException
 import ktUtils.TrackNotFoundException
 import ktUtils.VideoNotFoundException
-import playableInfo.PlayableInfo
-import playableInfo.SpotifyPlaylist
-import playableInfo.SpotifySong
+import objects.playableInformation.PlayableInfo
+import objects.playableInformation.SpotifyPlaylist
+import objects.playableInformation.SpotifySong
 import java.util.logging.Logger
 
 private val dotenv: Dotenv = Dotenv.load()

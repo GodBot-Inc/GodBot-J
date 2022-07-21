@@ -1,4 +1,4 @@
-package playableInfo
+package objects.playableInformation
 
 class SpotifyPlaylist private constructor(
     override val duration: Long,
@@ -21,7 +21,7 @@ class SpotifyPlaylist private constructor(
         var thumbnailUri: String? = null,
         var size: Int = 0,
         var videoIds: ArrayList<String> = ArrayList(),
-        var songInfos: ArrayList<PlayableInfo>
+        var songInfos: ArrayList<PlayableInfo> = ArrayList()
     ) {
 
         fun duration(duration: Long) = apply { this.duration = duration }

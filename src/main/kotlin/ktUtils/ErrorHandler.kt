@@ -1,10 +1,11 @@
 package ktUtils
 
+import constants.errorRed
 import ktLogging.Logger
 import ktLogging.LoggingLevel
 import ktLogging.custom.GodBotLogger
 import ktLogging.formatPayload
-import ktSnippets.standardError
+import net.dv8tion.jda.api.EmbedBuilder
 import objects.EventFacade
 import objects.SlashCommandPayload
 
@@ -16,6 +17,11 @@ fun handleDefaultErrorResponse(
     logger: Logger = GodBotLogger(),
     loggingLevel: LoggingLevel = LoggingLevel.HIGH
 ){
-    event.replyEphemeral(standardError(msg))
+    event.replyEphemeral(
+        EmbedBuilder()
+            .setDescription(msg)
+            .setColor(errorRed)
+            .build()
+    )
     logger.error(formatPayload(payload), loggingLevel)
 }

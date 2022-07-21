@@ -5,7 +5,7 @@ import ktUtils.millisToStringDisplay
 import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.entities.Member
 import net.dv8tion.jda.api.entities.MessageEmbed
-import playableInfo.*
+import objects.playableInformation.*
 import javax.annotation.CheckReturnValue
 
 private const val defaultThumbnail =
@@ -122,7 +122,7 @@ private fun formatSongSource(playableInfo: PlayableInfo): String {
 }
 
 @CheckReturnValue
-fun playVideo(
+fun playVideoMessage(
     requester: Member,
     playableInfo: PlayableInfo,
     positionInQueue: Int,
@@ -194,7 +194,7 @@ private fun formatPlaylistSource(playlistInfo: PlaylistPlayableInfo): String {
 }
 
 @CheckReturnValue
-fun playPlaylist(
+fun playPlaylistMessage(
     requester: Member,
     playlistInfo: PlaylistPlayableInfo,
     positionInQueue: Int,

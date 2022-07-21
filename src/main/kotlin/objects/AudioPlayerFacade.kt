@@ -9,7 +9,7 @@ import lavaplayerHandlers.TrackEventListener
 import net.dv8tion.jda.api.entities.Member
 import net.dv8tion.jda.api.entities.VoiceChannel
 import net.dv8tion.jda.api.managers.AudioManager
-import playableInfo.PlayableInfo
+import objects.playableInformation.PlayableInfo
 import singeltons.AudioPlayerManagerWrapper
 import singeltons.PlayerVault
 import java.util.concurrent.TimeUnit

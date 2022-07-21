@@ -11,15 +11,15 @@ import ktCommands.play.services.getYTVideoInfo
 import ktCommands.play.utils.convertYtUrlToId
 import ktCommands.play.utils.isSong
 import ktCommands.play.utils.isValid
-import ktSnippets.playPlaylist
-import ktSnippets.playVideo
+import ktSnippets.playPlaylistMessage
+import ktSnippets.playVideoMessage
 import ktUtils.CouldNotExtractVideoInformation
 import ktUtils.TrackNotFoundException
 import ktUtils.VideoNotFoundException
 import objects.EventFacade
 import objects.SlashCommandPayload
-import playableInfo.YouTubePlaylist
-import playableInfo.YouTubeSong
+import objects.playableInformation.YouTubePlaylist
+import objects.playableInformation.YouTubeSong
 import singeltons.AudioPlayerManagerWrapper
 import singeltons.JDAManager
 
@@ -86,7 +86,7 @@ suspend fun resolveVideo(
         return@coroutineScope
     }
 
-    hook.reply(playVideo(
+    hook.reply(playVideoMessage(
         payload.member,
         info,
         position,
@@ -126,7 +126,7 @@ suspend fun resolvePlaylist(
     }
 
     hook.reply(
-        playPlaylist(
+        playPlaylistMessage(
             payload.member,
             info,
             positionInQueue,
