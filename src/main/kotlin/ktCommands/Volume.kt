@@ -1,11 +1,14 @@
 package ktCommands
 
+import constants.louderEmoji
+import constants.muteEmoji
+import constants.noAudioChangeEmoji
+import constants.quieterEmoji
 import ktUtils.getPlayerWithQueue
 import net.dv8tion.jda.api.entities.Emoji
 import objects.EventFacade
 import objects.SlashCommandPayload
 import singeltons.JDAManager
-import snippets.EmojiIds
 import snippets.ErrorMessages
 
 fun volume(event: EventFacade, payload: SlashCommandPayload) {
@@ -23,15 +26,15 @@ fun volume(event: EventFacade, payload: SlashCommandPayload) {
     ) ?: return
 
     val playerVolume: Int = player.getVolume()
-    var emoji: Emoji = EmojiIds.noAudioChange
+    var emoji: Emoji = noAudioChangeEmoji
 
     if (playerVolume > level*10) {
-        emoji = EmojiIds.quieter
+        emoji = quieterEmoji
     } else if (playerVolume < level*10) {
-        emoji = EmojiIds.louder
+        emoji = louderEmoji
     }
     if (level == 0) {
-        emoji = EmojiIds.mute
+        emoji = muteEmoji
     }
 
     player.setVolume(level*10)

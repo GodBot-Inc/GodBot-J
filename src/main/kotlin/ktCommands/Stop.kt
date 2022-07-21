@@ -1,10 +1,10 @@
 package ktCommands
 
+import constants.stopEmoji
 import ktUtils.getPlayingPlayer
 import objects.EventFacade
 import objects.SlashCommandPayload
 import singeltons.JDAManager
-import snippets.EmojiIds
 
 fun stop(event: EventFacade, payload: SlashCommandPayload) {
     val player = getPlayingPlayer(
@@ -15,5 +15,5 @@ fun stop(event: EventFacade, payload: SlashCommandPayload) {
     ) ?: return
 
     player.stop()
-    event.replyEmote(EmojiIds.stop, "Player stopped")
+    event.replyEmote(stopEmoji, "Player stopped")
 }

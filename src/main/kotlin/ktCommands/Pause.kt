@@ -1,11 +1,11 @@
 package ktCommands
 
 import commands.Command
+import constants.pauseEmoji
 import ktUtils.getPlayingPlayer
 import objects.EventFacade
 import objects.SlashCommandPayload
 import singeltons.JDAManager
-import snippets.EmojiIds
 
 fun pause(event: EventFacade, payload: SlashCommandPayload) {
     val player = getPlayingPlayer(
@@ -21,5 +21,5 @@ fun pause(event: EventFacade, payload: SlashCommandPayload) {
     }
 
     player.setPaused(true)
-    event.replyEmote(EmojiIds.pause, "Player paused")
+    event.replyEmote(pauseEmoji, "Player paused")
 }

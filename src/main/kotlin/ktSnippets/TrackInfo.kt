@@ -1,12 +1,11 @@
 package ktSnippets
 
-import constants.secondary
+import constants.*
 import ktUtils.millisToStringDisplay
 import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.entities.Member
 import net.dv8tion.jda.api.entities.MessageEmbed
 import playableInfo.*
-import snippets.EmojiIds
 import javax.annotation.CheckReturnValue
 
 private const val defaultThumbnail =
@@ -50,24 +49,24 @@ fun trackLinesDefault(): String {
 
 private fun getPositionInQueue(position: Int, queueSize: Int): String {
     if (position == 0 && queueSize == 0) {
-        return String.format("%s -", EmojiIds.queueEmoji)
+        return String.format("%s -", queueEmoji.asMention)
     } else if (position == 0) {
-        return String.format("%s 1 - %s", EmojiIds.queueEmoji, queueSize)
+        return String.format("%s 1 - %s", queueEmoji.asMention, queueSize)
     } else if (queueSize == 0) {
-        return String.format("%s %s", EmojiIds.queueEmoji, position)
+        return String.format("%s %s", queueEmoji.asMention, position)
     }
-    return String.format("%s %s - %s", EmojiIds.queueEmoji, position, queueSize)
+    return String.format("%s %s - %s", queueEmoji.asMention, position, queueSize)
 }
 
 private fun getPositionInQueueVideo(position: Int, queueSize: Int): String {
     if (position == 0 && queueSize == 0) {
-        return String.format("%s -", EmojiIds.queueEmoji)
+        return String.format("%s -", queueEmoji.asMention)
     } else if (position == 0) {
-        return String.format("%s 1/%s", EmojiIds.queueEmoji, queueSize)
+        return String.format("%s 1/%s", queueEmoji.asMention, queueSize)
     } else if (queueSize == 0) {
-        return String.format("%s %s", EmojiIds.queueEmoji, position)
+        return String.format("%s %s", queueEmoji.asMention, position)
     }
-    return String.format("%s %s/%s", EmojiIds.queueEmoji, position, queueSize)
+    return String.format("%s %s/%s", queueEmoji.asMention, position, queueSize)
 }
 
 private fun getAuthor(interpretation: PlayableInfo?): String {
@@ -91,7 +90,7 @@ private fun formatSongSource(playableInfo: PlayableInfo): String {
         builder.append(
             String.format(
                 "%s [YouTube](%s)\n",
-                EmojiIds.youtubeEmoji.asMention,
+                youtubeEmoji.asMention,
                 playableInfo.uri
             )
         )
@@ -99,7 +98,7 @@ private fun formatSongSource(playableInfo: PlayableInfo): String {
         builder.append(
             String.format(
                 "%s -\n",
-                EmojiIds.youtubeEmoji.asMention
+                youtubeEmoji.asMention
             )
         )
     }
@@ -107,7 +106,7 @@ private fun formatSongSource(playableInfo: PlayableInfo): String {
         builder.append(
             String.format(
                 "%s [Spotify](%s)\n",
-                EmojiIds.spotifyEmoji,
+                spotifyEmoji.asMention,
                 playableInfo.uri
             )
         )
@@ -115,7 +114,7 @@ private fun formatSongSource(playableInfo: PlayableInfo): String {
         builder.append(
             String.format(
                 "%s -\n",
-                EmojiIds.spotifyEmoji
+                spotifyEmoji.asMention
             )
         )
     }
@@ -161,7 +160,7 @@ private fun formatPlaylistSource(playlistInfo: PlaylistPlayableInfo): String {
         stringBuilder.append(
             String.format(
                 "%s [YouTube](%s)\n",
-                EmojiIds.youtubeEmoji.asMention,
+                youtubeEmoji.asMention,
                 playlistInfo.uri,
             )
         )
@@ -170,7 +169,7 @@ private fun formatPlaylistSource(playlistInfo: PlaylistPlayableInfo): String {
             String.format(
                 String.format(
                     " %s YouTube -\n",
-                    EmojiIds.youtubeEmoji.asMention
+                    youtubeEmoji.asMention
                 )
             )
         )
@@ -179,7 +178,7 @@ private fun formatPlaylistSource(playlistInfo: PlaylistPlayableInfo): String {
         stringBuilder.append(
             String.format(
                 "%s [Spotify](%s)\n",
-                EmojiIds.spotifyEmoji,
+                spotifyEmoji.asMention,
                 playlistInfo.uri
             )
         )
@@ -187,7 +186,7 @@ private fun formatPlaylistSource(playlistInfo: PlaylistPlayableInfo): String {
         stringBuilder.append(
             String.format(
                 "%s -\n",
-                EmojiIds.spotifyEmoji
+                spotifyEmoji.asMention
             )
         )
     }
@@ -217,7 +216,7 @@ fun playPlaylist(
             "Tracks",
             String.format(
                 "%s %s",
-                EmojiIds.trackEmoji,
+                trackSizeEmoji.asMention,
                 playlistInfo.size
             ),
             true

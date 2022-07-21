@@ -1,11 +1,11 @@
 package ktCommands
 
 import commands.Command
+import constants.cleanedEmoji
 import ktUtils.getPlayerWithQueue
 import objects.EventFacade
 import objects.SlashCommandPayload
 import singeltons.JDAManager
-import snippets.EmojiIds
 
 fun clearQueue(event: EventFacade, payload: SlashCommandPayload) {
     val player = getPlayerWithQueue(
@@ -17,5 +17,5 @@ fun clearQueue(event: EventFacade, payload: SlashCommandPayload) {
 
     player.clearQueue()
 
-    event.replyEmote(EmojiIds.cleaned, "Removed all tracks from the Queue")
+    event.replyEmote(cleanedEmoji, "Removed all tracks from the Queue")
 }

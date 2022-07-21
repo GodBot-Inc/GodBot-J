@@ -1,10 +1,10 @@
 package ktCommands
 
+import constants.nextTrackEmoji
 import ktUtils.getPlayerWithQueue
 import objects.EventFacade
 import objects.SlashCommandPayload
 import singeltons.JDAManager
-import snippets.EmojiIds
 
 fun skip(event: EventFacade, payload: SlashCommandPayload) {
     val player = getPlayerWithQueue(
@@ -16,6 +16,7 @@ fun skip(event: EventFacade, payload: SlashCommandPayload) {
 
     val audioTrack = player.playNext()
 
-    event.replyEmoteLink(EmojiIds.nextTrack, "Skipped Song, Now Playing: " +
+    event.replyEmoteLink(
+        nextTrackEmoji, "Skipped Song, Now Playing: " +
             "[${audioTrack.songInfo.title}](${audioTrack.songInfo.uri})")
 }

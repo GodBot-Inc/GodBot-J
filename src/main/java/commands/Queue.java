@@ -1,5 +1,6 @@
 package commands;
 
+import constants.EmojisKt;
 import interactions.InteractionScheduler;
 import ktLogging.UtilsKt;
 import ktLogging.custom.GodBotChildLogger;
@@ -19,7 +20,6 @@ import singeltons.JDAManager;
 import singeltons.PlayerVault;
 import snippets.Buttons;
 import snippets.Colours;
-import snippets.EmojiIds;
 import snippets.ErrorMessages;
 import utils.MongoCommunication;
 import utils.QueueWrapper;
@@ -39,7 +39,7 @@ public class Queue implements Command {
                 .setTitle(
                         String.format(
                                 "%s Queue",
-                                EmojiIds.queueEmoji
+                                EmojisKt.getQueueEmoji().getAsMention()
                         )
                 )
                 .setDescription(description)

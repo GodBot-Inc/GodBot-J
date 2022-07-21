@@ -1,11 +1,12 @@
 package ktCommands
 
 import commands.Command
+import constants.loopEmoji
+import constants.noLoopEmoji
 import ktUtils.getPlayer
 import objects.EventFacade
 import objects.SlashCommandPayload
 import singeltons.JDAManager
-import snippets.EmojiIds
 import snippets.ErrorMessages
 
 fun loop(event: EventFacade, payload: SlashCommandPayload) {
@@ -32,7 +33,7 @@ fun loop(event: EventFacade, payload: SlashCommandPayload) {
 
     player.loop = mode
     if (mode)
-        event.replyEmote(EmojiIds.loop, "Loop Mode Enabled")
+        event.replyEmote(loopEmoji, "Loop Mode Enabled")
     else
-        event.replyEmote(EmojiIds.noLoop, "Loop Mode Disabled")
+        event.replyEmote(noLoopEmoji, "Loop Mode Disabled")
 }
