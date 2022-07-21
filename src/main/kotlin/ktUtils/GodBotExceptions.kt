@@ -23,6 +23,8 @@ class GuildNotFoundException: NotFoundException()
 
 class TrackNotFoundException: NotFoundException()
 
+class LoadFailedException: NotFoundException()
+
 class PlaylistNotFoundException: NotFoundException()
 
 

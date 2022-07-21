@@ -4,9 +4,7 @@ import com.sedmelluq.discord.lavaplayer.player.AudioConfiguration;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
-import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
-import ktUtils.TrackNotFoundException;
-import lavaplayerHandlers.AudioResultHandler;
+import lib.lavaplayer.AudioResultHandler;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.VoiceChannel;
 import objects.AudioPlayerExtender;
@@ -62,23 +60,11 @@ public class AudioPlayerManagerWrapper {
         return player;
     }
 
-    public AudioTrack loadItem(String url)
-            throws TrackNotFoundException {
-        AudioResultHandler audioResultHandler = new AudioResultHandler();
+    public void loadItem(String url, AudioResultHandler resultHandler) {
         playerManager.loadItem(
                 url,
-                audioResultHandler
+                resultHandler
         );
-        while (audioResultHandler.actionType == 0) {
-            try {
-                TimeUnit.MILLISECONDS.sleep(20);
-            } catch (InterruptedException ignore) {}
-        }
-
-        if (audioResultHandler.actionType == 3 || audioResultHandler.actionType == 4) {
-            throw new TrackNotFoundException();
-        }
-        return audioResultHandler.audioTrack;
     }
 
     public AudioPlayerManager getManager() {

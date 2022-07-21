@@ -2,10 +2,12 @@ package objects
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer
 import ktUtils.GodBotException
+import ktUtils.LoadFailedException
 import ktUtils.QueueEmptyException
 import ktUtils.TrackNotFoundException
-import lavaplayerHandlers.AudioPlayerSendHandler
 import lavaplayerHandlers.TrackEventListener
+import lib.lavaplayer.AudioPlayerSendHandler
+import lib.lavaplayer.AudioResultHandler
 import net.dv8tion.jda.api.entities.Member
 import net.dv8tion.jda.api.entities.VoiceChannel
 import net.dv8tion.jda.api.managers.AudioManager
@@ -116,20 +118,24 @@ class AudioPlayerExtender(
         return audioTrack
     }
 
-    @Throws(TrackNotFoundException::class)
+    @Throws(TrackNotFoundException::class, LoadFailedException::class)
     fun playNow(audioTrackExtender: AudioTrackExtender) {
         updateUsage()
-        val playableTrack =
-            AudioPlayerManagerWrapper
+        val callback = AudioResultHandler()
+        AudioPlayerManagerWrapper
                 .getInstance()
-                .loadItem(audioTrackExtender.songInfo.uri)
+                .loadItem(
+                    audioTrackExtender.songInfo.uri,
+                    callback
+                )
 
+        val playableTrack = callback.awaitReady()
         audioPlayer.stopTrack()
         currentTrack = audioTrackExtender
         audioPlayer.playTrack(playableTrack)
     }
 
-    @Throws(TrackNotFoundException::class)
+    @Throws(TrackNotFoundException::class, LoadFailedException::class)
     fun play(playableInfo: PlayableInfo, payload: SlashCommandPayload): Int {
         return this.play(AudioTrackExtender(playableInfo, payload.member))
     }

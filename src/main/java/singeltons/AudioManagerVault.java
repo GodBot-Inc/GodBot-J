@@ -1,7 +1,7 @@
 package singeltons;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
-import lavaplayerHandlers.AudioPlayerSendHandler;
+import lib.lavaplayer.AudioPlayerSendHandler;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.managers.AudioManager;
