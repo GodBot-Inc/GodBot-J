@@ -11,6 +11,7 @@ import net.dv8tion.jda.api.events.interaction.SlashCommandEvent
 import net.dv8tion.jda.api.hooks.ListenerAdapter
 import objects.EventFacade
 import objects.SlashCommandPayload
+import kotlin.concurrent.thread
 
 class InteractionListener: ListenerAdapter() {
 
@@ -41,7 +42,7 @@ class InteractionListener: ListenerAdapter() {
 
         when (pureEvent.name) {
             "join" -> join(event, payload)
-            "play" -> runBlocking { play(event, payload) }
+            "play" -> thread { runBlocking { play(event, payload) } }
             "pause" -> pause(event, payload)
             "resume" -> resume(event, payload)
             "stop" -> stop(event, payload)

@@ -14,6 +14,7 @@ const val noPlayerInVc = "There is no player registered for this VoiceChannel"
 const val noPlayingTrack = "There is no track playing"
 const val noPlayerFound = "There was no player found"
 
-const val loadingFailed = "Loading of the given song failed"
+const val loadingSongFailed = "Loading of the given song failed"
+const val loadingPlaylistFailed = "Loading of the given playlist failed"
 const val queueEmpty = "Queue of the player is empty"
 const val notReceivedParameter = "Your parameter could not be received"

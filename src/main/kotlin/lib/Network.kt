@@ -19,5 +19,5 @@ suspend fun get(uri: URI): JSONObject = coroutineScope {
             BodyHandlers.ofString()
         )
     }
-    return@coroutineScope JSONObject(response)
+    return@coroutineScope JSONObject(response.body())
 }

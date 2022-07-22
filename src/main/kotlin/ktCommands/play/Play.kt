@@ -16,6 +16,7 @@ import ktSnippets.playVideoMessage
 import ktUtils.CouldNotExtractVideoInformation
 import ktUtils.TrackNotFoundException
 import ktUtils.VideoNotFoundException
+import ktUtils.YouTubeApiException
 import lib.jda.PremiumPlayerManager
 import objects.EventFacade
 import objects.SlashCommandPayload
@@ -23,6 +24,7 @@ import objects.playableInformation.YouTubePlaylist
 import objects.playableInformation.YouTubeSong
 
 suspend fun play(event: EventFacade, payload: SlashCommandPayload) {
+    println("Play called")
     val url = event.getOption("url")?.asString
     if (url == null) {
         event.error(notReceivedParameter)
@@ -32,6 +34,7 @@ suspend fun play(event: EventFacade, payload: SlashCommandPayload) {
         event.error(invalidURL)
         return
     }
+    println("Entering coroutine")
 
     coroutineScope {
         val isSong = isSong(url)
@@ -42,6 +45,7 @@ suspend fun play(event: EventFacade, payload: SlashCommandPayload) {
 
         val hook = InteractionHookWrapper(event.getHook())
         event.deferReply()
+        println("defered")
 
         if (isSong)
             resolveVideo(payload, hook, url)
@@ -96,6 +100,7 @@ suspend fun resolvePlaylist(
     hook: InteractionHookWrapper,
     url: String
 ) = coroutineScope {
+    println("Called ResolvePlaylist")
     val infoJob: Deferred<YouTubePlaylist> = async { getYTPlaylistInfo(convertYtUrlToId(url)) }
 
     val player = PremiumPlayerManager.getOrCreatePlayer(
@@ -104,7 +109,14 @@ suspend fun resolvePlaylist(
     )
 
     val positionInQueue = player.queue.size + 1
-    val info = infoJob.await()
+    val info: YouTubePlaylist
+    try {
+        info = infoJob.await()
+    } catch (e: YouTubeApiException) {
+        hook.error(loadingPlaylistFailed)
+        e.printStackTrace()
+        return@coroutineScope
+    }
 
     launch {
         player.openConnection()
@@ -118,6 +130,7 @@ suspend fun resolvePlaylist(
         }
     }
 
+    println("Replying")
     hook.reply(
         playPlaylistMessage(
             payload.member,

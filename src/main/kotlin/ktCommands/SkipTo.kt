@@ -1,6 +1,6 @@
 package ktCommands
 
-import constants.loadingFailed
+import constants.loadingSongFailed
 import constants.notReceivedParameter
 import ktUtils.getPlayerWithQueue
 import objects.EventFacade
@@ -27,7 +27,7 @@ fun skipTo(event: EventFacade, payload: SlashCommandPayload) {
     }
 
     if (player.currentTrack == null) {
-        event.error(loadingFailed)
+        event.error(loadingSongFailed)
         return
     }
 

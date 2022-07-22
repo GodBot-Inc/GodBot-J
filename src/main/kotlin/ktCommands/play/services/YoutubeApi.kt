@@ -4,6 +4,7 @@ import kotlinx.coroutines.*
 import ktCommands.play.utils.YTUrlBuilder
 import ktCommands.play.utils.convertYtToMillis
 import ktUtils.CouldNotExtractVideoInformation
+import ktUtils.PlaylistNotFoundException
 import ktUtils.VideoNotFoundException
 import ktUtils.YouTubeApiException
 import lib.get
@@ -41,8 +42,12 @@ suspend fun getYTVideoInfo(id: String) = coroutineScope {
     val contentDetails = response.getJSONObject("contentDetails")
     val statistics = response.getJSONObject("statistics")
 
-    builder.thumbnailUri = snippet.getJSONObject("thumbnails").getJSONObject("standard").getString("url")
-    builder.thumbnailUri = snippet.getJSONObject("thumbnails").getJSONObject("standard").getString("url")
+    try {
+        builder.thumbnailUri = snippet.getJSONObject("thumbnails").getJSONObject("standard").getString("url")
+    } catch (e:JSONException) {
+        builder.thumbnailUri = snippet.getJSONObject("thumbnails").getJSONObject("high").getString("url")
+    }
+
     if (snippet.getString("channelTitle").contains(" - Topic"))
         builder.creator = snippet.getString("channelTitle").split(" - Topic")[0]
     else
@@ -61,6 +66,7 @@ suspend fun getYTVideoInfo(id: String) = coroutineScope {
     return@coroutineScope builder.build()
 }
 
+@Throws(PlaylistNotFoundException::class, CouldNotExtractVideoInformation::class)
 suspend fun getYTPlaylistInfo(id: String) = coroutineScope {
     val itemsRequest: CompletableFuture<HttpResponse<String>> = client.sendAsync(
         builder.uri(YTUrlBuilder().getPlaylistItems().id(id).build())
@@ -68,22 +74,15 @@ suspend fun getYTPlaylistInfo(id: String) = coroutineScope {
             .build(),
         HttpResponse.BodyHandlers.ofString()
     )
-    var response = JSONObject(withContext(Dispatchers.IO) {
-        client.send(
-            builder.uri(YTUrlBuilder().getPlaylist().id(id).build())
-                .GET()
-                .build(),
-            HttpResponse.BodyHandlers.ofString()
-        )
-    })
+    var response = get(YTUrlBuilder().getPlaylist().id(id).build())
 
     val ytBuilder = YouTubePlaylist.Builder()
 
     ytBuilder.uri = "https://www.youtube.com/playlist?list=$id"
     if (response.isEmpty)
-        throw CouldNotExtractVideoInformation()
+        throw PlaylistNotFoundException()
     if (response.getJSONArray("items").isEmpty)
-        throw CouldNotExtractVideoInformation()
+        throw PlaylistNotFoundException()
 
     response = response.getJSONArray("items").getJSONObject(0)
 
@@ -112,9 +111,11 @@ suspend fun getYTPlaylistInfo(id: String) = coroutineScope {
 
     val infoRequests: ArrayList<Deferred<YouTubeSong>> = ArrayList()
     var nextPage = true
-    var items = JSONObject(withContext(Dispatchers.IO) {
+    val itemsResponse = withContext(Dispatchers.IO) {
         itemsRequest.join()
-    })
+    }
+    println("StatusCode ${itemsResponse.statusCode()}")
+    var items = JSONObject(itemsResponse.body())
     var processedSongs = 0
 
     while (nextPage) {
@@ -136,7 +137,6 @@ suspend fun getYTPlaylistInfo(id: String) = coroutineScope {
                     .getJSONObject(i)
                     .getJSONObject("contentDetails")
                     .getString("videoId")
-                print(items.getJSONArray("items").getJSONObject(i).getJSONObject("contentDetails").getJSONObject("duration"))
             } catch (e: JSONException) {
                 continue
             }
