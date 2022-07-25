@@ -1,5 +1,7 @@
 package ktUtils
 
+import kotlin.math.roundToInt
+
 fun millisToString(millis: Long): String {
     var duration = millis
     if (duration == 0L)
@@ -10,16 +12,15 @@ fun millisToString(millis: Long): String {
     var seconds = 0
 
     if (duration >= 3600000) {
-        hours = (millis / 3600000).toInt()
+        hours = (duration / 3600000).toInt()
         duration -= 3600000 * hours
     }
-    println(millis / 60000)
     if (duration >= 60000) {
-        minutes = (millis / 60000).toInt()
+        minutes = (duration / 60000).toInt()
         duration -= 60000 * minutes
     }
     if (duration >= 1000) {
-        seconds = (millis / 1000).toInt()
+        seconds = (((duration / 1000) / 10.0).roundToInt() * 10)
         duration -= 1000 * seconds
     }
 
@@ -39,8 +40,7 @@ fun millisToString(millis: Long): String {
     else if (seconds in 1..9)
         strSeconds = "0$seconds"
 
-    println("$strHours:$strMinutes:$strSeconds")
-    if (strHours != "")
+    if (strHours == "")
         return "$strMinutes:$strSeconds"
     return "$strHours:$strMinutes:$strSeconds"
 }
