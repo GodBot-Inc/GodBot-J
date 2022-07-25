@@ -32,6 +32,7 @@ fun convertYtToMillis(durationp: String): Long {
 }
 
 fun convertYtUrlToId(url: String): String {
+    println("URL inside convertYtUrlToId: $url")
     return if (url.contains("youtu.be/"))
         url.split(".be/")[1]
     else if (url.contains("list="))

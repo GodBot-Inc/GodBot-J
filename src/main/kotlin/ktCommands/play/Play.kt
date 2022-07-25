@@ -7,7 +7,7 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import ktCommands.play.lib.InteractionHookWrapper
 import ktCommands.play.services.getYTPlaylistInfo
-import ktCommands.play.services.getYTVideoInfo
+import ktCommands.play.services.getYTVideoInfoFromUrl
 import ktCommands.play.utils.isSong
 import ktCommands.play.utils.isValid
 import ktCommands.play.utils.playPlaylistMessage
@@ -52,7 +52,7 @@ suspend fun resolveVideo(
     hook: InteractionHookWrapper,
     url: String
 ) = coroutineScope {
-    val infoJob: Deferred<YouTubeSong> = async { getYTVideoInfo(url) }
+    val infoJob: Deferred<YouTubeSong> = async { getYTVideoInfoFromUrl(url) }
 
     val player = PremiumPlayerManager.getOrCreatePlayer(
         payload.guild,
@@ -97,6 +97,7 @@ suspend fun resolvePlaylist(
     hook: InteractionHookWrapper,
     url: String
 ) = coroutineScope {
+    println("URL: $url")
     val infoJob: Deferred<YouTubePlaylist> = async { getYTPlaylistInfo(url) }
 
     val player = PremiumPlayerManager.getOrCreatePlayer(

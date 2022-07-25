@@ -24,9 +24,10 @@ val builder: HttpRequest.Builder = HttpRequest.newBuilder()
 
 // TODO: Check for invalid code responses
 
+suspend fun getYTVideoInfoFromUrl(url: String) = getYTVideoInfo(convertYtUrlToId(url))
+
 @Throws(VideoNotFoundException::class, CouldNotExtractVideoInformation::class)
-suspend fun getYTVideoInfo(url: String) = coroutineScope {
-    val id = convertYtUrlToId(url)
+suspend fun getYTVideoInfo(id: String) = coroutineScope {
     var response = get(YTUrlBuilder().getVideo().id(id).build())
     val builder = YouTubeSong.Builder()
 
@@ -70,6 +71,7 @@ suspend fun getYTVideoInfo(url: String) = coroutineScope {
 
 @Throws(PlaylistNotFoundException::class, CouldNotExtractVideoInformation::class)
 suspend fun getYTPlaylistInfo(url: String) = coroutineScope {
+    println("URL inside Playlist: $url")
     val id = convertYtUrlToId(url)
     val itemsRequest: CompletableFuture<HttpResponse<String>> = client.sendAsync(
         builder.uri(YTUrlBuilder().getPlaylistItems().id(id).build())
