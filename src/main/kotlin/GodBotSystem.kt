@@ -19,30 +19,35 @@ import kotlin.system.exitProcess
 
 var GodBotJda: JDA? = null
 
-fun main(args: Array<String>) {
-    println("Checking Env...")
-    if (!validEnv())
-        exitProcess(0)
+class GodBotSystem {
+    companion object {
+        @JvmStatic
+        fun main(args: Array<String>) {
+            println("Checking Env...")
+            if (!validEnv())
+                exitProcess(0)
 
-    val dotenv = Dotenv.load()
+            val dotenv = Dotenv.load()
 
-    try {
-        GodBotJda = initializeFromToken(dotenv["TOKEN"])
-    } catch (e: LoginException) {
-        println("Initializing Failed".red())
-        exitProcess(0)
+            try {
+                GodBotJda = initializeFromToken(dotenv["TOKEN"])
+            } catch (e: LoginException) {
+                println("Initializing Failed".red())
+                exitProcess(0)
+            }
+
+            GodBotJda!!.presence.activity = Activity.playing("music | /help")
+
+            try {
+                GodBotJda!!.awaitReady()
+            } catch (e: InterruptedException) {
+                println("Bot failed to start".red())
+                GodBotJda!!.shutdown()
+                exitProcess(0)
+            }
+            println("Bot successfully started".green())
+        }
     }
-
-    GodBotJda!!.presence.activity = Activity.playing("music | /help")
-
-    try {
-        GodBotJda!!.awaitReady()
-    } catch (e: InterruptedException) {
-        println("Bot failed to start".red())
-        GodBotJda!!.shutdown()
-        exitProcess(0)
-    }
-    println("Bot successfully started".green())
 }
 
 private fun initializeFromToken(token: String): JDA {

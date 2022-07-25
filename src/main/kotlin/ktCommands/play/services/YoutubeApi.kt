@@ -3,6 +3,7 @@ package ktCommands.play.services
 import kotlinx.coroutines.*
 import ktCommands.play.utils.YTUrlBuilder
 import ktCommands.play.utils.convertYtToMillis
+import ktCommands.play.utils.convertYtUrlToId
 import ktUtils.CouldNotExtractVideoInformation
 import ktUtils.PlaylistNotFoundException
 import ktUtils.VideoNotFoundException
@@ -24,7 +25,8 @@ val builder: HttpRequest.Builder = HttpRequest.newBuilder()
 // TODO: Check for invalid code responses
 
 @Throws(VideoNotFoundException::class, CouldNotExtractVideoInformation::class)
-suspend fun getYTVideoInfo(id: String) = coroutineScope {
+suspend fun getYTVideoInfo(url: String) = coroutineScope {
+    val id = convertYtUrlToId(url)
     var response = get(YTUrlBuilder().getVideo().id(id).build())
     val builder = YouTubeSong.Builder()
 
@@ -67,7 +69,8 @@ suspend fun getYTVideoInfo(id: String) = coroutineScope {
 }
 
 @Throws(PlaylistNotFoundException::class, CouldNotExtractVideoInformation::class)
-suspend fun getYTPlaylistInfo(id: String) = coroutineScope {
+suspend fun getYTPlaylistInfo(url: String) = coroutineScope {
+    val id = convertYtUrlToId(url)
     val itemsRequest: CompletableFuture<HttpResponse<String>> = client.sendAsync(
         builder.uri(YTUrlBuilder().getPlaylistItems().id(id).build())
             .GET()

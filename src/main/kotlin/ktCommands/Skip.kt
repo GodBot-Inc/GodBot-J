@@ -1,6 +1,7 @@
 package ktCommands
 
 import constants.nextTrackEmoji
+import kotlinx.coroutines.runBlocking
 import ktUtils.getPlayerWithQueue
 import objects.EventFacade
 import objects.SlashCommandPayload
@@ -12,7 +13,7 @@ fun skip(event: EventFacade, payload: SlashCommandPayload) {
         event
     ) ?: return
 
-    val audioTrack = player.playNext()
+    val audioTrack = runBlocking { player.playNext() }
 
     event.replyEmoteLink(
         nextTrackEmoji, "Skipped Song, Now Playing: " +

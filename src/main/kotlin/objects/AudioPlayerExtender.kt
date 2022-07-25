@@ -2,14 +2,13 @@ package objects
 
 import com.andreapivetta.kolor.red
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer
+import com.sedmelluq.discord.lavaplayer.track.AudioTrack
+import kotlinx.coroutines.runBlocking
 import ktUtils.GodBotException
 import ktUtils.LoadFailedException
 import ktUtils.QueueEmptyException
 import ktUtils.TrackNotFoundException
-import lib.jda.PremiumPlayerManager
-import lib.lavaplayer.AudioPlayerSendHandler
-import lib.lavaplayer.AudioResultHandler
-import lib.lavaplayer.TrackEventListener
+import lib.lavaplayer.*
 import net.dv8tion.jda.api.entities.Member
 import net.dv8tion.jda.api.entities.VoiceChannel
 import net.dv8tion.jda.api.managers.AudioManager
@@ -84,7 +83,7 @@ class AudioPlayerExtender(
 
     fun changeChannel(newVoiceChannel: VoiceChannel) = apply { updateUsage(); voiceChannel = newVoiceChannel }
 
-    fun playNowOrNext(audioTrackExtender: AudioTrackExtender) {
+    suspend fun playNowOrNext(audioTrackExtender: AudioTrackExtender) {
         updateUsage()
         try {
             // Play Now already sets current Track
@@ -100,7 +99,7 @@ class AudioPlayerExtender(
     }
 
     @Throws(QueueEmptyException::class)
-    fun playNext(): AudioTrackExtender {
+    suspend fun playNext(): AudioTrackExtender {
         updateUsage()
         if (queue.isEmpty()) {
             currentTrack = null
@@ -120,7 +119,7 @@ class AudioPlayerExtender(
     }
 
     @Throws(TrackNotFoundException::class, LoadFailedException::class)
-    fun playNow(audioTrackExtender: AudioTrackExtender) {
+    suspend fun playNow(audioTrackExtender: AudioTrackExtender) {
         updateUsage()
         val callback = AudioResultHandler()
         val url = audioTrackExtender.songInfo.uri
@@ -133,19 +132,21 @@ class AudioPlayerExtender(
             callback
         )
 
-        val playableTrack = callback.awaitReady()
+        println("Running blocking")
+        val playableTrack: AudioTrack = runBlocking { awaitReady(callback) }
         audioPlayer.stopTrack()
         currentTrack = audioTrackExtender
+        println("Playing new audioTrack")
         audioPlayer.playTrack(playableTrack)
     }
 
     @Throws(TrackNotFoundException::class, LoadFailedException::class)
-    fun play(playableInfo: PlayableInfo, payload: SlashCommandPayload): Int {
+    suspend fun play(playableInfo: PlayableInfo, payload: SlashCommandPayload): Int {
         return this.play(AudioTrackExtender(playableInfo, payload.member))
     }
 
     @Throws(TrackNotFoundException::class)
-    fun play(audioTrackExtender: AudioTrackExtender): Int {
+    suspend fun play(audioTrackExtender: AudioTrackExtender): Int {
         updateUsage()
         if (!audioManager.isConnected)
             audioManager.openAudioConnection(voiceChannel)
@@ -161,7 +162,7 @@ class AudioPlayerExtender(
     }
 
     @Throws(IndexOutOfBoundsException::class)
-    fun skipTo(index: Int) {
+    suspend fun skipTo(index: Int) {
         updateUsage()
         if (index < queue.size) {
             val playableInfo = queue[index]

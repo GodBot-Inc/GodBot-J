@@ -1,10 +1,9 @@
-package lib.jda
+package lib.lavaplayer
 
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers
 import config.premiumEncoding
 import config.premiumResamplingQuality
-import lib.lavaplayer.AudioResultHandler
 import net.dv8tion.jda.api.entities.Guild
 import net.dv8tion.jda.api.entities.VoiceChannel
 import objects.AudioPlayerExtender

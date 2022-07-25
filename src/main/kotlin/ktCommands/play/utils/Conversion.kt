@@ -36,6 +36,7 @@ fun convertYtUrlToId(url: String): String {
         url.split(".be/")[1]
     else if (url.contains("list="))
         url.split("list=")[1].split("&")[0]
-    else
-        url.split("watch\\?v=")[1].split("&")[0]
+    else {
+        url.split("watch?v=")[1].split("&")[0]
+    }
 }

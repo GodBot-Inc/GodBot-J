@@ -8,23 +8,18 @@ import kotlinx.coroutines.launch
 import ktCommands.play.lib.InteractionHookWrapper
 import ktCommands.play.services.getYTPlaylistInfo
 import ktCommands.play.services.getYTVideoInfo
-import ktCommands.play.utils.convertYtUrlToId
 import ktCommands.play.utils.isSong
 import ktCommands.play.utils.isValid
-import ktSnippets.playPlaylistMessage
-import ktSnippets.playVideoMessage
-import ktUtils.CouldNotExtractVideoInformation
-import ktUtils.TrackNotFoundException
-import ktUtils.VideoNotFoundException
-import ktUtils.YouTubeApiException
-import lib.jda.PremiumPlayerManager
+import ktCommands.play.utils.playPlaylistMessage
+import ktCommands.play.utils.playVideoMessage
+import ktUtils.*
+import lib.lavaplayer.PremiumPlayerManager
 import objects.EventFacade
 import objects.SlashCommandPayload
 import objects.playableInformation.YouTubePlaylist
 import objects.playableInformation.YouTubeSong
 
 suspend fun play(event: EventFacade, payload: SlashCommandPayload) {
-    println("Play called")
     val url = event.getOption("url")?.asString
     if (url == null) {
         event.error(notReceivedParameter)
@@ -34,7 +29,6 @@ suspend fun play(event: EventFacade, payload: SlashCommandPayload) {
         event.error(invalidURL)
         return
     }
-    println("Entering coroutine")
 
     coroutineScope {
         val isSong = isSong(url)
@@ -45,7 +39,6 @@ suspend fun play(event: EventFacade, payload: SlashCommandPayload) {
 
         val hook = InteractionHookWrapper(event.getHook())
         event.deferReply()
-        println("defered")
 
         if (isSong)
             resolveVideo(payload, hook, url)
@@ -59,7 +52,7 @@ suspend fun resolveVideo(
     hook: InteractionHookWrapper,
     url: String
 ) = coroutineScope {
-    val infoJob: Deferred<YouTubeSong> = async { getYTVideoInfo(convertYtUrlToId(url)) }
+    val infoJob: Deferred<YouTubeSong> = async { getYTVideoInfo(url) }
 
     val player = PremiumPlayerManager.getOrCreatePlayer(
         payload.guild,
@@ -78,6 +71,7 @@ suspend fun resolveVideo(
         return@coroutineScope
     }
 
+    println("About to play")
     val position: Int
     try {
         position = player.play(info, payload)
@@ -85,13 +79,16 @@ suspend fun resolveVideo(
         hook.error(songNotFound)
         return@coroutineScope
     }
+    println("Playing about to send response")
 
-    hook.reply(playVideoMessage(
+    hook.reply(
+        playVideoMessage(
         payload.member,
         info,
         position,
         player.queue.size + 1
-    ))
+        )
+    )
 }
 
 suspend fun resolvePlaylist(
@@ -100,8 +97,7 @@ suspend fun resolvePlaylist(
     hook: InteractionHookWrapper,
     url: String
 ) = coroutineScope {
-    println("Called ResolvePlaylist")
-    val infoJob: Deferred<YouTubePlaylist> = async { getYTPlaylistInfo(convertYtUrlToId(url)) }
+    val infoJob: Deferred<YouTubePlaylist> = async { getYTPlaylistInfo(url) }
 
     val player = PremiumPlayerManager.getOrCreatePlayer(
         payload.guild,
@@ -125,12 +121,18 @@ suspend fun resolvePlaylist(
 
         for (songInfo in info.songInfos) {
             try {
+                /*
+                Chance to optimize:
+                    just create a method, which loads the playable Song, and store the Deferred responses in an array
+                    (same as in YT Api) just load them in, as soon as every song is loaded inside the Queue.
+                    Only do that, if you really need to improve the loading speeds of songs, since it adds more code
+                    complexity.
+                 */
                 player.play(info, payload)
-            } catch (ignore: TrackNotFoundException) { }
+            } catch (ignore: NotFoundException) { }
         }
     }
 
-    println("Replying")
     hook.reply(
         playPlaylistMessage(
             payload.member,

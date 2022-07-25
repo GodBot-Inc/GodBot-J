@@ -1,6 +1,6 @@
 package ktCommands
 
-import lib.jda.PremiumPlayerManager
+import lib.lavaplayer.PremiumPlayerManager
 import objects.EventFacade
 import objects.SlashCommandPayload
 

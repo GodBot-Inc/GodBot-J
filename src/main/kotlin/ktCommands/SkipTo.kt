@@ -2,6 +2,7 @@ package ktCommands
 
 import constants.loadingSongFailed
 import constants.notReceivedParameter
+import kotlinx.coroutines.runBlocking
 import ktUtils.getPlayerWithQueue
 import objects.EventFacade
 import objects.SlashCommandPayload
@@ -20,7 +21,7 @@ fun skipTo(event: EventFacade, payload: SlashCommandPayload) {
     ) ?: return
 
     try {
-        player.skipTo((position - 1).toInt())
+        runBlocking { player.skipTo((position - 1).toInt()) }
     } catch (e: IndexOutOfBoundsException) {
         event.error("The Queue is ${player.queue.size} big and the position is $position")
         return
