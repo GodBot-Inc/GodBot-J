@@ -10,15 +10,16 @@ fun millisToString(millis: Long): String {
     var seconds = 0
 
     if (duration >= 3600000) {
-        hours = (duration % 3600000).toInt()
+        hours = (millis / 3600000).toInt()
         duration -= 3600000 * hours
     }
+    println(millis / 60000)
     if (duration >= 60000) {
-        minutes = (duration % 60000).toInt()
+        minutes = (millis / 60000).toInt()
         duration -= 60000 * minutes
     }
     if (duration >= 1000) {
-        seconds = (duration % 1000).toInt()
+        seconds = (millis / 1000).toInt()
         duration -= 1000 * seconds
     }
 
@@ -38,6 +39,7 @@ fun millisToString(millis: Long): String {
     else if (seconds in 1..9)
         strSeconds = "0$seconds"
 
+    println("$strHours:$strMinutes:$strSeconds")
     if (strHours != "")
         return "$strMinutes:$strSeconds"
     return "$strHours:$strMinutes:$strSeconds"
