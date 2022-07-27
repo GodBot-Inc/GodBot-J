@@ -9,7 +9,7 @@ import objects.EventFacade
 import objects.SlashCommandPayload
 import java.util.concurrent.TimeUnit
 
-fun seek(event: EventFacade, payload: SlashCommandPayload) {
+fun forward(event: EventFacade, payload: SlashCommandPayload) {
     fun getSeekPoint(): Long {
         val hours = event.getOption("hours")
         val minutes = event.getOption("minutes")
