@@ -1,12 +1,12 @@
 package lib.jda
 
-import commands.Queue
 import constants.generalError
 import constants.notConnectedToVc
 import io.github.cdimascio.dotenv.Dotenv
 import kotlinx.coroutines.runBlocking
 import ktCommands.*
 import ktCommands.play.play
+import ktCommands.queue.queue
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent
 import net.dv8tion.jda.api.hooks.ListenerAdapter
 import objects.EventFacade
@@ -47,7 +47,7 @@ class InteractionListener: ListenerAdapter() {
             "resume" -> resume(event, payload)
             "stop" -> stop(event, payload)
             "skip" -> skip(event, payload)
-            "queue" -> Queue.trigger(event, payload)
+            "queue" -> queue(event, payload)
             "clear-queue" -> clearQueue(event, payload)
             "remove" -> remove(event, payload)
             "leave" -> leave(event, payload)
