@@ -24,21 +24,15 @@ fun trackLines(currentMs: Long, maxMs: Long): String {
         return trackLinesDefault()
     }
 
-    println("First: " + (currentMs / maxMs.toDouble()))
-    println("Second " + (currentMs / maxMs.toDouble() * 100))
-    println("Third " + (currentMs / maxMs.toDouble() * 100 / 5))
-    println("Fourth " + roundToNearestFive((currentMs / maxMs.toDouble() * 100).toInt()) / 5)
-
     val position: Int = roundToNearestFive((currentMs / maxMs.toDouble() * 100).toInt()) / 5
     val sb: StringBuilder = StringBuilder()
     for (i in 0..19) {
-        println(i)
-        if (i == (position - 1)) {
-            println(i == position - 1)
+        if (i < (position - 1))
+            sb.append("[▬](https://godbot-music.com)")
+        else if (i == (position - 1))
             sb.append(":radio_button:")
-            continue
-        }
-        sb.append("▬")
+        else
+            sb.append("▬")
     }
     return sb.toString()
 }
