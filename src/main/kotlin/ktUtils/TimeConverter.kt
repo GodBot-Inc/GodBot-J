@@ -20,7 +20,9 @@ fun millisToString(millis: Long): String {
         duration -= 60000 * minutes
     }
     if (duration >= 1000) {
-        seconds = (((duration / 1000) / 10.0).roundToInt() * 10)
+        seconds = (duration / 1000).toInt()
+        if (seconds.toString().length >= 3)
+            seconds = (seconds / 10.0).roundToInt() * 10
         duration -= 1000 * seconds
     }
 
