@@ -24,9 +24,9 @@ fun millisToString(millis: Long): String {
         duration -= 1000 * seconds
     }
 
-    var strHours = ""
-    var strMinutes = ""
-    var strSeconds = ""
+    var strHours = "00"
+    var strMinutes = "00"
+    var strSeconds = "00"
     if (hours >= 10)
         strHours = "$hours"
     else if (hours in 1..9)
@@ -40,7 +40,7 @@ fun millisToString(millis: Long): String {
     else if (seconds in 1..9)
         strSeconds = "0$seconds"
 
-    if (strHours == "")
+    if (strHours == "00")
         return "$strMinutes:$strSeconds"
     return "$strHours:$strMinutes:$strSeconds"
 }
