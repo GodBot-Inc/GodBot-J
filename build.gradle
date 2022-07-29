@@ -1,10 +1,10 @@
 plugins {
-    id 'org.jetbrains.kotlin.jvm' version '1.6.10'
+    id 'org.jetbrains.kotlin.jvm' version '1.6.21'
     id 'java'
 }
 
 group 'com.godbot'
-version '1.0-SNAPSHOT'
+version '1.1-REWRITE'
 
 repositories {
     mavenCentral()
@@ -24,13 +24,14 @@ dependencies {
     implementation('io.github.cdimascio:dotenv-kotlin:6.2.2')
     implementation('org.mongodb:mongodb-driver-sync:4.5.1')
     implementation('net.dv8tion:JDA:4.3.0_334')
-    implementation('org.json:json:20211205')
-    implementation('org.apache.logging.log4j:log4j-api:2.17.0')
-    implementation('org.apache.logging.log4j:log4j-core:2.17.0')
-    implementation('org.slf4j:slf4j-api:1.7.32')
-    implementation('org.slf4j:slf4j-log4j12:1.7.32')
+    implementation('org.json:json:20220320')
+    implementation('com.google.code.gson:gson:2.9.0')
+    implementation('org.apache.logging.log4j:log4j-api:2.17.2')
+    implementation('org.apache.logging.log4j:log4j-core:2.17.2')
+    implementation('org.slf4j:slf4j-api:1.7.36')
+    implementation('org.slf4j:slf4j-log4j12:1.7.36')
     implementation('com.sedmelluq:jda-nas:1.1.0')
-    implementation('com.adamratzman:spotify-api-kotlin-core:3.8.6')
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
 
     // GB-Logging Dependencies
     implementation('com.andreapivetta.kolor:kolor:1.0.0')

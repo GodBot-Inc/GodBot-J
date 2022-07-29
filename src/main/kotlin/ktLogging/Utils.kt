@@ -1,6 +1,7 @@
 package ktLogging
 
 import com.andreapivetta.kolor.*
+import objects.SlashCommandPayload
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
@@ -29,4 +30,8 @@ fun getDate(): String {
         Languages.US -> "MM-dd HH:mm:ss"
     }
     return DateTimeFormatter.ofPattern(format).format(current)
+}
+
+fun formatPayload(payload: SlashCommandPayload): String {
+    return "<Server: ${payload.guild.name}, ServerId: ${payload.guild.id}, User: ${payload.member.user.asTag}>"
 }
