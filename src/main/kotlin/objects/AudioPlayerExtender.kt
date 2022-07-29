@@ -1,6 +1,5 @@
 package objects
 
-import com.andreapivetta.kolor.red
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack
 import kotlinx.coroutines.runBlocking
@@ -122,21 +121,15 @@ class AudioPlayerExtender(
     suspend fun playNow(audioTrackExtender: AudioTrackExtender) {
         updateUsage()
         val callback = AudioResultHandler()
-        val url = audioTrackExtender.songInfo.uri
-        if (url == null) {
-            println("URL OF SONG IS NULL".red())
-            throw TrackNotFoundException()
-        }
+        val url = audioTrackExtender.songInfo.uri ?: throw TrackNotFoundException()
         PremiumPlayerManager.loadItem(
             url,
             callback
         )
 
-        println("Running blocking")
         val playableTrack: AudioTrack = runBlocking { awaitReady(callback) }
         audioPlayer.stopTrack()
         currentTrack = audioTrackExtender
-        println("Playing new audioTrack")
         audioPlayer.playTrack(playableTrack)
     }
 
@@ -156,7 +149,6 @@ class AudioPlayerExtender(
             playNow(audioTrackExtender)
             return 0
         }
-        println("Added to Queue: " + audioTrackExtender.songInfo.title)
         queue.add(audioTrackExtender)
         return queue.size - 1
     }

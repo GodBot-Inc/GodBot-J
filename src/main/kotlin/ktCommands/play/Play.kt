@@ -68,7 +68,6 @@ suspend fun resolveVideo(
         return@coroutineScope
     }
 
-    println("About to play")
     val position: Int
     try {
         position = player.play(info, payload)
@@ -76,7 +75,6 @@ suspend fun resolveVideo(
         hook.error(songNotFound)
         return@coroutineScope
     }
-    println("Playing about to send response")
 
     hook.reply(
         playVideoMessage(
@@ -94,7 +92,6 @@ suspend fun resolvePlaylist(
     hook: InteractionHookWrapper,
     url: String
 ) = coroutineScope {
-    println("URL: $url")
     val infoJob: Deferred<YouTubePlaylist> = async { getYTPlaylistInfo(url) }
 
     val player = PremiumPlayerManager.getOrCreatePlayer(

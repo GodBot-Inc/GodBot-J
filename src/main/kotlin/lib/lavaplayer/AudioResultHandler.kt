@@ -39,7 +39,6 @@ class AudioResultHandler: AudioLoadResultHandler {
 
 @Throws(LoadFailedException::class, TrackNotFoundException::class)
 suspend fun awaitReady(resultHandler: AudioResultHandler) = coroutineScope {
-    println("Awaiting ready")
     while (resultHandler.error == 0 && resultHandler.audioTrack == null) {
         try {
             withContext(Dispatchers.IO) {
@@ -47,7 +46,6 @@ suspend fun awaitReady(resultHandler: AudioResultHandler) = coroutineScope {
             }
         } catch (ignore: InterruptedException) {}
     }
-    println("Response")
     if (resultHandler.error == 2)
         throw LoadFailedException()
     if (resultHandler.audioTrack != null)
