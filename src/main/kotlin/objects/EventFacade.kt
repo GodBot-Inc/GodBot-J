@@ -20,7 +20,7 @@ class EventFacade(event: SlashCommandEvent) {
     }
 
     fun replyEphemeral(embed: MessageEmbed) {
-        this.event.replyEmbeds(embed).queue()
+        this.event.replyEmbeds(embed).setEphemeral(true).queue()
     }
 
     fun reply(message: String, color: Color = primary) {
