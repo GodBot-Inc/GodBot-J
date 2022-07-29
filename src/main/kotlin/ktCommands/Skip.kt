@@ -13,7 +13,10 @@ fun skip(event: EventFacade, payload: SlashCommandPayload) {
         event
     ) ?: return
 
+    val paused = player.isPaused()
     val audioTrack = runBlocking { player.playNext() }
+    if (paused)
+        player.setPaused(false)
 
     event.replyEmoteLink(
         nextTrackEmoji, "Skipped Song, Now Playing: " +

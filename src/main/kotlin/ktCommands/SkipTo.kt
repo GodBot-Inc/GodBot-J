@@ -20,12 +20,15 @@ fun skipTo(event: EventFacade, payload: SlashCommandPayload) {
         event
     ) ?: return
 
+    val paused = player.isPaused()
     try {
         runBlocking { player.skipTo((position - 1).toInt()) }
     } catch (e: IndexOutOfBoundsException) {
         event.error("The Queue is ${player.queue.size} big and the position is $position")
         return
     }
+    if (paused)
+        player.setPaused(false)
 
     if (player.currentTrack == null) {
         event.error(loadingSongFailed)
