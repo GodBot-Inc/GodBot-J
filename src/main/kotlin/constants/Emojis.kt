@@ -19,3 +19,5 @@ val noAudioChangeEmoji = Emoji.fromMarkdown("<:no_audio_change:93122639080682291
 val louderEmoji = Emoji.fromMarkdown("<:louder:931226365460623391>")
 val quieterEmoji = Emoji.fromMarkdown("<:quieter:931226382908936192>")
 val muteEmoji = Emoji.fromMarkdown("<:mute_player:931235380429197382>")
+val leaveEmoji = Emoji.fromMarkdown("<:exit:1002538137412718613>")
+val joinEmoji = Emoji.fromMarkdown("<:enter:1002539101645447258>")

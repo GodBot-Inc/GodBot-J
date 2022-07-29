@@ -1,5 +1,6 @@
 package ktCommands
 
+import constants.joinEmoji
 import lib.lavaplayer.PremiumPlayerManager
 import objects.EventFacade
 import objects.SlashCommandPayload
@@ -15,5 +16,5 @@ fun join(event: EventFacade, payload: SlashCommandPayload) {
     }
 
     player.openConnection()
-    event.reply("Joined the channel ${payload.voiceChannel.name}")
+    event.replyEmote(joinEmoji, "Joined the channel ${payload.voiceChannel.name}")
 }
