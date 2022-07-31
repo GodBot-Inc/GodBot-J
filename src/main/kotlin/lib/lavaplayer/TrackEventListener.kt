@@ -10,6 +10,11 @@ import ktUtils.QueueEmptyException
 import objects.AudioPlayerExtender
 
 class TrackEventListener(val audioPlayer: AudioPlayerExtender): AudioEventAdapter() {
+
+    private val trackEventSubscribers: ArrayList<(TrackEvents) -> Unit> = ArrayList()
+
+    fun subscribe(func: (TrackEvents) -> Unit) = trackEventSubscribers.add(func)
+
     override fun onPlayerPause(player: AudioPlayer) {
         super.onPlayerPause(player)
     }
@@ -19,7 +24,8 @@ class TrackEventListener(val audioPlayer: AudioPlayerExtender): AudioEventAdapte
     }
 
     override fun onTrackStart(player: AudioPlayer, track: AudioTrack) {
-        super.onTrackStart(player, track)
+        if (trackEventSubscribers.isNotEmpty())
+            trackEventSubscribers.forEach { func -> func(TrackEvents.START) }
     }
 
     override fun onTrackEnd(player: AudioPlayer, track: AudioTrack, endReason: AudioTrackEndReason) {
@@ -33,6 +39,8 @@ class TrackEventListener(val audioPlayer: AudioPlayerExtender): AudioEventAdapte
                 runBlocking { audioPlayer.playNext() }
             } catch (ignore: QueueEmptyException) { }
         }
+        if (trackEventSubscribers.isNotEmpty())
+            trackEventSubscribers.forEach { func -> func(TrackEvents.END) }
     }
 
     override fun onTrackException(player: AudioPlayer, track: AudioTrack, exception: FriendlyException) {

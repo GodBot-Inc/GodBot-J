@@ -24,21 +24,45 @@ class AudioPlayerExtender(
     var loop = false
     val queue = ArrayList<AudioTrackExtender>()
     var currentTrack: AudioTrackExtender? = null
+    private val trackEventListener = TrackEventListener(this)
     private val audioManager: AudioManager
 
     private var lifecycle = true
     private var lastAction = System.currentTimeMillis()
+
+    private val playerEventSubscribers = ArrayList<(PlayerEvents) -> Unit>()
+
 
     init {
         audioPlayer.volume = 50
         audioPlayer.setFrameBufferDuration(200)
         this.audioManager = audioManager
         this.audioManager.sendingHandler = AudioPlayerSendHandler(audioPlayer)
-        audioPlayer.addListener(TrackEventListener(this))
+        audioPlayer.addListener(this.trackEventListener)
         // Execute both tasks async
         thread { lifecycle() }
     }
 
+    // subscribe Api
+    fun subscribeToPlayerEvents(func: (PlayerEvents) -> Unit) {
+        playerEventSubscribers.add(func)
+    }
+
+    fun subscribeToListenerEvents(func: (TrackEvents) -> Unit) {
+        trackEventListener.subscribe(func)
+    }
+
+    fun dispatchEvent(event: PlayerEvents) {
+        playerEventSubscribers.forEach { func ->
+            run {
+                println("Looping and calling function")
+                func(event)
+            }
+        }
+    }
+
+
+    // Utility Functions
     private fun lifecycle() {
         while (lifecycle) {
             // 600000 = 10 min
@@ -61,20 +85,20 @@ class AudioPlayerExtender(
         }
     }
 
-    private fun updateUsage() = apply { lastAction = System.currentTimeMillis() }
-
-    fun seek(seekPoint: Long) = apply { audioPlayer.playingTrack.position = seekPoint;updateUsage() }
-
     fun cleanup() {
         audioManager.closeAudioConnection()
         queue.clear()
         currentTrack = null
         lastAction = 0
         lifecycle = false
-        // only stops the player
         audioPlayer.destroy()
+        dispatchEvent(PlayerEvents.CLEANUP)
         PlayerStorage.remove(this.audioManager.guild.id)
     }
+
+    private fun updateUsage() = apply { lastAction = System.currentTimeMillis() }
+
+    fun seek(seekPoint: Long) = apply { audioPlayer.playingTrack.position = seekPoint;updateUsage() }
 
     fun openConnection() = apply { updateUsage(); if(!audioManager.isConnected) audioManager.openAudioConnection(voiceChannel) }
 
@@ -147,9 +171,13 @@ class AudioPlayerExtender(
         if (audioPlayer.playingTrack == null && queue.size == 0) {
             // playNow sets currentTrack
             playNow(audioTrackExtender)
+            thread { dispatchEvent(PlayerEvents.PLAY) }
             return 0
         }
         queue.add(audioTrackExtender)
+        thread {
+            dispatchEvent(PlayerEvents.QUEUE)
+        }
         return queue.size - 1
     }
 

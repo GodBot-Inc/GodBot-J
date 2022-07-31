@@ -4,6 +4,7 @@ import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers
 import config.premiumEncoding
 import config.premiumResamplingQuality
+import features.subscriptions.BotSubscriptions
 import net.dv8tion.jda.api.entities.Guild
 import net.dv8tion.jda.api.entities.VoiceChannel
 import objects.AudioPlayerExtender
@@ -29,6 +30,7 @@ object PremiumPlayerManager {
             guild.audioManager
         )
         PlayerStorage.store(guild.id, player)
+        BotSubscriptions.newPlayer(player)
         return player
     }
 

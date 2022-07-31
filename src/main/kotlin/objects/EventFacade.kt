@@ -9,6 +9,7 @@ import net.dv8tion.jda.api.entities.TextChannel
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent
 import net.dv8tion.jda.api.interactions.InteractionHook
 import net.dv8tion.jda.api.interactions.commands.OptionMapping
+import net.dv8tion.jda.api.requests.restaction.interactions.ReplyAction
 import java.awt.Color
 
 class EventFacade(event: SlashCommandEvent) {
@@ -30,6 +31,10 @@ class EventFacade(event: SlashCommandEvent) {
                 .setColor(color)
                 .build()
         )
+    }
+
+    fun reply(message: String): ReplyAction {
+        return this.event.reply(message)
     }
 
     fun replyLink(message: String, color: Color = primary) {
