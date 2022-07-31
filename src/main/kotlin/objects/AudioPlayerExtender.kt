@@ -52,7 +52,7 @@ class AudioPlayerExtender(
         trackEventListener.subscribe(func)
     }
 
-    fun dispatchEvent(event: PlayerEvents) {
+    private fun dispatchEvent(event: PlayerEvents) {
         playerEventSubscribers.forEach { func ->
             run {
                 println("Looping and calling function")
