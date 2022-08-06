@@ -33,8 +33,8 @@ class EventFacade(event: SlashCommandEvent) {
         )
     }
 
-    fun reply(message: String): ReplyAction {
-        return this.event.reply(message)
+    fun replyAction(embed: MessageEmbed): ReplyAction {
+        return this.event.replyEmbeds(embed)
     }
 
     fun replyLink(message: String, color: Color = primary) {

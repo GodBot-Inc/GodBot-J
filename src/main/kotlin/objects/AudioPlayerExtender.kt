@@ -174,6 +174,7 @@ class AudioPlayerExtender(
             thread { dispatchEvent(PlayerEvents.PLAY) }
             return 0
         }
+        println("Queued: Title: ${audioTrackExtender.songInfo.title} Uri: ${audioTrackExtender.songInfo.uri}")
         queue.add(audioTrackExtender)
         thread {
             dispatchEvent(PlayerEvents.QUEUE)
