@@ -2,11 +2,14 @@ package lib.jda
 
 import constants.generalError
 import constants.notConnectedToVc
+import features.ButtonDistributor
 import io.github.cdimascio.dotenv.Dotenv
 import kotlinx.coroutines.runBlocking
 import ktCommands.*
 import ktCommands.play.play
+import ktCommands.queue.objects.ButtonEventWrapper
 import ktCommands.queue.queue
+import net.dv8tion.jda.api.events.interaction.ButtonClickEvent
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent
 import net.dv8tion.jda.api.hooks.ListenerAdapter
 import objects.EventFacade
@@ -56,5 +59,9 @@ class InteractionListener: ListenerAdapter() {
             "volume" -> volume(event, payload)
             "forward" -> forward(event, payload)
         }
+    }
+
+    override fun onButtonClick(event: ButtonClickEvent) {
+        ButtonDistributor.distribute(ButtonEventWrapper(event))
     }
 }

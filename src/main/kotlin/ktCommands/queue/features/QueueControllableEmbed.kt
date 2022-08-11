@@ -1,29 +1,30 @@
 package ktCommands.queue.features
 
+import features.ButtonDistributor
 import features.subscriptions.BotSubscriptions
-import ktCommands.queue.utils.compactQueue
+import ktCommands.queue.objects.ButtonEventWrapper
+import ktCommands.queue.objects.MessageWrapper
+import ktCommands.queue.utils.getMaxQueuePages
 import lib.lavaplayer.TrackEvents
-import net.dv8tion.jda.api.entities.Message
 import net.dv8tion.jda.api.requests.restaction.interactions.ReplyAction
 import objects.AudioPlayerExtender
 import objects.PlayerEvents
+import java.util.concurrent.TimeUnit
 
 class QueueControllableEmbed(
-    private val messageAction: ReplyAction,
+    messageAction: ReplyAction,
     private val player: AudioPlayerExtender,
     private val avatarUrl: String?
     ) {
 
-    var isCompact: Boolean = true
-    var pages: Int = player.queue.size
     var page: Int = 1
-    private lateinit var message: Message
+    private lateinit var message: MessageWrapper
 
     init {
         // Send Message
         messageAction.queue { hook ->
             run {
-                message = hook.retrieveOriginal().submit().join()
+                message = MessageWrapper(hook.retrieveOriginal().submit().join())
             }
         }
         // Subscribe to update events from the player
@@ -33,28 +34,46 @@ class QueueControllableEmbed(
             player
         )
         BotSubscriptions.subscribeToTrackEvent(TrackEvents.START, ::onTrackStart, player)
+        while (!this::message.isInitialized)
+            TimeUnit.MILLISECONDS.sleep(10)
+        print("Message initialized Subscribing to ButtonDistributor")
+        ButtonDistributor.add(message.id, ::resolveButtonAction)
+    }
+
+    private fun resolveButtonAction(event: ButtonEventWrapper) {
+        when (event.buttonId) {
+            "first" -> firstPage(event)
+            "left" -> previousPage(event)
+            "right" -> nextPage(event)
+            "last" -> lastPage(event)
+        }
     }
 
     // Navigation
-    fun firstPage() {
-
+    private fun firstPage(event: ButtonEventWrapper) {
+        page = 1
+        event.updateQueue(player.queue, avatarUrl, page)
     }
 
-    fun previousPage() {
-
+    private fun previousPage(event: ButtonEventWrapper) {
+        page--
+        event.updateQueue(player.queue, avatarUrl, page)
     }
 
-    fun nextPage() {
-
+    private fun nextPage(event: ButtonEventWrapper) {
+        page++
+        event.updateQueue(player.queue, avatarUrl, page)
     }
 
-    fun lastPage() {
-
+    private fun lastPage(event: ButtonEventWrapper) {
+        page = getMaxQueuePages(player.queue)
+        event.updateQueue(player.queue, avatarUrl, page)
     }
 
 
     private fun disable() {
-        println("Disable")
+        ButtonDistributor.remove(message.id)
+        message.disable()
     }
 
     // Updates
@@ -64,10 +83,10 @@ class QueueControllableEmbed(
             return
         }
         // Queue Event
-        message.editMessageEmbeds(compactQueue(player.queue, avatarUrl)).queue()
+        message.updateQueue(player.queue, avatarUrl, page)
     }
 
     private fun onTrackStart(event: TrackEvents) {
-
+        // TODO: Check for track endings
     }
 }

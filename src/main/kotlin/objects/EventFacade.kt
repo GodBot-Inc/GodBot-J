@@ -5,10 +5,10 @@ import constants.primary
 import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.entities.Emoji
 import net.dv8tion.jda.api.entities.MessageEmbed
-import net.dv8tion.jda.api.entities.TextChannel
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent
 import net.dv8tion.jda.api.interactions.InteractionHook
 import net.dv8tion.jda.api.interactions.commands.OptionMapping
+import net.dv8tion.jda.api.interactions.components.Button
 import net.dv8tion.jda.api.requests.restaction.interactions.ReplyAction
 import java.awt.Color
 
@@ -22,19 +22,6 @@ class EventFacade(event: SlashCommandEvent) {
 
     fun replyEphemeral(embed: MessageEmbed) {
         this.event.replyEmbeds(embed).setEphemeral(true).queue()
-    }
-
-    fun reply(message: String, color: Color = primary) {
-        this.reply(
-            EmbedBuilder()
-                .setTitle(message)
-                .setColor(color)
-                .build()
-        )
-    }
-
-    fun replyAction(embed: MessageEmbed): ReplyAction {
-        return this.event.replyEmbeds(embed)
     }
 
     fun replyLink(message: String, color: Color = primary) {
@@ -64,8 +51,14 @@ class EventFacade(event: SlashCommandEvent) {
         )
     }
 
-    fun reply(embed: MessageEmbed) {
+    fun reply(embed: MessageEmbed)  {
         this.event.replyEmbeds(embed).queue()
+    }
+
+    fun replyAction(embed: MessageEmbed, buttons: ArrayList<Button>?): ReplyAction {
+        if (buttons == null)
+            return this.event.replyEmbeds(embed)
+        return this.event.replyEmbeds(embed).addActionRow(buttons)
     }
 
     fun error(message: String) {
@@ -76,8 +69,6 @@ class EventFacade(event: SlashCommandEvent) {
                 .build()
         )
     }
-
-    fun getTextChannel(): TextChannel = this.event.textChannel
 
     fun getHook(): InteractionHook = this.event.hook
 

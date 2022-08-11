@@ -21,3 +21,8 @@ val quieterEmoji = Emoji.fromMarkdown("<:quieter:931226382908936192>")
 val muteEmoji = Emoji.fromMarkdown("<:mute_player:931235380429197382>")
 val leaveEmoji = Emoji.fromMarkdown("<:exit:1002538137412718613>")
 val joinEmoji = Emoji.fromMarkdown("<:enter:1002539101645447258>")
+
+val queueFirstEmoji = Emoji.fromUnicode("U+23EA")
+val queueLeftEmoji = Emoji.fromUnicode("U+25C0")
+val queueRightEmoji = Emoji.fromUnicode("U+25B6")
+val queueLastEmoji = Emoji.fromUnicode("U+23E9")
