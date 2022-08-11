@@ -17,7 +17,8 @@ class QueueControllableEmbed(
     private val avatarUrl: String?
     ) {
 
-    var page: Int = 1
+    private var page: Int = 1
+    private var maxQueuePages: Int = getMaxQueuePages(player.queue)
     private lateinit var message: MessageWrapper
 
     init {
@@ -53,27 +54,31 @@ class QueueControllableEmbed(
     private fun firstPage(event: ButtonEventWrapper) {
         page = 1
         event.updateQueue(player.queue, avatarUrl, page)
+        maxQueuePages = getMaxQueuePages(player.queue)
     }
 
     private fun previousPage(event: ButtonEventWrapper) {
         page--
         event.updateQueue(player.queue, avatarUrl, page)
+        maxQueuePages = getMaxQueuePages(player.queue)
     }
 
     private fun nextPage(event: ButtonEventWrapper) {
         page++
         event.updateQueue(player.queue, avatarUrl, page)
+        maxQueuePages = getMaxQueuePages(player.queue)
     }
 
     private fun lastPage(event: ButtonEventWrapper) {
         page = getMaxQueuePages(player.queue)
         event.updateQueue(player.queue, avatarUrl, page)
+        maxQueuePages = getMaxQueuePages(player.queue)
     }
-
 
     private fun disable() {
         ButtonDistributor.remove(message.id)
-        message.disable()
+        if (maxQueuePages != 1)
+            message.disable()
     }
 
     // Updates
@@ -84,9 +89,12 @@ class QueueControllableEmbed(
         }
         // Queue Event
         message.updateQueue(player.queue, avatarUrl, page)
+        maxQueuePages = getMaxQueuePages(player.queue)
     }
 
     private fun onTrackStart(event: TrackEvents) {
-        // TODO: Check for track endings
+        if (event == TrackEvents.START)
+            message.updateQueue(player.queue, avatarUrl, page)
+        maxQueuePages = getMaxQueuePages(player.queue)
     }
 }
