@@ -1,7 +1,5 @@
 package commands.play
 
-import constants.*
-import kotlinx.coroutines.*
 import commands.play.lib.InteractionHookWrapper
 import commands.play.services.getYTPlaylistInfo
 import commands.play.services.getYTVideoInfoFromUrl
@@ -9,12 +7,17 @@ import commands.play.utils.isSong
 import commands.play.utils.isValid
 import commands.play.utils.playPlaylistMessage
 import commands.play.utils.playVideoMessage
-import utils.*
+import constants.*
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 import lib.lavaplayer.PremiumPlayerManager
 import objects.EventFacade
 import objects.SlashCommandPayload
 import objects.playableInformation.YouTubePlaylist
 import objects.playableInformation.YouTubeSong
+import utils.*
 
 suspend fun play(event: EventFacade, payload: SlashCommandPayload) {
     val url = event.getOption("url")?.asString
@@ -123,7 +126,7 @@ suspend fun resolvePlaylist(
                     Only do that, if you really need to improve the loading speeds of songs, since it adds more code
                     complexity.
                  */
-                player.play(info, payload)
+                player.play(songInfo, payload)
             } catch (ignore: NotFoundException) { }
         }
     }
