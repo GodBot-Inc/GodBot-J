@@ -28,9 +28,7 @@ object BotSubscriptions {
         player: AudioPlayerExtender
     ) {
         player.subscribeToPlayerEvents { event -> run {
-            println("Player Event running in Subscription Lambda ${event.name}")
             if (events.contains(event)) {
-                println("Events contains event: ${event.name}")
                 func(event)
             }
         } }

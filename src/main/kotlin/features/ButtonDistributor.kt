@@ -8,7 +8,6 @@ object ButtonDistributor {
 
     fun distribute(event: ButtonEventWrapper) {
         for ((key, value) in buttonMessages) {
-            print("key $key eventId: ${event.messageId}")
             if (key == event.messageId) {
                 value(event)
             }
@@ -16,7 +15,6 @@ object ButtonDistributor {
     }
 
     fun add(id: String, func: (ButtonEventWrapper) -> Unit) {
-        println("Added Button Distributor $id $func")
         buttonMessages[id] = func
     }
 
