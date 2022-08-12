@@ -1,15 +1,16 @@
 package commands.queue.features
 
-import features.ButtonDistributor
-import features.subscriptions.BotSubscriptions
 import commands.queue.objects.ButtonEventWrapper
 import commands.queue.objects.MessageWrapper
 import commands.queue.utils.getMaxQueuePages
+import features.ButtonDistributor
+import features.subscriptions.BotSubscriptions
 import lib.lavaplayer.TrackEvents
 import net.dv8tion.jda.api.requests.restaction.interactions.ReplyAction
 import objects.AudioPlayerExtender
 import objects.PlayerEvents
 import java.util.concurrent.TimeUnit
+import kotlin.concurrent.thread
 
 class QueueControllableEmbed(
     messageAction: ReplyAction,
@@ -18,8 +19,11 @@ class QueueControllableEmbed(
     ) {
 
     private var page: Int = 1
-    private var maxQueuePages: Int = getMaxQueuePages(player.queue)
     private lateinit var message: MessageWrapper
+    private var maxQueuePages: Int = getMaxQueuePages(player.queue)
+
+    private var lifecycle = true
+    private var lastAction = System.currentTimeMillis()
 
     init {
         // Send Message
@@ -39,6 +43,20 @@ class QueueControllableEmbed(
             TimeUnit.MILLISECONDS.sleep(10)
         print("Message initialized Subscribing to ButtonDistributor")
         ButtonDistributor.add(message.id, ::resolveButtonAction)
+        thread { lifecycle() }
+    }
+
+    private fun lifecycle() {
+        while (lifecycle) {
+            if (System.currentTimeMillis() - lastAction >= TimeUnit.MINUTES.toMillis(10))
+                disable()
+            TimeUnit.SECONDS.sleep(5)
+        }
+    }
+
+    private fun update() {
+        maxQueuePages = getMaxQueuePages(player.queue)
+        lastAction = System.currentTimeMillis()
     }
 
     private fun resolveButtonAction(event: ButtonEventWrapper) {
@@ -54,31 +72,32 @@ class QueueControllableEmbed(
     private fun firstPage(event: ButtonEventWrapper) {
         page = 1
         event.updateQueue(player.queue, avatarUrl, page)
-        maxQueuePages = getMaxQueuePages(player.queue)
+        update()
     }
 
     private fun previousPage(event: ButtonEventWrapper) {
         page--
         event.updateQueue(player.queue, avatarUrl, page)
-        maxQueuePages = getMaxQueuePages(player.queue)
+        update()
     }
 
     private fun nextPage(event: ButtonEventWrapper) {
         page++
         event.updateQueue(player.queue, avatarUrl, page)
-        maxQueuePages = getMaxQueuePages(player.queue)
+        update()
     }
 
     private fun lastPage(event: ButtonEventWrapper) {
         page = getMaxQueuePages(player.queue)
         event.updateQueue(player.queue, avatarUrl, page)
-        maxQueuePages = getMaxQueuePages(player.queue)
+        update()
     }
 
     private fun disable() {
         ButtonDistributor.remove(message.id)
         if (maxQueuePages != 1)
             message.disable()
+        lifecycle = false
     }
 
     // Updates
