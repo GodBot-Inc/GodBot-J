@@ -19,7 +19,7 @@ object PremiumPlayerManager {
     init {
         playerManager.configuration.resamplingQuality = premiumResamplingQuality
         playerManager.configuration.opusEncodingQuality = premiumEncoding
-        playerManager.frameBufferDuration = TimeUnit.SECONDS.toMillis(10).toInt()
+        playerManager.frameBufferDuration = TimeUnit.SECONDS.toMillis(5).toInt()
         AudioSourceManagers.registerRemoteSources(playerManager)
     }
 
