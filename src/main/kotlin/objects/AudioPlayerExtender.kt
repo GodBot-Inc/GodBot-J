@@ -3,10 +3,10 @@ package objects
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack
 import kotlinx.coroutines.runBlocking
-import ktUtils.GodBotException
-import ktUtils.LoadFailedException
-import ktUtils.QueueEmptyException
-import ktUtils.TrackNotFoundException
+import utils.GodBotException
+import utils.LoadFailedException
+import utils.QueueEmptyException
+import utils.TrackNotFoundException
 import lib.lavaplayer.*
 import net.dv8tion.jda.api.entities.Member
 import net.dv8tion.jda.api.entities.VoiceChannel

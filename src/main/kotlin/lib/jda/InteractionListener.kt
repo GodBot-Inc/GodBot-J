@@ -5,10 +5,10 @@ import constants.notConnectedToVc
 import features.ButtonDistributor
 import io.github.cdimascio.dotenv.Dotenv
 import kotlinx.coroutines.runBlocking
-import ktCommands.*
-import ktCommands.play.play
-import ktCommands.queue.objects.ButtonEventWrapper
-import ktCommands.queue.queue
+import commands.*
+import commands.play.play
+import commands.queue.objects.ButtonEventWrapper
+import commands.queue.queue
 import net.dv8tion.jda.api.events.interaction.ButtonClickEvent
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent
 import net.dv8tion.jda.api.hooks.ListenerAdapter

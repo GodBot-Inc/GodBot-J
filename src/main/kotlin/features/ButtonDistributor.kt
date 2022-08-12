@@ -1,6 +1,6 @@
 package features
 
-import ktCommands.queue.objects.ButtonEventWrapper
+import commands.queue.objects.ButtonEventWrapper
 
 
 object ButtonDistributor {

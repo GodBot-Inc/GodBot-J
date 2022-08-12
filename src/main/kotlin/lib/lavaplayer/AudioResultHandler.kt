@@ -7,8 +7,8 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrack
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.withContext
-import ktUtils.LoadFailedException
-import ktUtils.TrackNotFoundException
+import utils.LoadFailedException
+import utils.TrackNotFoundException
 
 class AudioResultHandler: AudioLoadResultHandler {
 
