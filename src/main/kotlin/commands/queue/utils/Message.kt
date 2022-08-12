@@ -2,10 +2,10 @@ package commands.queue.utils
 
 import constants.primary
 import constants.queueEmoji
-import utils.millisToString
 import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.entities.MessageEmbed
 import objects.AudioTrackExtender
+import utils.millisToString
 import kotlin.math.ceil
 
 
@@ -19,7 +19,7 @@ fun compactQueue(queue: ArrayList<AudioTrackExtender>, avatarUrl: String?, page:
 
     for (i in min..max) {
         try {
-            queueMessage += "[${queue[i].songInfo.title}](${queue[i].songInfo.uri}) " +
+            queueMessage += "${i+1}. [${queue[i].songInfo.title}](${queue[i].songInfo.uri}) " +
                     "- ${millisToString(queue[i].songInfo.duration)}\n\n"
         } catch (e: IndexOutOfBoundsException) {
             break
