@@ -17,19 +17,24 @@ import kotlin.system.exitProcess
 
 
 var GodBotJda: JDA? = null
+private val cores = Runtime.getRuntime().availableProcessors()
 
 class GodBotSystem {
+
     companion object {
         @JvmStatic
         fun main(args: Array<String>) {
             println("Checking Env...")
             if (!validEnv())
                 exitProcess(0)
+            println("Checking Env Successful".green())
 
             val dotenv = Dotenv.load()
 
             try {
+                println("Starting to Initialize...")
                 GodBotJda = initializeFromToken(dotenv["TOKEN"])
+                println("Initializing Successful".green())
             } catch (e: LoginException) {
                 println("Initializing Failed".red())
                 exitProcess(0)
@@ -38,6 +43,7 @@ class GodBotSystem {
             GodBotJda!!.presence.activity = Activity.playing("music | /help")
 
             try {
+                println("Awaiting Ready...")
                 GodBotJda!!.awaitReady()
             } catch (e: InterruptedException) {
                 println("Bot failed to start".red())
@@ -58,6 +64,10 @@ private fun initializeFromToken(token: String): JDA {
         GeneralListener()
     )
     builder.setAudioSendFactory(NativeAudioSendFactory())
+    if (cores <= 1) {
+        println("Available Cores \"$cores\", setting Parallelism Flag")
+        System.setProperty("java.util.concurrent.ForkJoinPool.common.parallelism", "1")
+    }
     return builder.build()
 }
 

@@ -4,7 +4,7 @@ plugins {
 }
 
 group 'com.godbot'
-version '1.1-REWRITE'
+version '0.2.0-REWRITE'
 
 repositories {
     mavenCentral()
