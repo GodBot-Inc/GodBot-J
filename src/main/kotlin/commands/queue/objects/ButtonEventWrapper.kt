@@ -4,7 +4,7 @@ import commands.queue.utils.QueueButtons
 import commands.queue.utils.compactQueue
 import commands.queue.utils.getMaxQueuePages
 import net.dv8tion.jda.api.events.interaction.ButtonClickEvent
-import objects.AudioTrackExtender
+import utils.AudioTrackExtender
 
 class ButtonEventWrapper(private val event: ButtonClickEvent) {
 

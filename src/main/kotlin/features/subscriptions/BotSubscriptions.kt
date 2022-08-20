@@ -1,8 +1,8 @@
 package features.subscriptions
 
 import lib.lavaplayer.TrackEvents
-import objects.AudioPlayerExtender
-import objects.PlayerEvents
+import utils.AudioPlayerExtender
+import utils.PlayerEvents
 
 object BotSubscriptions {
     //TODO: Add Remove function

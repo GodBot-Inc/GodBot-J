@@ -1,6 +1,6 @@
 package state
 
-import objects.AudioPlayerExtender
+import utils.AudioPlayerExtender
 
 object PlayerStorage {
 
@@ -8,10 +8,5 @@ object PlayerStorage {
 
     fun store(guildId: String, player: AudioPlayerExtender) = storage.put(guildId, player)
     fun get(guildId: String): AudioPlayerExtender? = storage[guildId]
-    fun actionOnEveryPlayer(func: (AudioPlayerExtender) -> Unit) {
-        for ((_, value) in storage) {
-            func(value)
-        }
-    }
     fun remove(guildId: String) = storage.remove(guildId)
 }

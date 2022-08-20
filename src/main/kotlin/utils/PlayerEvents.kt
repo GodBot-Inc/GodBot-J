@@ -1,4 +1,4 @@
-package objects
+package utils
 
 enum class PlayerEvents {
     PLAY,

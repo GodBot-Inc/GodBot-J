@@ -7,7 +7,7 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrack
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason
 import kotlinx.coroutines.runBlocking
 import utils.QueueEmptyException
-import objects.AudioPlayerExtender
+import utils.AudioPlayerExtender
 
 class TrackEventListener(val audioPlayer: AudioPlayerExtender): AudioEventAdapter() {
 

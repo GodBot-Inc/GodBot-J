@@ -2,7 +2,7 @@ package commands
 
 import constants.notReceivedParameter
 import utils.getPlayerWithQueue
-import objects.AudioTrackExtender
+import utils.AudioTrackExtender
 import objects.EventFacade
 import objects.SlashCommandPayload
 

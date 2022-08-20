@@ -7,8 +7,8 @@ import features.ButtonDistributor
 import features.subscriptions.BotSubscriptions
 import lib.lavaplayer.TrackEvents
 import net.dv8tion.jda.api.requests.restaction.interactions.ReplyAction
-import objects.AudioPlayerExtender
-import objects.PlayerEvents
+import utils.AudioPlayerExtender
+import utils.PlayerEvents
 import java.util.concurrent.TimeUnit
 import kotlin.concurrent.thread
 

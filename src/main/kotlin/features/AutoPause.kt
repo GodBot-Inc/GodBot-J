@@ -3,7 +3,7 @@ package features
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceJoinEvent
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceLeaveEvent
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceMoveEvent
-import objects.AudioPlayerExtender
+import utils.AudioPlayerExtender
 
 fun autoPauseMove(event: GuildVoiceMoveEvent, player: AudioPlayerExtender) {
     if (event.channelLeft == player.voiceChannel &&

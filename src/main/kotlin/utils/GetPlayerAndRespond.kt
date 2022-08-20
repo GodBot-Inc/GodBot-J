@@ -3,7 +3,6 @@ package utils
 import constants.noPlayerInVc
 import constants.noPlayingTrack
 import constants.queueEmpty
-import objects.AudioPlayerExtender
 import objects.EventFacade
 import state.PlayerStorage
 

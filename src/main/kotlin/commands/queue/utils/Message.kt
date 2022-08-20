@@ -4,7 +4,7 @@ import constants.primary
 import constants.queueEmoji
 import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.entities.MessageEmbed
-import objects.AudioTrackExtender
+import utils.AudioTrackExtender
 import utils.millisToString
 import kotlin.math.ceil
 
