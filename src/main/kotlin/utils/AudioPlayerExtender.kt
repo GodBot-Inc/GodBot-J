@@ -159,12 +159,8 @@ class AudioPlayerExtender(
         return this.play(AudioTrackExtender(playableInfo, payload.member))
     }
 
-    @Throws(TrackNotFoundException::class)
-    suspend fun play(audioTrackExtender: AudioTrackExtender): Int {
-        updateUsage()
-        if (!audioManager.isConnected)
-            audioManager.openAudioConnection(voiceChannel)
-
+    @Throws(TrackNotFoundException::class, LoadFailedException::class)
+    private suspend fun playLogic(audioTrackExtender: AudioTrackExtender): Int {
         if (audioPlayer.playingTrack == null && queue.size == 0) {
             // playNow sets currentTrack
             playNow(audioTrackExtender)
@@ -173,10 +169,31 @@ class AudioPlayerExtender(
         }
         println("Queued: Title: ${audioTrackExtender.songInfo.title} Uri: ${audioTrackExtender.songInfo.uri}")
         queue.add(audioTrackExtender)
-        thread {
-            dispatchEvent(PlayerEvents.QUEUE)
-        }
         return queue.size - 1
+    }
+
+    suspend fun play(playableInfo: ArrayList<PlayableInfo>, payload: SlashCommandPayload) {
+        updateUsage()
+        if (!audioManager.isConnected)
+            audioManager.openAudioConnection(voiceChannel)
+
+        for (info in playableInfo) {
+            try {
+                playLogic(AudioTrackExtender(info, payload.member))
+            } catch (ignore: NotFoundException) { }
+        }
+        thread { dispatchEvent(PlayerEvents.QUEUE) }
+    }
+
+    @Throws(TrackNotFoundException::class, LoadFailedException::class)
+    suspend fun play(audioTrackExtender: AudioTrackExtender): Int {
+        updateUsage()
+        if (!audioManager.isConnected)
+            audioManager.openAudioConnection(voiceChannel)
+
+        val position = playLogic(audioTrackExtender)
+        thread { dispatchEvent(PlayerEvents.QUEUE) }
+        return position
     }
 
     @Throws(IndexOutOfBoundsException::class)

@@ -17,7 +17,10 @@ import objects.EventFacade
 import objects.SlashCommandPayload
 import objects.playableInformation.YouTubePlaylist
 import objects.playableInformation.YouTubeSong
-import utils.*
+import utils.CouldNotExtractVideoInformation
+import utils.TrackNotFoundException
+import utils.VideoNotFoundException
+import utils.YouTubeApiException
 
 suspend fun play(event: EventFacade, payload: SlashCommandPayload) {
     val url = event.getOption("url")?.asString
@@ -58,7 +61,6 @@ suspend fun resolveVideo(
         payload.guild,
         payload.voiceChannel
     )
-    player.openConnection()
 
     val info: YouTubeSong
     try {
@@ -113,22 +115,10 @@ suspend fun resolvePlaylist(
     }
 
     launch {
-        player.openConnection()
         if (event.getOption("shuffle")?.asBoolean == true)
             info.songInfos.shuffle()
 
-        for (songInfo in info.songInfos) {
-            try {
-                /*
-                Chance to optimize:
-                    just create a method, which loads the playable Song, and store the Deferred responses in an array
-                    (same as in YT Api) just load them in, as soon as every song is loaded inside the Queue.
-                    Only do that, if you really need to improve the loading speeds of songs, since it adds more code
-                    complexity.
-                 */
-                player.play(songInfo, payload)
-            } catch (ignore: NotFoundException) { }
-        }
+        player.play(info.songInfos, payload)
     }
 
     hook.reply(

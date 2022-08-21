@@ -24,6 +24,9 @@ class QueueControllableEmbed(
 
     private var lifecycle = true
     private var lastAction = System.currentTimeMillis()
+    private var lastQueueUpdate = System.currentTimeMillis()
+    private var awaitingAction = false
+    private var queueActions = 0
 
     init {
         // Send Message
