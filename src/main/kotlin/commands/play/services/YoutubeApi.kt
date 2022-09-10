@@ -1,18 +1,18 @@
 package commands.play.services
 
-import kotlinx.coroutines.*
 import commands.play.utils.YTUrlBuilder
 import commands.play.utils.convertYtToMillis
 import commands.play.utils.convertYtUrlToId
-import utils.CouldNotExtractVideoInformation
-import utils.PlaylistNotFoundException
-import utils.VideoNotFoundException
-import utils.YouTubeApiException
+import kotlinx.coroutines.*
 import lib.get
 import objects.playableInformation.YouTubePlaylist
 import objects.playableInformation.YouTubeSong
 import org.json.JSONException
 import org.json.JSONObject
+import utils.CouldNotExtractVideoInformation
+import utils.PlaylistNotFoundException
+import utils.VideoNotFoundException
+import utils.YouTubeApiException
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse
@@ -115,7 +115,6 @@ suspend fun getYTPlaylistInfo(url: String) = coroutineScope {
     ytBuilder.size = size
 
     val infoRequests: ArrayList<Deferred<YouTubeSong>> = ArrayList()
-    var nextPage = true
     val itemsResponse = withContext(Dispatchers.IO) {
         itemsRequest.join()
     }
@@ -123,16 +122,12 @@ suspend fun getYTPlaylistInfo(url: String) = coroutineScope {
     var items = JSONObject(itemsResponse.body())
     var processedSongs = 0
 
-    while (nextPage) {
-        var nextPageRequest: Deferred<JSONObject>? = null
-        try {
-            nextPageRequest = async { get(YTUrlBuilder().getPlaylistItemsToken()
-                .id(id)
-                .pageToken(items.getString("nextPageToken"))
-                .build()) }
-        } catch(e: JSONException) {
-            nextPage = false
-        }
+    while (true) {
+        var nextPageRequest: Deferred<JSONObject>?
+        nextPageRequest = async { get(YTUrlBuilder().getPlaylistItemsToken()
+            .id(id)
+            .pageToken(items.getString("nextPageToken"))
+            .build()) }
 
         for (i in 0..items.getJSONArray("items").length()) {
             processedSongs++
@@ -152,7 +147,11 @@ suspend fun getYTPlaylistInfo(url: String) = coroutineScope {
         if (processedSongs >= size)
             break
 
-        items = nextPageRequest?.await() ?: break
+        try {
+            items = nextPageRequest.await()
+        } catch (e: JSONException) {
+            break
+        }
     }
 
     for (infoDeferred in infoRequests) {
