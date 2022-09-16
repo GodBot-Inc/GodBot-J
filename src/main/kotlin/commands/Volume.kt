@@ -1,10 +1,10 @@
 package commands
 
 import constants.*
-import utils.getPlayerWithQueue
 import net.dv8tion.jda.api.entities.Emoji
 import objects.EventFacade
 import objects.SlashCommandPayload
+import utils.getPlayingPlayer
 
 fun volume(event: EventFacade, payload: SlashCommandPayload) {
     val level: Int? = event.getLong("level")?.toInt()
@@ -13,7 +13,7 @@ fun volume(event: EventFacade, payload: SlashCommandPayload) {
         return
     }
 
-    val player = getPlayerWithQueue(
+    val player = getPlayingPlayer(
         payload.guild.id,
         payload.voiceChannel.id,
         event
