@@ -1,6 +1,5 @@
-package commands.play.services
+package services
 
-import utils.YTUrlBuilder
 import commands.play.utils.convertYtToMillis
 import commands.play.utils.convertYtUrlToId
 import kotlinx.coroutines.*
@@ -9,10 +8,7 @@ import objects.playableInformation.YouTubePlaylist
 import objects.playableInformation.YouTubeSong
 import org.json.JSONException
 import org.json.JSONObject
-import utils.CouldNotExtractVideoInformation
-import utils.PlaylistNotFoundException
-import utils.VideoNotFoundException
-import utils.YouTubeApiException
+import utils.*
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse
@@ -123,20 +119,21 @@ suspend fun getYTPlaylistInfo(url: String) = coroutineScope {
     var items = JSONObject(itemsResponse.body())
     var processedSongs = 0
     var nextPageRequest: Deferred<JSONObject>? = null
-    var nextPage = true
+    var nextPageToken: String?
 
     while (true) {
-        try {
+        nextPageToken = try {
             items.getString("nextPageToken")
         } catch(e: JSONException) {
-            nextPage = false
+            null
         }
-        if (nextPage)
+
+        if (nextPageToken != null)
             nextPageRequest = async { get(
                 YTUrlBuilder().getPlaylistItemsToken()
-                .id(id)
-                .pageToken(items.getString("nextPageToken"))
-                .build()) }
+                    .id(id)
+                    .pageToken(nextPageToken)
+                    .build()) }
 
         for (i in 0..items.getJSONArray("items").length()) {
             processedSongs++
