@@ -1,6 +1,6 @@
 package commands.play.services
 
-import commands.play.utils.YTUrlBuilder
+import utils.YTUrlBuilder
 import commands.play.utils.convertYtToMillis
 import commands.play.utils.convertYtUrlToId
 import kotlinx.coroutines.*
@@ -69,7 +69,7 @@ suspend fun getYTVideoInfo(id: String) = coroutineScope {
     return@coroutineScope builder.build()
 }
 
-@Throws(PlaylistNotFoundException::class, CouldNotExtractVideoInformation::class)
+@Throws(PlaylistNotFoundException::class, CouldNotExtractVideoInformation::class, JSONException::class)
 suspend fun getYTPlaylistInfo(url: String) = coroutineScope {
     println("URL inside Playlist: $url")
     val id = convertYtUrlToId(url)
@@ -118,16 +118,25 @@ suspend fun getYTPlaylistInfo(url: String) = coroutineScope {
     val itemsResponse = withContext(Dispatchers.IO) {
         itemsRequest.join()
     }
+
     println("StatusCode ${itemsResponse.statusCode()}")
     var items = JSONObject(itemsResponse.body())
     var processedSongs = 0
+    var nextPageRequest: Deferred<JSONObject>? = null
+    var nextPage = true
 
     while (true) {
-        var nextPageRequest: Deferred<JSONObject>?
-        nextPageRequest = async { get(YTUrlBuilder().getPlaylistItemsToken()
-            .id(id)
-            .pageToken(items.getString("nextPageToken"))
-            .build()) }
+        try {
+            items.getString("nextPageToken")
+        } catch(e: JSONException) {
+            nextPage = false
+        }
+        if (nextPage)
+            nextPageRequest = async { get(
+                YTUrlBuilder().getPlaylistItemsToken()
+                .id(id)
+                .pageToken(items.getString("nextPageToken"))
+                .build()) }
 
         for (i in 0..items.getJSONArray("items").length()) {
             processedSongs++
@@ -148,7 +157,7 @@ suspend fun getYTPlaylistInfo(url: String) = coroutineScope {
             break
 
         try {
-            items = nextPageRequest.await()
+            items = nextPageRequest?.await() ?: break
         } catch (e: JSONException) {
             break
         }

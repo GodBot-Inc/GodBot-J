@@ -1,6 +1,6 @@
 package commands.play
 
-import commands.play.lib.InteractionHookWrapper
+import lib.jda.InteractionHookWrapper
 import commands.play.services.getYTPlaylistInfo
 import commands.play.services.getYTVideoInfoFromUrl
 import commands.play.utils.isSong

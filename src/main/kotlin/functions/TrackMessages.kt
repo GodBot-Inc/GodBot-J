@@ -1,11 +1,11 @@
 package commands.play.utils
 
 import constants.*
-import utils.millisToStringDisplay
 import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.entities.Member
 import net.dv8tion.jda.api.entities.MessageEmbed
 import objects.playableInformation.*
+import utils.millisToStringDisplay
 import javax.annotation.CheckReturnValue
 
 private const val defaultThumbnail =

@@ -1,4 +1,4 @@
-package commands.play.lib
+package lib.jda
 
 import constants.errorRed
 import net.dv8tion.jda.api.EmbedBuilder
