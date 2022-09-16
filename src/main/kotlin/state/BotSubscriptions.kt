@@ -1,4 +1,4 @@
-package features.subscriptions
+package state
 
 import lib.lavaplayer.TrackEvents
 import lib.lavaplayer.AudioPlayerExtender

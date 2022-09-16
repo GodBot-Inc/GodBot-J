@@ -4,7 +4,7 @@ import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers
 import config.premiumEncoding
 import config.premiumResamplingQuality
-import features.subscriptions.BotSubscriptions
+import state.BotSubscriptions
 import net.dv8tion.jda.api.entities.Guild
 import net.dv8tion.jda.api.entities.VoiceChannel
 import state.PlayerStorage

@@ -1,8 +1,8 @@
 package commands.queue.features
 
 import commands.queue.utils.getMaxQueuePages
-import features.ButtonDistributor
-import features.subscriptions.BotSubscriptions
+import state.ButtonDistributor
+import state.BotSubscriptions
 import lib.jda.MessageWrapper
 import lib.lavaplayer.AudioPlayerExtender
 import lib.lavaplayer.TrackEvents

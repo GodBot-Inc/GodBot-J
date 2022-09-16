@@ -1,6 +1,6 @@
 package lib.jda
 
-import commands.queue.utils.QueueButtons
+import functions.QueueButtons
 import commands.queue.utils.compactQueue
 import commands.queue.utils.getMaxQueuePages
 import net.dv8tion.jda.api.entities.Message

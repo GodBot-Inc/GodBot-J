@@ -1,4 +1,4 @@
-package commands.queue.utils
+package functions
 
 import constants.queueFirstEmoji
 import constants.queueLastEmoji

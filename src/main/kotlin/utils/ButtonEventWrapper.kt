@@ -1,6 +1,6 @@
 package utils
 
-import commands.queue.utils.QueueButtons
+import functions.QueueButtons
 import commands.queue.utils.compactQueue
 import commands.queue.utils.getMaxQueuePages
 import lib.lavaplayer.AudioTrackExtender

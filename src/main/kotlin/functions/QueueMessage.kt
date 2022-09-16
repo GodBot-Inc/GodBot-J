@@ -2,9 +2,9 @@ package commands.queue.utils
 
 import constants.primary
 import constants.queueEmoji
+import lib.lavaplayer.AudioTrackExtender
 import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.entities.MessageEmbed
-import lib.lavaplayer.AudioTrackExtender
 import utils.millisToString
 import kotlin.math.ceil
 

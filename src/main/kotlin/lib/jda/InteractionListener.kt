@@ -2,7 +2,7 @@ package lib.jda
 
 import constants.generalError
 import constants.notConnectedToVc
-import features.ButtonDistributor
+import state.ButtonDistributor
 import io.github.cdimascio.dotenv.Dotenv
 import kotlinx.coroutines.runBlocking
 import commands.*
