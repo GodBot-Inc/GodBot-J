@@ -1,6 +1,6 @@
 package commands.queue
 
-import commands.queue.features.QueueControllableEmbed
+import state.QueueControllableEmbed
 import functions.QueueButtons
 import commands.queue.utils.compactQueue
 import commands.queue.utils.getMaxQueuePages

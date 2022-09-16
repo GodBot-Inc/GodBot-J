@@ -1,7 +1,6 @@
 package state
 
 import lib.lavaplayer.TrackEvents
-import lib.lavaplayer.AudioPlayerExtender
 import utils.PlayerEvents
 
 object BotSubscriptions {

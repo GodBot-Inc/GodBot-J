@@ -1,10 +1,7 @@
-package commands.queue.features
+package state
 
 import commands.queue.utils.getMaxQueuePages
-import state.ButtonDistributor
-import state.BotSubscriptions
 import lib.jda.MessageWrapper
-import lib.lavaplayer.AudioPlayerExtender
 import lib.lavaplayer.TrackEvents
 import net.dv8tion.jda.api.requests.restaction.interactions.ReplyAction
 import utils.ButtonEventWrapper

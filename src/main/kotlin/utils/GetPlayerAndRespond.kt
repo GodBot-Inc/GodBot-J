@@ -3,7 +3,7 @@ package utils
 import constants.noPlayerInVc
 import constants.noPlayingTrack
 import constants.queueEmpty
-import lib.lavaplayer.AudioPlayerExtender
+import state.AudioPlayerExtender
 import lib.jda.EventFacade
 import state.PlayerStorage
 

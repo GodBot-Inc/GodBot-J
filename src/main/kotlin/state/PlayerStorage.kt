@@ -1,7 +1,5 @@
 package state
 
-import lib.lavaplayer.AudioPlayerExtender
-
 object PlayerStorage {
 
     private val storage: HashMap<String, AudioPlayerExtender> = HashMap()

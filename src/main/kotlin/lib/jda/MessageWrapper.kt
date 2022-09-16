@@ -4,7 +4,7 @@ import functions.QueueButtons
 import commands.queue.utils.compactQueue
 import commands.queue.utils.getMaxQueuePages
 import net.dv8tion.jda.api.entities.Message
-import lib.lavaplayer.AudioTrackExtender
+import state.AudioTrackExtender
 
 class MessageWrapper(private val message: Message) {
 

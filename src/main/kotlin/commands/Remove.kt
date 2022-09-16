@@ -2,7 +2,7 @@ package commands
 
 import constants.notReceivedParameter
 import utils.getPlayerWithQueue
-import lib.lavaplayer.AudioTrackExtender
+import state.AudioTrackExtender
 import lib.jda.EventFacade
 import objects.SlashCommandPayload
 

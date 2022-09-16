@@ -3,7 +3,7 @@ package utils
 import functions.QueueButtons
 import commands.queue.utils.compactQueue
 import commands.queue.utils.getMaxQueuePages
-import lib.lavaplayer.AudioTrackExtender
+import state.AudioTrackExtender
 import net.dv8tion.jda.api.events.interaction.ButtonClickEvent
 
 class ButtonEventWrapper(private val event: ButtonClickEvent) {
