@@ -165,3 +165,4 @@ buildNumber.properties
 /META-INF/MANIFEST.MF
 /out/production/resources/META-INF/MANIFEST.MF
 /src/main/resources/META-INF/MANIFEST.MF
+/src/main/kotlin/META-INF/
