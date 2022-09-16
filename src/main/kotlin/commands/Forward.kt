@@ -5,7 +5,7 @@ import commands.play.utils.trackLines
 import utils.getPlayingPlayer
 import utils.millisToString
 import net.dv8tion.jda.api.EmbedBuilder
-import objects.EventFacade
+import lib.jda.EventFacade
 import objects.SlashCommandPayload
 import java.util.concurrent.TimeUnit
 

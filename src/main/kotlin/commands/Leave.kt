@@ -2,7 +2,7 @@ package commands
 
 import constants.leaveEmoji
 import utils.getPlayer
-import objects.EventFacade
+import lib.jda.EventFacade
 import objects.SlashCommandPayload
 
 fun leave(event: EventFacade, payload: SlashCommandPayload) {

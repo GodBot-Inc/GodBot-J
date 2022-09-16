@@ -2,7 +2,7 @@ package commands
 
 import constants.cleanedEmoji
 import utils.getPlayerWithQueue
-import objects.EventFacade
+import lib.jda.EventFacade
 import objects.SlashCommandPayload
 
 fun clearQueue(event: EventFacade, payload: SlashCommandPayload) {

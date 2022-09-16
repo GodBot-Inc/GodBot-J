@@ -7,7 +7,6 @@ import config.premiumResamplingQuality
 import features.subscriptions.BotSubscriptions
 import net.dv8tion.jda.api.entities.Guild
 import net.dv8tion.jda.api.entities.VoiceChannel
-import utils.AudioPlayerExtender
 import state.PlayerStorage
 import java.util.concurrent.TimeUnit
 

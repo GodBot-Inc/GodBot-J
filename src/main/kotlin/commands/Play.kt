@@ -13,7 +13,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import lib.lavaplayer.PremiumPlayerManager
-import objects.EventFacade
+import lib.jda.EventFacade
 import objects.SlashCommandPayload
 import objects.playableInformation.YouTubePlaylist
 import objects.playableInformation.YouTubeSong

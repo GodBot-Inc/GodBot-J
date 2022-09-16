@@ -2,7 +2,7 @@ package commands
 
 import constants.joinEmoji
 import lib.lavaplayer.PremiumPlayerManager
-import objects.EventFacade
+import lib.jda.EventFacade
 import objects.SlashCommandPayload
 
 fun join(event: EventFacade, payload: SlashCommandPayload) {

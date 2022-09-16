@@ -1,4 +1,4 @@
-package objects
+package lib.jda
 
 import constants.errorRed
 import constants.primary

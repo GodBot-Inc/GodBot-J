@@ -7,12 +7,11 @@ import io.github.cdimascio.dotenv.Dotenv
 import kotlinx.coroutines.runBlocking
 import commands.*
 import commands.play.play
-import commands.queue.objects.ButtonEventWrapper
+import utils.ButtonEventWrapper
 import commands.queue.queue
 import net.dv8tion.jda.api.events.interaction.ButtonClickEvent
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent
 import net.dv8tion.jda.api.hooks.ListenerAdapter
-import objects.EventFacade
 import objects.SlashCommandPayload
 import kotlin.concurrent.thread
 

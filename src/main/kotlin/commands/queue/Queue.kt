@@ -5,7 +5,7 @@ import commands.queue.utils.QueueButtons
 import commands.queue.utils.compactQueue
 import commands.queue.utils.getMaxQueuePages
 import utils.getPlayerWithQueue
-import objects.EventFacade
+import lib.jda.EventFacade
 import objects.SlashCommandPayload
 
 fun queue(event: EventFacade, payload: SlashCommandPayload) {

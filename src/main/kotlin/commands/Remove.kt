@@ -2,8 +2,8 @@ package commands
 
 import constants.notReceivedParameter
 import utils.getPlayerWithQueue
-import utils.AudioTrackExtender
-import objects.EventFacade
+import lib.lavaplayer.AudioTrackExtender
+import lib.jda.EventFacade
 import objects.SlashCommandPayload
 
 fun remove(event: EventFacade, payload: SlashCommandPayload) {

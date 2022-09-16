@@ -4,7 +4,7 @@ import constants.loadingSongFailed
 import constants.notReceivedParameter
 import kotlinx.coroutines.runBlocking
 import utils.getPlayerWithQueue
-import objects.EventFacade
+import lib.jda.EventFacade
 import objects.SlashCommandPayload
 
 fun skipTo(event: EventFacade, payload: SlashCommandPayload) {

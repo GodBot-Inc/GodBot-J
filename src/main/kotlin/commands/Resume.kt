@@ -2,7 +2,7 @@ package commands
 
 import constants.playEmoji
 import utils.getPlayingPlayer
-import objects.EventFacade
+import lib.jda.EventFacade
 import objects.SlashCommandPayload
 
 fun resume(event: EventFacade, payload: SlashCommandPayload) {

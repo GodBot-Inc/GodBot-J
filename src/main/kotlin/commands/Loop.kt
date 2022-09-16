@@ -4,7 +4,7 @@ import constants.loopEmoji
 import constants.noLoopEmoji
 import constants.notReceivedParameter
 import utils.getPlayer
-import objects.EventFacade
+import lib.jda.EventFacade
 import objects.SlashCommandPayload
 
 fun loop(event: EventFacade, payload: SlashCommandPayload) {

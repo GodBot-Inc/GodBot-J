@@ -1,6 +1,6 @@
 package features
 
-import commands.queue.objects.ButtonEventWrapper
+import utils.ButtonEventWrapper
 
 
 object ButtonDistributor {

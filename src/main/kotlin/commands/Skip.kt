@@ -3,7 +3,7 @@ package commands
 import constants.nextTrackEmoji
 import kotlinx.coroutines.runBlocking
 import utils.getPlayerWithQueue
-import objects.EventFacade
+import lib.jda.EventFacade
 import objects.SlashCommandPayload
 
 fun skip(event: EventFacade, payload: SlashCommandPayload) {

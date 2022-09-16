@@ -1,6 +1,6 @@
 package state
 
-import utils.AudioPlayerExtender
+import lib.lavaplayer.AudioPlayerExtender
 
 object PlayerStorage {
 

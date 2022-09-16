@@ -2,7 +2,7 @@ package commands
 
 import constants.pauseEmoji
 import utils.getPlayingPlayer
-import objects.EventFacade
+import lib.jda.EventFacade
 import objects.SlashCommandPayload
 
 fun pause(event: EventFacade, payload: SlashCommandPayload) {

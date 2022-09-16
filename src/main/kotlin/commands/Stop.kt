@@ -2,7 +2,7 @@ package commands
 
 import constants.stopEmoji
 import utils.getPlayingPlayer
-import objects.EventFacade
+import lib.jda.EventFacade
 import objects.SlashCommandPayload
 
 fun stop(event: EventFacade, payload: SlashCommandPayload) {

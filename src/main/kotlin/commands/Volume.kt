@@ -2,7 +2,7 @@ package commands
 
 import constants.*
 import net.dv8tion.jda.api.entities.Emoji
-import objects.EventFacade
+import lib.jda.EventFacade
 import objects.SlashCommandPayload
 import utils.getPlayingPlayer
 
