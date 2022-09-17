@@ -111,15 +111,14 @@ class AudioPlayerExtender(
         } catch (e: TrackNotFoundException) {
             try {
                 // Play next already sets currentTrack
-                playNext()
+                playNextTrack()
             } catch (e: QueueEmptyException) {
                 currentTrack = null
             }
         }
     }
 
-    @Throws(QueueEmptyException::class)
-    suspend fun playNext(): AudioTrackExtender {
+    suspend fun playNextTrack(): AudioTrackExtender {
         updateUsage()
         if (queue.isEmpty()) {
             currentTrack = null
@@ -131,14 +130,13 @@ class AudioPlayerExtender(
             playNow(audioTrack)
         } catch (e: GodBotException) {
             // Recursion, so eventually the method will end
-            return playNext()
+            return playNextTrack()
         }
         // In case of expected method process
         currentTrack = audioTrack
         return audioTrack
     }
 
-    @Throws(TrackNotFoundException::class, LoadFailedException::class)
     suspend fun playNow(audioTrackExtender: AudioTrackExtender) {
         updateUsage()
         val callback = AudioResultHandler()
@@ -154,12 +152,10 @@ class AudioPlayerExtender(
         audioPlayer.playTrack(playableTrack)
     }
 
-    @Throws(TrackNotFoundException::class, LoadFailedException::class)
     suspend fun play(playableInfo: PlayableInfo, payload: SlashCommandPayload): Int {
         return this.play(AudioTrackExtender(playableInfo, payload.member))
     }
 
-    @Throws(TrackNotFoundException::class, LoadFailedException::class)
     private suspend fun playLogic(audioTrackExtender: AudioTrackExtender): Int {
         if (audioPlayer.playingTrack == null && queue.size == 0) {
             // playNow sets currentTrack
@@ -185,7 +181,6 @@ class AudioPlayerExtender(
         thread { dispatchEvent(PlayerEvents.QUEUE) }
     }
 
-    @Throws(TrackNotFoundException::class, LoadFailedException::class)
     suspend fun play(audioTrackExtender: AudioTrackExtender): Int {
         updateUsage()
         if (!audioManager.isConnected)
@@ -196,7 +191,6 @@ class AudioPlayerExtender(
         return position
     }
 
-    @Throws(IndexOutOfBoundsException::class)
     suspend fun skipTo(index: Int) {
         updateUsage()
         if (index < queue.size) {
@@ -209,7 +203,6 @@ class AudioPlayerExtender(
             throw IndexOutOfBoundsException()
     }
 
-    @Throws(IndexOutOfBoundsException::class)
     fun removeTrackAt(index: Int): AudioTrackExtender {
         updateUsage()
         return queue.removeAt(index)

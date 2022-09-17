@@ -14,7 +14,7 @@ fun skip(event: EventFacade, payload: SlashCommandPayload) {
     ) ?: return
 
     val paused = player.isPaused()
-    val audioTrack = runBlocking { player.playNext() }
+    val audioTrack = runBlocking { player.playNextTrack() }
     if (paused)
         player.setPaused(false)
 

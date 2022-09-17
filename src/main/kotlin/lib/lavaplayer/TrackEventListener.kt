@@ -36,7 +36,7 @@ class TrackEventListener(val audioPlayer: AudioPlayerExtender): AudioEventAdapte
         }
         if (endReason.mayStartNext) {
             try {
-                runBlocking { audioPlayer.playNext() }
+                runBlocking { audioPlayer.playNextTrack() }
             } catch (ignore: QueueEmptyException) { }
         }
         if (trackEventSubscribers.isNotEmpty())
