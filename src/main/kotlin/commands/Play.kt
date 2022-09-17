@@ -11,7 +11,7 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import lib.jda.EventFacade
 import lib.jda.InteractionHookWrapper
-import lib.lavaplayer.PremiumPlayerManager
+import lib.lavaplayer.PlayerManager
 import objects.SlashCommandPayload
 import objects.playableInformation.YouTubePlaylist
 import objects.playableInformation.YouTubeSong
@@ -57,7 +57,7 @@ suspend fun resolveVideo(
 ) = coroutineScope {
     val infoJob: Deferred<YouTubeSong> = async { getYTVideoInfoFromUrl(url) }
 
-    val player = PremiumPlayerManager.getOrCreatePlayer(
+    val player = PlayerManager.getOrCreatePlayer(
         payload.guild,
         payload.voiceChannel
     )
@@ -99,7 +99,7 @@ suspend fun resolvePlaylist(
 ) = coroutineScope {
     val infoJob: Deferred<YouTubePlaylist> = async { getYTPlaylistInfo(url) }
 
-    val player = PremiumPlayerManager.getOrCreatePlayer(
+    val player = PlayerManager.getOrCreatePlayer(
         payload.guild,
         payload.voiceChannel
     )

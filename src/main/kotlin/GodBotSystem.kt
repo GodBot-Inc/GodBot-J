@@ -5,6 +5,7 @@ import io.github.cdimascio.dotenv.Dotenv
 import lib.jda.BotStateListener
 import lib.jda.GeneralListener
 import lib.jda.InteractionListener
+import lib.lavaplayer.PlayerManager
 import net.dv8tion.jda.api.JDA
 import net.dv8tion.jda.api.JDABuilder
 import net.dv8tion.jda.api.entities.Activity
@@ -41,6 +42,10 @@ class GodBotSystem {
             }
 
             GodBotJda!!.presence.activity = Activity.playing("music | /help")
+
+            println("Setting Player Manager to Premium")
+            PlayerManager.setPremium()
+            println("Set Player Manager to Premium".green())
 
             try {
                 println("Awaiting Ready...")

@@ -141,7 +141,7 @@ class AudioPlayerExtender(
         updateUsage()
         val callback = AudioResultHandler()
         val url = audioTrackExtender.songInfo.uri ?: throw TrackNotFoundException()
-        PremiumPlayerManager.loadItem(
+        PlayerManager.loadItem(
             url,
             callback
         )

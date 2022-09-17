@@ -1,12 +1,12 @@
 package commands
 
 import constants.joinEmoji
-import lib.lavaplayer.PremiumPlayerManager
+import lib.lavaplayer.PlayerManager
 import lib.jda.EventFacade
 import objects.SlashCommandPayload
 
 fun join(event: EventFacade, payload: SlashCommandPayload) {
-    val player = PremiumPlayerManager.getOrCreatePlayer(
+    val player = PlayerManager.getOrCreatePlayer(
         payload.guild,
         payload.voiceChannel
     )
