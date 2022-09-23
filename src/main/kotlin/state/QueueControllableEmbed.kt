@@ -1,10 +1,10 @@
 package state
 
-import commands.queue.utils.getMaxQueuePages
+import functions.getMaxQueuePages
+import lib.jda.ButtonEventWrapper
 import lib.jda.MessageWrapper
 import lib.lavaplayer.TrackEvents
 import net.dv8tion.jda.api.requests.restaction.interactions.ReplyAction
-import utils.ButtonEventWrapper
 import utils.PlayerEvents
 import java.util.concurrent.TimeUnit
 import kotlin.concurrent.thread
@@ -31,14 +31,14 @@ class QueueControllableEmbed(
         }
         // Subscribe to update events from the player
         BotSubscriptions.subscribeToPlayerEvents(
-            arrayListOf(PlayerEvents.QUEUE, PlayerEvents.CLEANUP),
+            arrayListOf(PlayerEvents.QUEUE, PlayerEvents.CLEANUP, PlayerEvents.CLEAR_QUEUE),
             ::onPlayerUpdate,
             player
         )
         BotSubscriptions.subscribeToTrackEvent(TrackEvents.START, ::onTrackStart, player)
         while (!this::message.isInitialized)
             TimeUnit.MILLISECONDS.sleep(10)
-        print("Message initialized Subscribing to ButtonDistributor")
+        println("Message initialized Subscribing to ButtonDistributor")
         ButtonDistributor.add(message.id, ::resolveButtonAction)
         thread { lifecycle() }
     }

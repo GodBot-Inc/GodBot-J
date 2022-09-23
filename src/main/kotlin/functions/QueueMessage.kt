@@ -1,17 +1,28 @@
-package commands.queue.utils
+package functions
 
 import constants.primary
 import constants.queueEmoji
-import state.AudioTrackExtender
 import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.entities.MessageEmbed
+import state.AudioTrackExtender
 import utils.millisToString
 import kotlin.math.ceil
 
 
-fun getMaxQueuePages(queue:ArrayList<AudioTrackExtender>) = ceil(queue.size.toDouble() / 10).toInt()
+fun getMaxQueuePages(queue:ArrayList<AudioTrackExtender>): Int {
+    if (queue.isEmpty())
+        return 0
+    return ceil(queue.size.toDouble() / 10).toInt()
+}
 
 fun compactQueue(queue: ArrayList<AudioTrackExtender>, avatarUrl: String?, page: Int = 1): MessageEmbed {
+    if (queue.isEmpty()) {
+        return EmbedBuilder()
+            .setDescription("Waiting for Tracks...")
+            .setTitle("${queueEmoji.asMention} Queue")
+            .setColor(primary)
+            .build()
+    }
     val maxPages = getMaxQueuePages(queue)
     val max = page * 10 - 1
     val min = max - 9

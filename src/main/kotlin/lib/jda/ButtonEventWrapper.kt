@@ -1,10 +1,10 @@
-package utils
+package lib.jda
 
 import functions.QueueButtons
-import commands.queue.utils.compactQueue
-import commands.queue.utils.getMaxQueuePages
-import state.AudioTrackExtender
+import functions.compactQueue
+import functions.getMaxQueuePages
 import net.dv8tion.jda.api.events.interaction.ButtonClickEvent
+import state.AudioTrackExtender
 
 class ButtonEventWrapper(private val event: ButtonClickEvent) {
 

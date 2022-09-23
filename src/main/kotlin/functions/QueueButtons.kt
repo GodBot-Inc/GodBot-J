@@ -9,7 +9,7 @@ import net.dv8tion.jda.api.interactions.components.Button
 
 object QueueButtons {
     fun checkButtons(page: Int, maxPages: Int): ArrayList<Button>? {
-        if (maxPages == 1)
+        if (maxPages == 0 || maxPages == 1)
             return null
         if (page == maxPages)
             return rightDisabled()
@@ -18,7 +18,7 @@ object QueueButtons {
         return noneDisabled()
     }
 
-    fun leftDisabled(): ArrayList<Button> {
+    private fun leftDisabled(): ArrayList<Button> {
         return arrayListOf(
             Button.secondary("first_disabled", queueFirstEmoji).asDisabled(),
             Button.secondary("left_disabled", queueLeftEmoji).asDisabled(),
@@ -27,7 +27,7 @@ object QueueButtons {
         )
     }
 
-    fun rightDisabled(): ArrayList<Button> {
+    private fun rightDisabled(): ArrayList<Button> {
         return arrayListOf(
             Button.primary("first", queueFirstEmoji),
             Button.primary("left", queueLeftEmoji),
@@ -45,7 +45,7 @@ object QueueButtons {
         )
     }
 
-    fun noneDisabled(): ArrayList<Button> {
+    private fun noneDisabled(): ArrayList<Button> {
         return arrayListOf(
             Button.primary("first", queueFirstEmoji),
             Button.primary("left", queueLeftEmoji),

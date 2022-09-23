@@ -1,6 +1,6 @@
 package state
 
-import utils.ButtonEventWrapper
+import lib.jda.ButtonEventWrapper
 
 
 object ButtonDistributor {

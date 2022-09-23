@@ -52,7 +52,9 @@ class AudioPlayerExtender(
     private fun dispatchEvent(event: PlayerEvents) {
         playerEventSubscribers.forEach { func ->
             run {
-                func(event)
+                try {
+                    func(event)
+                } catch (_: Exception) { }
             }
         }
     }
@@ -227,7 +229,7 @@ class AudioPlayerExtender(
 
     fun isConnected() = audioManager.isConnected
 
-    fun clearQueue() = apply { updateUsage(); queue.clear() }
+    fun clearQueue() = apply { updateUsage(); queue.clear(); dispatchEvent(PlayerEvents.CLEAR_QUEUE); }
 
     fun stop() = apply { updateUsage(); clearQueue(); audioPlayer.stopTrack() }
 }

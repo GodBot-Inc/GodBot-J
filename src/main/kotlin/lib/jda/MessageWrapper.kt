@@ -1,8 +1,8 @@
 package lib.jda
 
 import functions.QueueButtons
-import commands.queue.utils.compactQueue
-import commands.queue.utils.getMaxQueuePages
+import functions.compactQueue
+import functions.getMaxQueuePages
 import net.dv8tion.jda.api.entities.Message
 import state.AudioTrackExtender
 
@@ -18,18 +18,12 @@ class MessageWrapper(private val message: Message) {
         val buttons = QueueButtons.checkButtons(page, getMaxQueuePages(queue))
         val embed = compactQueue(queue, avatarUrl, page)
         if (buttons == null)
-            message.editMessageEmbeds(embed).queue()
+            message.editMessageEmbeds(embed).setActionRow(QueueButtons.allDisabled()).queue()
         else
-            message
-                .editMessageEmbeds(embed)
-                .setActionRow(buttons)
-                .queue()
+            message.editMessageEmbeds(embed).setActionRow(buttons).queue()
     }
 
     fun disable() {
-        message
-            .editMessageEmbeds(message.embeds)
-            .setActionRow(QueueButtons.allDisabled())
-            .queue()
+        message.editMessageEmbeds(message.embeds).setActionRow(QueueButtons.allDisabled()).queue()
     }
 }

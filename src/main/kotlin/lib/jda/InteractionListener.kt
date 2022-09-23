@@ -1,7 +1,7 @@
 package lib.jda
 
 import commands.*
-import commands.queue.queue
+import commands.queue
 import constants.generalError
 import constants.notConnectedToVc
 import io.github.cdimascio.dotenv.Dotenv
@@ -11,7 +11,6 @@ import net.dv8tion.jda.api.events.interaction.SlashCommandEvent
 import net.dv8tion.jda.api.hooks.ListenerAdapter
 import objects.SlashCommandPayload
 import state.ButtonDistributor
-import utils.ButtonEventWrapper
 import kotlin.concurrent.thread
 
 class InteractionListener: ListenerAdapter() {

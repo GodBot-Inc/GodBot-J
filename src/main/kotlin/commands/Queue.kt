@@ -1,15 +1,15 @@
-package commands.queue
+package commands
 
-import state.QueueControllableEmbed
 import functions.QueueButtons
-import commands.queue.utils.compactQueue
-import commands.queue.utils.getMaxQueuePages
-import utils.getPlayerWithQueue
+import functions.compactQueue
+import functions.getMaxQueuePages
 import lib.jda.EventFacade
 import objects.SlashCommandPayload
+import state.QueueControllableEmbed
+import utils.getPlayer
 
 fun queue(event: EventFacade, payload: SlashCommandPayload) {
-    val player = getPlayerWithQueue(payload.guild.id, payload.voiceChannel.id, event) ?: return
+    val player = getPlayer(payload.guild.id, payload.voiceChannel.id, event) ?: return
 
     val message = event.replyAction(
         compactQueue(player.queue, payload.member.user.avatarUrl),
