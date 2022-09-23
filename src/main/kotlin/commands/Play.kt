@@ -118,7 +118,6 @@ suspend fun resolvePlaylist(
         info.songInfos.shuffle()
 
     val successfulSongs = runBlocking { player.playPlaylist(info.songInfos, payload) }
-    println("Successful Songs: $successfulSongs")
 
     if (successfulSongs == 0) {
         hook.error(loadingPlaylistFailed)

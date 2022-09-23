@@ -67,7 +67,6 @@ suspend fun getYTVideoInfo(id: String) = coroutineScope {
 
 @Throws(PlaylistNotFoundException::class, CouldNotExtractVideoInformation::class, JSONException::class)
 suspend fun getYTPlaylistInfo(url: String) = coroutineScope {
-    println("URL inside Playlist: $url")
     val id = convertYtUrlToId(url)
     val itemsRequest: CompletableFuture<HttpResponse<String>> = client.sendAsync(
         builder.uri(YTUrlBuilder().getPlaylistItems().id(id).build())
@@ -115,7 +114,6 @@ suspend fun getYTPlaylistInfo(url: String) = coroutineScope {
         itemsRequest.join()
     }
 
-    println("StatusCode ${itemsResponse.statusCode()}")
     var items = JSONObject(itemsResponse.body())
     var processedSongs = 0
     var nextPageRequest: Deferred<JSONObject>? = null

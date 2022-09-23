@@ -177,13 +177,11 @@ class AudioPlayerExtender(
             try {
                 runBlocking { playLogic(AudioTrackExtender(info, payload.member)) }
             } catch (ignore: LoadFailedException) {
-                println("Load Failed Exception")
                 failedSongs++
             }
         }
 
         thread { dispatchEvent(PlayerEvents.QUEUE) }
-        println("PlayPlaylist difference: ${playableInfo.size - failedSongs} size: ${playableInfo.size} failedSongs: $failedSongs")
         return playableInfo.size - failedSongs
     }
 
