@@ -8,7 +8,7 @@ import constants.*
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import lib.jda.EventFacade
 import lib.jda.InteractionHookWrapper
 import lib.lavaplayer.PlayerManager
@@ -18,7 +18,7 @@ import objects.playableInformation.YouTubeSong
 import services.getYTPlaylistInfo
 import services.getYTVideoInfoFromUrl
 import utils.CouldNotExtractVideoInformation
-import utils.TrackNotFoundException
+import utils.NotFoundException
 import utils.VideoNotFoundException
 import utils.YouTubeApiException
 
@@ -76,7 +76,7 @@ suspend fun resolveVideo(
     val position: Int
     try {
         position = player.play(info, payload)
-    } catch (e: TrackNotFoundException) {
+    } catch (e: NotFoundException) {
         hook.error(songNotFound)
         return@coroutineScope
     }
@@ -114,11 +114,15 @@ suspend fun resolvePlaylist(
         return@coroutineScope
     }
 
-    launch {
-        if (event.getOption("shuffle")?.asBoolean == true)
-            info.songInfos.shuffle()
+    if (event.getOption("shuffle")?.asBoolean == true)
+        info.songInfos.shuffle()
 
-        player.play(info.songInfos, payload)
+    val successfulSongs = runBlocking { player.playPlaylist(info.songInfos, payload) }
+    println("Successful Songs: $successfulSongs")
+
+    if (successfulSongs == 0) {
+        hook.error(loadingPlaylistFailed)
+        return@coroutineScope
     }
 
     hook.reply(

@@ -8,7 +8,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.withContext
 import utils.LoadFailedException
-import utils.TrackNotFoundException
 
 class AudioResultHandler: AudioLoadResultHandler {
 
@@ -37,19 +36,20 @@ class AudioResultHandler: AudioLoadResultHandler {
     }
 }
 
-@Throws(LoadFailedException::class, TrackNotFoundException::class)
 suspend fun awaitReady(resultHandler: AudioResultHandler) = coroutineScope {
-    while (resultHandler.error == 0 && resultHandler.audioTrack == null) {
+    while (true) {
         try {
             withContext(Dispatchers.IO) {
                 Thread.sleep(100)
             }
+            if (resultHandler.error != 0)
+                break
+            if (resultHandler.audioTrack != null)
+                break
         } catch (ignore: InterruptedException) {}
     }
-    if (resultHandler.error == 2)
+    if (resultHandler.error != 0) {
         throw LoadFailedException()
-    if (resultHandler.audioTrack != null)
-        return@coroutineScope resultHandler.audioTrack!!
-
-    throw TrackNotFoundException()
+    }
+    return@coroutineScope resultHandler.audioTrack!!
 }

@@ -52,7 +52,6 @@ class AudioPlayerExtender(
     private fun dispatchEvent(event: PlayerEvents) {
         playerEventSubscribers.forEach { func ->
             run {
-                println("Looping and calling function")
                 func(event)
             }
         }
@@ -146,7 +145,7 @@ class AudioPlayerExtender(
             callback
         )
 
-        val playableTrack: AudioTrack = runBlocking { awaitReady(callback) }
+        val playableTrack: AudioTrack = awaitReady(callback)
         audioPlayer.stopTrack()
         currentTrack = audioTrackExtender
         audioPlayer.playTrack(playableTrack)
@@ -168,17 +167,24 @@ class AudioPlayerExtender(
         return queue.size - 1
     }
 
-    suspend fun play(playableInfo: ArrayList<PlayableInfo>, payload: SlashCommandPayload) {
+    suspend fun playPlaylist(playableInfo: ArrayList<PlayableInfo>, payload: SlashCommandPayload): Int {
         updateUsage()
+        var failedSongs = 0
         if (!audioManager.isConnected)
             audioManager.openAudioConnection(voiceChannel)
 
         for (info in playableInfo) {
             try {
-                playLogic(AudioTrackExtender(info, payload.member))
-            } catch (ignore: NotFoundException) { }
+                runBlocking { playLogic(AudioTrackExtender(info, payload.member)) }
+            } catch (ignore: LoadFailedException) {
+                println("Load Failed Exception")
+                failedSongs++
+            }
         }
+
         thread { dispatchEvent(PlayerEvents.QUEUE) }
+        println("PlayPlaylist difference: ${playableInfo.size - failedSongs} size: ${playableInfo.size} failedSongs: $failedSongs")
+        return playableInfo.size - failedSongs
     }
 
     suspend fun play(audioTrackExtender: AudioTrackExtender): Int {
