@@ -4,5 +4,6 @@ enum class PlayerEvents {
     PLAY,
     QUEUE,
     CLEANUP,
-    CLEAR_QUEUE
+    CLEAR_QUEUE,
+    REMOVE
 }

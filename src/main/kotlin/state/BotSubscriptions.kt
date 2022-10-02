@@ -4,7 +4,6 @@ import lib.lavaplayer.TrackEvents
 import utils.PlayerEvents
 
 object BotSubscriptions {
-    //TODO: Add Remove function
     private val specificPlayerSubscriptions = HashMap<(PlayerEvents) -> Unit, ArrayList<PlayerEvents>>()
     private val specificTrackSubscriptions = HashMap<(TrackEvents) -> Unit, ArrayList<TrackEvents>>()
 
@@ -21,16 +20,11 @@ object BotSubscriptions {
             }
     }
 
-    fun subscribeToPlayerEvents(
-        events: ArrayList<PlayerEvents>,
+    fun subscribeToPlayer(
         func: (PlayerEvents) -> Unit,
         player: AudioPlayerExtender
     ) {
-        player.subscribeToPlayerEvents { event -> run {
-            if (events.contains(event)) {
-                func(event)
-            }
-        } }
+        player.subscribeToPlayerEvents(func)
     }
 
     fun subscribeToTrackEvents(
