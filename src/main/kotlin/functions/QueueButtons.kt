@@ -8,9 +8,9 @@ import net.dv8tion.jda.api.interactions.components.Button
 
 
 object QueueButtons {
-    fun checkButtons(page: Int, maxPages: Int): ArrayList<Button>? {
+    fun checkButtons(page: Int, maxPages: Int): ArrayList<Button> {
         if (maxPages == 0 || maxPages == 1)
-            return null
+            return allDisabled()
         if (page == maxPages)
             return rightDisabled()
         if (page == 1)
