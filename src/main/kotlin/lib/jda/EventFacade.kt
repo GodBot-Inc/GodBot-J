@@ -11,6 +11,7 @@ import net.dv8tion.jda.api.interactions.commands.OptionMapping
 import net.dv8tion.jda.api.interactions.components.Button
 import net.dv8tion.jda.api.requests.restaction.interactions.ReplyAction
 import java.awt.Color
+import java.util.concurrent.TimeUnit
 
 class EventFacade(event: SlashCommandEvent) {
 
@@ -21,7 +22,9 @@ class EventFacade(event: SlashCommandEvent) {
     }
 
     fun replyEphemeral(embed: MessageEmbed) {
-        this.event.replyEmbeds(embed).setEphemeral(true).queue()
+        this.event.replyEmbeds(embed).setEphemeral(true).submit().thenCompose {
+            it.deleteOriginal().submitAfter(30, TimeUnit.SECONDS)
+        }
     }
 
     fun replyLink(message: String, color: Color = primary) {
@@ -52,7 +55,9 @@ class EventFacade(event: SlashCommandEvent) {
     }
 
     fun reply(embed: MessageEmbed)  {
-        this.event.replyEmbeds(embed).queue()
+        this.event.replyEmbeds(embed).submit().thenCompose {
+            it.deleteOriginal().submitAfter(30, TimeUnit.SECONDS)
+        }
     }
 
     fun replyAction(embed: MessageEmbed, buttons: ArrayList<Button>?): ReplyAction {
