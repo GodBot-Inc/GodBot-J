@@ -33,21 +33,19 @@ suspend fun play(event: EventFacade, payload: SlashCommandPayload) {
         return
     }
 
-    coroutineScope {
-        val isSong = isSong(url)
-        if (isSong == null) {
-            event.error(invalidPlatform)
-            return@coroutineScope
-        }
-
-        val hook = InteractionHookWrapper(event.getHook())
-        event.deferReply()
-
-        if (isSong)
-            resolveVideo(payload, hook, url)
-        else
-            resolvePlaylist(event, payload, hook, url)
+    val isSong = isSong(url)
+    if (isSong == null) {
+        event.error(invalidPlatform)
+        return
     }
+
+    val hook = InteractionHookWrapper(event.getHook())
+    event.deferReply()
+
+    if (isSong)
+        resolveVideo(payload, hook, url)
+    else
+        resolvePlaylist(event, payload, hook, url)
 }
 
 suspend fun resolveVideo(

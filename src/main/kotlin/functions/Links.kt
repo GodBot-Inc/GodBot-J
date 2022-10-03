@@ -28,8 +28,7 @@ fun isSong(url: String): Boolean? {
     val platform = resolvePlatform(url)
     when (platform) {
         "youtube" -> {
-            // TODO: build check for youtu.be urls
-            if (url.contains("watch?v=") && !url.contains("list="))
+            if (url.contains("watch?v=") && !url.contains("list=") || url.contains("youtu.be"))
                 return true
             return false
         }
