@@ -1,7 +1,6 @@
 package lib.jda
 
 import commands.*
-import commands.queue
 import constants.generalError
 import constants.notConnectedToVc
 import io.github.cdimascio.dotenv.Dotenv
@@ -55,6 +54,7 @@ class InteractionListener: ListenerAdapter() {
             "skipto" -> skipTo(event, payload)
             "volume" -> volume(event, payload)
             "forward" -> forward(event, payload)
+            "config" -> config(event, payload)
         }
     }
 

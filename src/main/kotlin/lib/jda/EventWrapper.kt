@@ -62,7 +62,7 @@ class EventWrapper(event: SlashCommandEvent) {
         )
     }
 
-    fun reply(embed: MessageEmbed)  {
+    fun reply(embed: MessageEmbed) {
         val deletionTime = Mongo.getMessageDeletionTime(event.guild?.id)
         val request = event.replyEmbeds(embed)
         if (deletionTime != null)
@@ -73,6 +73,10 @@ class EventWrapper(event: SlashCommandEvent) {
             }
         else
             request.queue()
+    }
+
+    fun reply(message: String) {
+        this.reply(EmbedBuilder().setTitle(message).setColor(primary).build())
     }
 
     fun replyAction(embed: MessageEmbed, buttons: ArrayList<Button>?): ReplyAction {
