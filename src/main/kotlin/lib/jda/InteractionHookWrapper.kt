@@ -1,6 +1,7 @@
 package lib.jda
 
 import constants.errorRed
+import lib.Mongo
 import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.entities.MessageEmbed
 import net.dv8tion.jda.api.interactions.InteractionHook
@@ -14,14 +15,24 @@ class InteractionHookWrapper(hook: InteractionHook) {
     }
 
     fun error(message: String) {
-        this.hook.sendMessageEmbeds(EmbedBuilder().setDescription(message).setColor(errorRed).build()).submit().thenCompose {
-            it.delete().submitAfter(30, TimeUnit.SECONDS)
-        }
+        val deletionTime = Mongo.getMessageDeletionTime(hook.interaction.guild?.id)
+        val request = hook.sendMessageEmbeds(EmbedBuilder().setDescription(message).setColor(errorRed).build())
+        if (deletionTime != null)
+            request.submit().thenCompose {
+                it.delete().submitAfter(30, TimeUnit.SECONDS)
+            }
+        else
+            request.queue()
     }
 
     fun reply(embed: MessageEmbed) {
-        this.hook.sendMessageEmbeds(embed).submit().thenCompose {
-            it.delete().submitAfter(30, TimeUnit.SECONDS)
-        }
+        val deletionTime = Mongo.getMessageDeletionTime(hook.interaction.guild?.id)
+        val request = hook.sendMessageEmbeds(embed)
+        if (deletionTime != null)
+            request.submit().thenCompose {
+                it.delete().submitAfter(30, TimeUnit.SECONDS)
+            }
+        else
+            request.queue()
     }
 }

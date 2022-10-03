@@ -27,7 +27,9 @@ object Mongo {
         configDB = discordDB.getCollection("Config")
     }
 
-    fun getMessageDeletionTime(serverId: String): Int? {
+    fun getMessageDeletionTime(serverId: String?): Int? {
+        if (serverId == null)
+            return null
         return configDB.find(Filters.eq("serverId", serverId)).first()?.getInteger("messageDeletionTime")
     }
 
