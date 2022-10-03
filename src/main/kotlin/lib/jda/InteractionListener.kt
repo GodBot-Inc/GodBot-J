@@ -18,7 +18,7 @@ class InteractionListener: ListenerAdapter() {
     override fun onSlashCommand(pureEvent: SlashCommandEvent) {
         val dotenv = Dotenv.load()
         val applicationId = dotenv.get("APPLICATIONID")
-        val event = EventFacade(pureEvent)
+        val event = EventWrapper(pureEvent)
 
         val guild = pureEvent.guild
         val member = pureEvent.member

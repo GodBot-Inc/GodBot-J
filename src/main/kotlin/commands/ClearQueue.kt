@@ -2,10 +2,10 @@ package commands
 
 import constants.cleanedEmoji
 import functions.getPlayerWithQueue
-import lib.jda.EventFacade
+import lib.jda.EventWrapper
 import objects.SlashCommandPayload
 
-fun clearQueue(event: EventFacade, payload: SlashCommandPayload) {
+fun clearQueue(event: EventWrapper, payload: SlashCommandPayload) {
     val player = getPlayerWithQueue(
         payload.guild.id,
         payload.voiceChannel.id,

@@ -9,7 +9,7 @@ import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.runBlocking
-import lib.jda.EventFacade
+import lib.jda.EventWrapper
 import lib.jda.InteractionHookWrapper
 import lib.lavaplayer.PlayerManager
 import objects.SlashCommandPayload
@@ -22,7 +22,7 @@ import utils.NotFoundException
 import utils.VideoNotFoundException
 import utils.YouTubeApiException
 
-suspend fun play(event: EventFacade, payload: SlashCommandPayload) {
+suspend fun play(event: EventWrapper, payload: SlashCommandPayload) {
     val url = event.getOption("url")?.asString
     if (url == null) {
         event.error(notReceivedParameter)
@@ -95,7 +95,7 @@ suspend fun resolveVideo(
 }
 
 suspend fun resolvePlaylist(
-    event: EventFacade,
+    event: EventWrapper,
     payload: SlashCommandPayload,
     hook: InteractionHookWrapper,
     url: String

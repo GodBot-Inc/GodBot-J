@@ -4,10 +4,10 @@ import constants.loopEmoji
 import constants.noLoopEmoji
 import constants.notReceivedParameter
 import functions.getPlayer
-import lib.jda.EventFacade
+import lib.jda.EventWrapper
 import objects.SlashCommandPayload
 
-fun loop(event: EventFacade, payload: SlashCommandPayload) {
+fun loop(event: EventWrapper, payload: SlashCommandPayload) {
     val mode = event.getOption("mode")?.asBoolean
     if (mode == null) {
         event.error(notReceivedParameter)

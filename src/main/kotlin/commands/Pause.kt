@@ -2,10 +2,10 @@ package commands
 
 import constants.pauseEmoji
 import functions.getPlayingPlayer
-import lib.jda.EventFacade
+import lib.jda.EventWrapper
 import objects.SlashCommandPayload
 
-fun pause(event: EventFacade, payload: SlashCommandPayload) {
+fun pause(event: EventWrapper, payload: SlashCommandPayload) {
     val player = getPlayingPlayer(
         payload.guild.id,
         payload.voiceChannel.id,
