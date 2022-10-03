@@ -19,7 +19,7 @@ class InteractionHookWrapper(hook: InteractionHook) {
         val request = hook.sendMessageEmbeds(EmbedBuilder().setDescription(message).setColor(errorRed).build())
         if (deletionTime != null)
             request.submit().thenCompose {
-                it.delete().submitAfter(30, TimeUnit.SECONDS)
+                it.delete().submitAfter(TimeUnit.MINUTES.toSeconds(deletionTime.toLong()), TimeUnit.SECONDS)
             }
         else
             request.queue()
@@ -30,7 +30,7 @@ class InteractionHookWrapper(hook: InteractionHook) {
         val request = hook.sendMessageEmbeds(embed)
         if (deletionTime != null)
             request.submit().thenCompose {
-                it.delete().submitAfter(30, TimeUnit.SECONDS)
+                it.delete().submitAfter(TimeUnit.MINUTES.toSeconds(deletionTime.toLong()), TimeUnit.SECONDS)
             }
         else
             request.queue()
