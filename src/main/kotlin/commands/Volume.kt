@@ -1,12 +1,12 @@
 package commands
 
 import constants.*
-import lib.jda.EventFacade
+import lib.jda.EventWrapper
 import net.dv8tion.jda.api.entities.Emoji
 import objects.SlashCommandPayload
-import utils.getPlayingPlayer
+import functions.getPlayingPlayer
 
-fun volume(event: EventFacade, payload: SlashCommandPayload) {
+fun volume(event: EventWrapper, payload: SlashCommandPayload) {
     val level: Int? = event.getLong("level")?.toInt()
 
     val player = getPlayingPlayer(

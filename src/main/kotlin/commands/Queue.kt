@@ -3,12 +3,12 @@ package commands
 import functions.QueueButtons
 import functions.compactQueue
 import functions.getMaxQueuePages
-import lib.jda.EventFacade
+import lib.jda.EventWrapper
 import objects.SlashCommandPayload
 import state.QueueControllableEmbed
-import utils.getPlayer
+import functions.getPlayer
 
-fun queue(event: EventFacade, payload: SlashCommandPayload) {
+fun queue(event: EventWrapper, payload: SlashCommandPayload) {
     val player = getPlayer(payload.guild.id, payload.voiceChannel.id, event) ?: return
 
     val message = event.replyAction(

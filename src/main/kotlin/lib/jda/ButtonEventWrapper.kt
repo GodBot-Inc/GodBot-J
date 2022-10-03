@@ -14,9 +14,6 @@ class ButtonEventWrapper(private val event: ButtonClickEvent) {
     fun updateQueue(queue: ArrayList<AudioTrackExtender>, avatarUrl: String?, page: Int) {
         val buttons = QueueButtons.checkButtons(page, getMaxQueuePages(queue))
         val embed = compactQueue(queue, avatarUrl, page)
-        if (buttons == null)
-            event.editMessageEmbeds(embed).queue()
-        else
-            event.editMessageEmbeds(embed).setActionRow(buttons).queue()
+        event.editMessageEmbeds(embed).setActionRow(buttons).queue()
     }
 }

@@ -9,7 +9,7 @@ import kotlinx.coroutines.runBlocking
 import state.AudioPlayerExtender
 import utils.QueueEmptyException
 
-class TrackEventListener(val audioPlayer: AudioPlayerExtender): AudioEventAdapter() {
+class TrackEventListener(private val audioPlayer: AudioPlayerExtender): AudioEventAdapter() {
 
     private val trackEventSubscribers: ArrayList<(TrackEvents) -> Unit> = ArrayList()
 

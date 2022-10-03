@@ -1,11 +1,11 @@
 package commands
 
 import constants.leaveEmoji
-import utils.getPlayer
-import lib.jda.EventFacade
+import functions.getPlayer
+import lib.jda.EventWrapper
 import objects.SlashCommandPayload
 
-fun leave(event: EventFacade, payload: SlashCommandPayload) {
+fun leave(event: EventWrapper, payload: SlashCommandPayload) {
     val player = getPlayer(
         payload.guild.id,
         payload.voiceChannel.id,

@@ -1,12 +1,12 @@
 package commands
 
 import constants.notReceivedParameter
-import utils.getPlayerWithQueue
+import functions.getPlayerWithQueue
 import state.AudioTrackExtender
-import lib.jda.EventFacade
+import lib.jda.EventWrapper
 import objects.SlashCommandPayload
 
-fun remove(event: EventFacade, payload: SlashCommandPayload) {
+fun remove(event: EventWrapper, payload: SlashCommandPayload) {
     val position: Long? = event.getLong("position")
     if (position == null) {
         event.error(notReceivedParameter)

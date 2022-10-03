@@ -1,7 +1,6 @@
 package lib.jda
 
 import commands.*
-import commands.queue
 import constants.generalError
 import constants.notConnectedToVc
 import io.github.cdimascio.dotenv.Dotenv
@@ -18,7 +17,7 @@ class InteractionListener: ListenerAdapter() {
     override fun onSlashCommand(pureEvent: SlashCommandEvent) {
         val dotenv = Dotenv.load()
         val applicationId = dotenv.get("APPLICATIONID")
-        val event = EventFacade(pureEvent)
+        val event = EventWrapper(pureEvent)
 
         val guild = pureEvent.guild
         val member = pureEvent.member
@@ -55,6 +54,7 @@ class InteractionListener: ListenerAdapter() {
             "skipto" -> skipTo(event, payload)
             "volume" -> volume(event, payload)
             "forward" -> forward(event, payload)
+            "config" -> config(event, payload)
         }
     }
 
