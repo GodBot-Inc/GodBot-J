@@ -2,7 +2,7 @@ package commands
 
 import constants.nextTrackEmoji
 import kotlinx.coroutines.runBlocking
-import utils.getPlayerWithQueue
+import functions.getPlayerWithQueue
 import lib.jda.EventFacade
 import objects.SlashCommandPayload
 

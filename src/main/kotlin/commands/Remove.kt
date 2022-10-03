@@ -1,7 +1,7 @@
 package commands
 
 import constants.notReceivedParameter
-import utils.getPlayerWithQueue
+import functions.getPlayerWithQueue
 import state.AudioTrackExtender
 import lib.jda.EventFacade
 import objects.SlashCommandPayload

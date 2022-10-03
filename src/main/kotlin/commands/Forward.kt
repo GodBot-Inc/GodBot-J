@@ -1,9 +1,9 @@
 package commands
 
 import constants.secondary
-import commands.play.utils.trackLines
-import utils.getPlayingPlayer
-import utils.millisToString
+import functions.trackLines
+import functions.getPlayingPlayer
+import functions.millisToString
 import net.dv8tion.jda.api.EmbedBuilder
 import lib.jda.EventFacade
 import objects.SlashCommandPayload

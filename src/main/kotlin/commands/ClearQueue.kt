@@ -1,7 +1,7 @@
 package commands
 
 import constants.cleanedEmoji
-import utils.getPlayerWithQueue
+import functions.getPlayerWithQueue
 import lib.jda.EventFacade
 import objects.SlashCommandPayload
 

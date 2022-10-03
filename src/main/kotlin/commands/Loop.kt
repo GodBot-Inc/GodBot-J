@@ -3,7 +3,7 @@ package commands
 import constants.loopEmoji
 import constants.noLoopEmoji
 import constants.notReceivedParameter
-import utils.getPlayer
+import functions.getPlayer
 import lib.jda.EventFacade
 import objects.SlashCommandPayload
 

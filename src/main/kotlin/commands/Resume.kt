@@ -1,7 +1,7 @@
 package commands
 
 import constants.playEmoji
-import utils.getPlayingPlayer
+import functions.getPlayingPlayer
 import lib.jda.EventFacade
 import objects.SlashCommandPayload
 

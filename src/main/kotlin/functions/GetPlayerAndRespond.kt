@@ -1,10 +1,10 @@
-package utils
+package functions
 
 import constants.noPlayerInVc
 import constants.noPlayingTrack
 import constants.queueEmpty
-import state.AudioPlayerExtender
 import lib.jda.EventFacade
+import state.AudioPlayerExtender
 import state.PlayerStorage
 
 

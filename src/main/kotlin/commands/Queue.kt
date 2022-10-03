@@ -6,7 +6,7 @@ import functions.getMaxQueuePages
 import lib.jda.EventFacade
 import objects.SlashCommandPayload
 import state.QueueControllableEmbed
-import utils.getPlayer
+import functions.getPlayer
 
 fun queue(event: EventFacade, payload: SlashCommandPayload) {
     val player = getPlayer(payload.guild.id, payload.voiceChannel.id, event) ?: return

@@ -2,8 +2,8 @@ package commands
 
 import commands.play.utils.isSong
 import commands.play.utils.isValid
-import commands.play.utils.playPlaylistMessage
-import commands.play.utils.playVideoMessage
+import functions.playPlaylistMessage
+import functions.playVideoMessage
 import constants.*
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async

@@ -3,7 +3,7 @@ package commands
 import constants.loadingSongFailed
 import constants.notReceivedParameter
 import kotlinx.coroutines.runBlocking
-import utils.getPlayerWithQueue
+import functions.getPlayerWithQueue
 import lib.jda.EventFacade
 import objects.SlashCommandPayload
 
