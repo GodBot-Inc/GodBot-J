@@ -2,14 +2,14 @@ package commands
 
 import commands.play.utils.isSong
 import commands.play.utils.isValid
-import commands.play.utils.playPlaylistMessage
-import commands.play.utils.playVideoMessage
 import constants.*
+import functions.playPlaylistMessage
+import functions.playVideoMessage
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.runBlocking
-import lib.jda.EventFacade
+import lib.jda.EventWrapper
 import lib.jda.InteractionHookWrapper
 import lib.lavaplayer.PlayerManager
 import objects.SlashCommandPayload
@@ -17,12 +17,12 @@ import objects.playableInformation.YouTubePlaylist
 import objects.playableInformation.YouTubeSong
 import services.getYTPlaylistInfo
 import services.getYTVideoInfoFromUrl
-import utils.CouldNotExtractVideoInformation
+import utils.CouldNotExtractItemInformation
 import utils.NotFoundException
 import utils.VideoNotFoundException
 import utils.YouTubeApiException
 
-suspend fun play(event: EventFacade, payload: SlashCommandPayload) {
+suspend fun play(event: EventWrapper, payload: SlashCommandPayload) {
     val url = event.getOption("url")?.asString
     if (url == null) {
         event.error(notReceivedParameter)
@@ -33,21 +33,19 @@ suspend fun play(event: EventFacade, payload: SlashCommandPayload) {
         return
     }
 
-    coroutineScope {
-        val isSong = isSong(url)
-        if (isSong == null) {
-            event.error(invalidPlatform)
-            return@coroutineScope
-        }
-
-        val hook = InteractionHookWrapper(event.getHook())
-        event.deferReply()
-
-        if (isSong)
-            resolveVideo(payload, hook, url)
-        else
-            resolvePlaylist(event, payload, hook, url)
+    val isSong = isSong(url)
+    if (isSong == null) {
+        event.error(invalidPlatform)
+        return
     }
+
+    val hook = InteractionHookWrapper(event.getHook())
+    event.deferReply()
+
+    if (isSong)
+        resolveVideo(payload, hook, url)
+    else
+        resolvePlaylist(event, payload, hook, url)
 }
 
 suspend fun resolveVideo(
@@ -68,8 +66,11 @@ suspend fun resolveVideo(
     } catch (e: VideoNotFoundException) {
         hook.error(songNotFound)
         return@coroutineScope
-    } catch (e: CouldNotExtractVideoInformation) {
+    } catch (e: CouldNotExtractItemInformation) {
         hook.error(songProcessingError)
+        return@coroutineScope
+    } catch (e: Exception) {
+        hook.error(loadingSongFailed)
         return@coroutineScope
     }
 
@@ -92,7 +93,7 @@ suspend fun resolveVideo(
 }
 
 suspend fun resolvePlaylist(
-    event: EventFacade,
+    event: EventWrapper,
     payload: SlashCommandPayload,
     hook: InteractionHookWrapper,
     url: String
@@ -109,6 +110,9 @@ suspend fun resolvePlaylist(
     try {
         info = infoJob.await()
     } catch (e: YouTubeApiException) {
+        hook.error(playlistNotFound)
+        return@coroutineScope
+    } catch (e: Exception) {
         hook.error(loadingPlaylistFailed)
         e.printStackTrace()
         return@coroutineScope

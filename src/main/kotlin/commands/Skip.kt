@@ -2,11 +2,11 @@ package commands
 
 import constants.nextTrackEmoji
 import kotlinx.coroutines.runBlocking
-import utils.getPlayerWithQueue
-import lib.jda.EventFacade
+import functions.getPlayerWithQueue
+import lib.jda.EventWrapper
 import objects.SlashCommandPayload
 
-fun skip(event: EventFacade, payload: SlashCommandPayload) {
+fun skip(event: EventWrapper, payload: SlashCommandPayload) {
     val player = getPlayerWithQueue(
         payload.guild.id,
         payload.voiceChannel.id,

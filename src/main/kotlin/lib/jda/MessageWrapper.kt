@@ -17,10 +17,7 @@ class MessageWrapper(private val message: Message) {
     ) {
         val buttons = QueueButtons.checkButtons(page, getMaxQueuePages(queue))
         val embed = compactQueue(queue, avatarUrl, page)
-        if (buttons == null)
-            message.editMessageEmbeds(embed).setActionRow(QueueButtons.allDisabled()).queue()
-        else
-            message.editMessageEmbeds(embed).setActionRow(buttons).queue()
+        message.editMessageEmbeds(embed).setActionRow(buttons).queue()
     }
 
     fun disable() {

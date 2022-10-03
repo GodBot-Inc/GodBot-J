@@ -3,11 +3,11 @@ package commands
 import constants.loadingSongFailed
 import constants.notReceivedParameter
 import kotlinx.coroutines.runBlocking
-import utils.getPlayerWithQueue
-import lib.jda.EventFacade
+import functions.getPlayerWithQueue
+import lib.jda.EventWrapper
 import objects.SlashCommandPayload
 
-fun skipTo(event: EventFacade, payload: SlashCommandPayload) {
+fun skipTo(event: EventWrapper, payload: SlashCommandPayload) {
     val position: Long? = event.getLong("position")
     if (position == null) {
         event.error(notReceivedParameter)

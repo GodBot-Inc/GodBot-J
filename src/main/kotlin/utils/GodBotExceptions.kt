@@ -19,4 +19,4 @@ open class YouTubeApiException: GodBotException()
 
 class VideoNotFoundException: YouTubeApiException()
 
-class CouldNotExtractVideoInformation: YouTubeApiException()
+class CouldNotExtractItemInformation: YouTubeApiException()

@@ -29,9 +29,7 @@ class QueueControllableEmbed(
                 message = MessageWrapper(hook.retrieveOriginal().submit().join())
             }
         }
-        // Subscribe to update events from the player
-        BotSubscriptions.subscribeToPlayerEvents(
-            arrayListOf(PlayerEvents.QUEUE, PlayerEvents.CLEANUP, PlayerEvents.CLEAR_QUEUE),
+        BotSubscriptions.subscribeToPlayer(
             ::onPlayerUpdate,
             player
         )

@@ -1,11 +1,11 @@
 package commands
 
 import constants.playEmoji
-import utils.getPlayingPlayer
-import lib.jda.EventFacade
+import functions.getPlayingPlayer
+import lib.jda.EventWrapper
 import objects.SlashCommandPayload
 
-fun resume(event: EventFacade, payload: SlashCommandPayload) {
+fun resume(event: EventWrapper, payload: SlashCommandPayload) {
     val player = getPlayingPlayer(
         payload.guild.id,
         payload.voiceChannel.id,

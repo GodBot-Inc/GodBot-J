@@ -9,6 +9,7 @@ import objects.playableInformation.YouTubeSong
 import org.json.JSONException
 import org.json.JSONObject
 import utils.*
+import java.io.IOException
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse
@@ -22,7 +23,12 @@ val builder: HttpRequest.Builder = HttpRequest.newBuilder()
 
 suspend fun getYTVideoInfoFromUrl(url: String) = getYTVideoInfo(convertYtUrlToId(url))
 
-@Throws(VideoNotFoundException::class, CouldNotExtractVideoInformation::class)
+@Throws(
+    VideoNotFoundException::class,
+    CouldNotExtractItemInformation::class,
+    IOException::class,
+    InterruptedException::class
+)
 suspend fun getYTVideoInfo(id: String) = coroutineScope {
     var response = get(YTUrlBuilder().getVideo().id(id).build())
     val builder = YouTubeSong.Builder()
@@ -35,7 +41,7 @@ suspend fun getYTVideoInfo(id: String) = coroutineScope {
     if (response.getJSONObject("snippet") == null
         || response.getJSONObject("contentDetails") == null
         || response.getJSONObject("statistics") == null )
-        throw CouldNotExtractVideoInformation()
+        throw CouldNotExtractItemInformation()
 
     val snippet = response.getJSONObject("snippet")
     val contentDetails = response.getJSONObject("contentDetails")
@@ -65,7 +71,13 @@ suspend fun getYTVideoInfo(id: String) = coroutineScope {
     return@coroutineScope builder.build()
 }
 
-@Throws(PlaylistNotFoundException::class, CouldNotExtractVideoInformation::class, JSONException::class)
+@Throws(
+    PlaylistNotFoundException::class,
+    CouldNotExtractItemInformation::class,
+    JSONException::class,
+    IOException::class,
+    InterruptedException::class
+)
 suspend fun getYTPlaylistInfo(url: String) = coroutineScope {
     val id = convertYtUrlToId(url)
     val itemsRequest: CompletableFuture<HttpResponse<String>> = client.sendAsync(
@@ -88,7 +100,7 @@ suspend fun getYTPlaylistInfo(url: String) = coroutineScope {
 
     if (response.getJSONObject("snippet") == null
         || response.getJSONObject("contentDetails") == null)
-        throw CouldNotExtractVideoInformation()
+        throw CouldNotExtractItemInformation()
 
     val snippet = response.getJSONObject("snippet")
     val contentDetails = response.getJSONObject("contentDetails")

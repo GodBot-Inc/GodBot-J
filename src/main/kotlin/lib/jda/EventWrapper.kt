@@ -2,6 +2,7 @@ package lib.jda
 
 import constants.errorRed
 import constants.primary
+import lib.Mongo
 import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.entities.Emoji
 import net.dv8tion.jda.api.entities.MessageEmbed
@@ -11,8 +12,9 @@ import net.dv8tion.jda.api.interactions.commands.OptionMapping
 import net.dv8tion.jda.api.interactions.components.Button
 import net.dv8tion.jda.api.requests.restaction.interactions.ReplyAction
 import java.awt.Color
+import java.util.concurrent.TimeUnit
 
-class EventFacade(event: SlashCommandEvent) {
+class EventWrapper(event: SlashCommandEvent) {
 
     val event: SlashCommandEvent
 
@@ -21,7 +23,16 @@ class EventFacade(event: SlashCommandEvent) {
     }
 
     fun replyEphemeral(embed: MessageEmbed) {
-        this.event.replyEmbeds(embed).setEphemeral(true).queue()
+        val deletionTime = Mongo.getMessageDeletionTime(event.guild?.id)
+        val request = this.event.replyEmbeds(embed).setEphemeral(true)
+        if (deletionTime != null)
+            request.submit().thenCompose {
+                it
+                    .deleteOriginal()
+                    .submitAfter(TimeUnit.MINUTES.toSeconds(deletionTime.toLong()), TimeUnit.SECONDS)
+            }
+        else
+            request.queue()
     }
 
     fun replyLink(message: String, color: Color = primary) {
@@ -51,8 +62,21 @@ class EventFacade(event: SlashCommandEvent) {
         )
     }
 
-    fun reply(embed: MessageEmbed)  {
-        this.event.replyEmbeds(embed).queue()
+    fun reply(embed: MessageEmbed) {
+        val deletionTime = Mongo.getMessageDeletionTime(event.guild?.id)
+        val request = event.replyEmbeds(embed)
+        if (deletionTime != null)
+            request.submit().thenCompose {
+                it
+                    .deleteOriginal()
+                    .submitAfter(TimeUnit.MINUTES.toSeconds(deletionTime.toLong()), TimeUnit.SECONDS)
+            }
+        else
+            request.queue()
+    }
+
+    fun reply(message: String) {
+        this.reply(EmbedBuilder().setTitle(message).setColor(primary).build())
     }
 
     fun replyAction(embed: MessageEmbed, buttons: ArrayList<Button>?): ReplyAction {

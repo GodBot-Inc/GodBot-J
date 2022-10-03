@@ -1,17 +1,13 @@
 package commands
 
 import constants.*
+import lib.jda.EventWrapper
 import net.dv8tion.jda.api.entities.Emoji
-import lib.jda.EventFacade
 import objects.SlashCommandPayload
-import utils.getPlayingPlayer
+import functions.getPlayingPlayer
 
-fun volume(event: EventFacade, payload: SlashCommandPayload) {
+fun volume(event: EventWrapper, payload: SlashCommandPayload) {
     val level: Int? = event.getLong("level")?.toInt()
-    if (level == null) {
-        event.error(notReceivedParameter)
-        return
-    }
 
     val player = getPlayingPlayer(
         payload.guild.id,
@@ -21,6 +17,17 @@ fun volume(event: EventFacade, payload: SlashCommandPayload) {
 
     val playerVolume: Int = player.getVolume()
     var emoji: Emoji = noAudioChangeEmoji
+
+    if (level == null) {
+        emoji = if (playerVolume/10 >= 7)
+            maxVolumeEmoji
+        else if (playerVolume/10 >= 4)
+            mediumVolumeEmoji
+        else
+            lowVolumeEmoji
+        event.replyEmote(emoji, "Volume: ${playerVolume/10}")
+        return
+    }
 
     if (playerVolume > level*10) {
         emoji = quieterEmoji

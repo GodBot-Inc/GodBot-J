@@ -211,6 +211,7 @@ class AudioPlayerExtender(
 
     fun removeTrackAt(index: Int): AudioTrackExtender {
         updateUsage()
+        thread { dispatchEvent(PlayerEvents.REMOVE) }
         return queue.removeAt(index)
     }
 

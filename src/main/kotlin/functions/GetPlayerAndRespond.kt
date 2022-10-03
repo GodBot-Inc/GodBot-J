@@ -1,14 +1,14 @@
-package utils
+package functions
 
 import constants.noPlayerInVc
 import constants.noPlayingTrack
 import constants.queueEmpty
+import lib.jda.EventWrapper
 import state.AudioPlayerExtender
-import lib.jda.EventFacade
 import state.PlayerStorage
 
 
-fun getPlayer(guildId: String, channelId: String, event: EventFacade): AudioPlayerExtender? {
+fun getPlayer(guildId: String, channelId: String, event: EventWrapper): AudioPlayerExtender? {
     val player = PlayerStorage.get(guildId)
     return if (player == null || player.voiceChannel.id != channelId) {
         event.error(noPlayerInVc)
@@ -18,7 +18,7 @@ fun getPlayer(guildId: String, channelId: String, event: EventFacade): AudioPlay
     }
 }
 
-fun getPlayingPlayer(guildId: String, channelId: String, event: EventFacade): AudioPlayerExtender? {
+fun getPlayingPlayer(guildId: String, channelId: String, event: EventWrapper): AudioPlayerExtender? {
     val player = getPlayer(guildId, channelId, event) ?: return null
 
     return if (player.currentTrack == null) {
@@ -29,7 +29,7 @@ fun getPlayingPlayer(guildId: String, channelId: String, event: EventFacade): Au
     }
 }
 
-fun getPlayerWithQueue(guildId: String, channelId: String, event: EventFacade): AudioPlayerExtender? {
+fun getPlayerWithQueue(guildId: String, channelId: String, event: EventWrapper): AudioPlayerExtender? {
     val player = getPlayingPlayer(guildId, channelId, event) ?: return null
 
     return if (player.queue.isEmpty()) {
