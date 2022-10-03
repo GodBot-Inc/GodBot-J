@@ -2,9 +2,9 @@ package commands
 
 import commands.play.utils.isSong
 import commands.play.utils.isValid
+import constants.*
 import functions.playPlaylistMessage
 import functions.playVideoMessage
-import constants.*
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
@@ -17,7 +17,7 @@ import objects.playableInformation.YouTubePlaylist
 import objects.playableInformation.YouTubeSong
 import services.getYTPlaylistInfo
 import services.getYTVideoInfoFromUrl
-import utils.CouldNotExtractVideoInformation
+import utils.CouldNotExtractItemInformation
 import utils.NotFoundException
 import utils.VideoNotFoundException
 import utils.YouTubeApiException
@@ -68,8 +68,11 @@ suspend fun resolveVideo(
     } catch (e: VideoNotFoundException) {
         hook.error(songNotFound)
         return@coroutineScope
-    } catch (e: CouldNotExtractVideoInformation) {
+    } catch (e: CouldNotExtractItemInformation) {
         hook.error(songProcessingError)
+        return@coroutineScope
+    } catch (e: Exception) {
+        hook.error(loadingSongFailed)
         return@coroutineScope
     }
 
@@ -109,6 +112,9 @@ suspend fun resolvePlaylist(
     try {
         info = infoJob.await()
     } catch (e: YouTubeApiException) {
+        hook.error(playlistNotFound)
+        return@coroutineScope
+    } catch (e: Exception) {
         hook.error(loadingPlaylistFailed)
         e.printStackTrace()
         return@coroutineScope
