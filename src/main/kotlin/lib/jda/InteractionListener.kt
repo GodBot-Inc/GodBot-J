@@ -27,6 +27,8 @@ class InteractionListener: ListenerAdapter() {
             event.error(generalError)
             return
         }
+        if (pureEvent.name == "config")
+            config(event, guild)
         if (voiceChannel == null) {
             event.error(notConnectedToVc)
             return
@@ -54,7 +56,6 @@ class InteractionListener: ListenerAdapter() {
             "skipto" -> skipTo(event, payload)
             "volume" -> volume(event, payload)
             "forward" -> forward(event, payload)
-            "config" -> config(event, payload)
         }
     }
 
