@@ -55,7 +55,7 @@ class InteractionListener: ListenerAdapter() {
             "loop" -> loop(event, payload)
             "skipto" -> skipTo(event, payload)
             "volume" -> volume(event, payload)
-            "forward" -> forward(event, payload)
+            "jump" -> jump(event, payload)
         }
     }
 

@@ -1,15 +1,15 @@
 package commands
 
 import constants.secondary
-import functions.trackLines
 import functions.getPlayingPlayer
 import functions.millisToString
-import net.dv8tion.jda.api.EmbedBuilder
+import functions.trackLines
 import lib.jda.EventWrapper
+import net.dv8tion.jda.api.EmbedBuilder
 import objects.SlashCommandPayload
 import java.util.concurrent.TimeUnit
 
-fun forward(event: EventWrapper, payload: SlashCommandPayload) {
+fun jump(event: EventWrapper, payload: SlashCommandPayload) {
     fun getSeekPoint(): Long {
         val hours = event.getOption("hours")
         val minutes = event.getOption("minutes")
