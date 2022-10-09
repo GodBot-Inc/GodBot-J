@@ -31,6 +31,7 @@ class GodBotSystem {
             println("Checking Env Successful".green())
 
             val dotenv = Dotenv.load()
+            println("test")
 
             try {
                 println("Starting to Initialize...")
